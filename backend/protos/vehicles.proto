@@ -1,0 +1,23 @@
+// SAD Traceability: Vehicles service contract from ADR-001 and processes 10.1/10.4.
+syntax = "proto3";
+
+package fleetops.vehicles.v1;
+
+service VehiclesService {
+  rpc ListVehicles (ListVehiclesRequest) returns (ListVehiclesResponse);
+}
+
+message ListVehiclesRequest {}
+
+message VehicleMessage {
+  string vehicle_id = 1;
+  string plate = 2;
+  string status = 3;
+  string site = 4;
+  string category = 5;
+}
+
+message ListVehiclesResponse {
+  repeated VehicleMessage vehicles = 1;
+}
+

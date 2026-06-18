@@ -1,0 +1,77 @@
+
+[notice] A new release of pip is available: 25.0.1 -> 26.1.2
+[notice] To update, run: pip install --upgrade pip
+=== IMPORT LINTER ===
+=============
+Import Linter
+=============
+
+---------
+Contracts
+---------
+
+Analyzed 83 files, 83 dependencies.
+-----------------------------------
+
+Domain layer must not depend on outer layers KEPT
+Application (Business) must not depend on Presentation or Infrastructure KEPT
+Presentation must not depend on Infrastructure (strict layering) KEPT
+Infrastructure must not depend on Presentation (DTO inversion) KEPT
+Layer hierarchy Presentation -> Business -> Domain KEPT
+
+Contracts: 5 kept, 0 broken.
+IMPORT LINTER: PASS
+
+=== MYPY ===
+Success: no issues found in 75 source files
+MYPY: PASS
+
+=== RUFF ===
+All checks passed!
+RUFF: PASS
+
+=== PYTEST ===
+..........................................                               [100%]
+42 passed in 6.74s
+PYTEST: PASS
+
+=== COVERAGE ===
+Name                                                                Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------------------------------------------
+src/fleetops_reports/application/__init__.py                            0      0      0      0   100%
+src/fleetops_reports/application/dependencies.py                       20      0      4      0   100%
+src/fleetops_reports/application/ports/__init__.py                      0      0      0      0   100%
+src/fleetops_reports/application/ports/analytics_repository.py          6      0      0      0   100%
+src/fleetops_reports/application/ports/metrics.py                      13      0      6      0   100%
+src/fleetops_reports/application/ports/object_storage.py                6      0      0      0   100%
+src/fleetops_reports/application/ports/operational_clients.py          29      0      0      0   100%
+src/fleetops_reports/application/services/__init__.py                   0      0      0      0   100%
+src/fleetops_reports/application/services/availability_service.py      12      0      0      0   100%
+src/fleetops_reports/application/services/graph_service.py              7      0      0      0   100%
+src/fleetops_reports/application/services/incident_service.py          16      0      0      0   100%
+src/fleetops_reports/application/services/maintenance_service.py       11      0      0      0   100%
+src/fleetops_reports/application/services/report_service.py            25      0      0      0   100%
+src/fleetops_reports/application/services/template_service.py           5      0      0      0   100%
+src/fleetops_reports/application/services/traceability_service.py      11      0      0      0   100%
+src/fleetops_reports/application/use_cases/__init__.py                  0      0      0      0   100%
+src/fleetops_reports/application/use_cases/generate_report.py          42      0      0      0   100%
+src/fleetops_reports/domain/__init__.py                                 0      0      0      0   100%
+src/fleetops_reports/domain/exceptions.py                              27      0      0      0   100%
+src/fleetops_reports/domain/models/__init__.py                          0      0      0      0   100%
+src/fleetops_reports/domain/models/kpi.py                              13      0      0      0   100%
+src/fleetops_reports/domain/models/report.py                           20      0      2      0   100%
+src/fleetops_reports/domain/models/timeline.py                         15      0      0      0   100%
+src/fleetops_reports/domain/models/vehicle.py                          11      0      0      0   100%
+src/fleetops_reports/domain/policies/__init__.py                        0      0      0      0   100%
+src/fleetops_reports/domain/policies/availability_policy.py            13      0      4      0   100%
+src/fleetops_reports/domain/policies/criticality_policy.py             12      0      6      0   100%
+src/fleetops_reports/domain/policies/mttr_policy.py                    14      0      6      0   100%
+src/fleetops_reports/domain/value_objects/__init__.py                   0      0      0      0   100%
+src/fleetops_reports/domain/value_objects/metric.py                    13      0      4      0   100%
+src/fleetops_reports/domain/value_objects/percentage.py                11      0      2      0   100%
+src/fleetops_reports/domain/value_objects/report_period.py             13      0      2      0   100%
+---------------------------------------------------------------------------------------------------------------
+TOTAL                                                                 365      0     36      0   100%
+COVERAGE: PASS
+
+SUMMARY import_linter=0 mypy=0 ruff=0 pytest=0 coverage=0

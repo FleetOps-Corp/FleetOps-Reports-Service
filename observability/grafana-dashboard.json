@@ -1,0 +1,35 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "panels": [
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "targets": [
+        {
+          "expr": "fleetops_reports_generated_total",
+          "refId": "A"
+        }
+      ],
+      "title": "Generated Reports",
+      "type": "stat"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["fleetops", "reports", "sad-traceability"],
+  "title": "FleetOps Reports",
+  "version": 1
+}
+

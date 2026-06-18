@@ -1,0 +1,143 @@
+# SAD Traceability: deployment view with custom network, API Gateway, backend,
+# MongoDB local development equivalent, MinIO, Prometheus, Grafana, Loki and Promtail.
+services:
+  gateway:
+    build:
+      context: ./gateway
+    user: "101:101"
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${GATEWAY_HTTP_PORT}:8080"
+    networks:
+      - fleetops_reports_net
+
+  backend:
+    build:
+      context: ./backend
+    user: "10001:10001"
+    env_file:
+      - .env.example
+      - path: .env
+        required: false
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    expose:
+      - "8000"
+    volumes:
+      - backend_logs:/var/log/fleetops-reports
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleetops_reports_net
+
+  mongodb:
+    image: mongo:7.0.12
+    user: "999:999"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD}"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mongosh --quiet -u \"$${MONGO_INITDB_ROOT_USERNAME}\" -p \"$${MONGO_INITDB_ROOT_PASSWORD}\" --authenticationDatabase admin --eval \"db.adminCommand('ping').ok\""
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleetops_reports_net
+
+  minio:
+    build:
+      context: ./minio
+    user: "10001:10001"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ACCESS_KEY}"
+      MINIO_ROOT_PASSWORD: "${MINIO_SECRET_KEY}"
+    ports:
+      - "${MINIO_API_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mc alias set local http://127.0.0.1:9000 \"$${MINIO_ROOT_USER}\" \"$${MINIO_ROOT_PASSWORD}\" && mc ready local"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fleetops_reports_net
+
+  prometheus:
+    image: prom/prometheus:v2.53.1
+    user: "65534:65534"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - fleetops_reports_net
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    user: "472:472"
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD}"
+    ports:
+      - "${GRAFANA_HTTP_PORT}:3000"
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - fleetops_reports_net
+
+  loki:
+    image: grafana/loki:3.1.0
+    user: "10001:10001"
+    command: ["-config.file=/etc/loki/loki-config.yml"]
+    volumes:
+      - ./observability/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+    networks:
+      - fleetops_reports_net
+
+  promtail:
+    image: grafana/promtail:3.1.0
+    user: "10001:10001"
+    command: ["-config.file=/etc/promtail/promtail-config.yml"]
+    volumes:
+      - ./observability/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - backend_logs:/var/log/fleetops-reports:ro
+    depends_on:
+      - loki
+    networks:
+      - fleetops_reports_net
+
+networks:
+  fleetops_reports_net:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  minio_data:
+  loki_data:
+  backend_logs:

@@ -1,0 +1,55 @@
+# SAD Traceability: enforces Presentation -> Business -> Data layering from DAS section 6.
+# Mapping: presentation = Capa de Presentación
+#          application + domain = Capa de Lógica de Negocio
+#          infrastructure = Capa de Acceso a Datos
+#          config = configuración transversal (permitida en infraestructura)
+#          composition = composition root (wiring, excluido de contratos estrictos)
+#          main = entry point FastAPI (usa composition)
+
+[importlinter]
+root_package = fleetops_reports
+
+[importlinter:contract:domain-independence]
+name = Domain layer must not depend on outer layers
+type = forbidden
+source_modules =
+    fleetops_reports.domain
+forbidden_modules =
+    fleetops_reports.application
+    fleetops_reports.presentation
+    fleetops_reports.infrastructure
+    fleetops_reports.config
+
+[importlinter:contract:application-business]
+name = Application (Business) must not depend on Presentation or Infrastructure
+type = forbidden
+source_modules =
+    fleetops_reports.application
+forbidden_modules =
+    fleetops_reports.presentation
+    fleetops_reports.infrastructure
+    fleetops_reports.config
+
+[importlinter:contract:presentation-no-infrastructure]
+name = Presentation must not depend on Infrastructure (strict layering)
+type = forbidden
+source_modules =
+    fleetops_reports.presentation
+forbidden_modules =
+    fleetops_reports.infrastructure
+
+[importlinter:contract:infrastructure-no-presentation]
+name = Infrastructure must not depend on Presentation (DTO inversion)
+type = forbidden
+source_modules =
+    fleetops_reports.infrastructure
+forbidden_modules =
+    fleetops_reports.presentation
+
+[importlinter:contract:layers-hierarchy]
+name = Layer hierarchy Presentation -> Business -> Domain
+type = layers
+layers =
+    fleetops_reports.presentation
+    fleetops_reports.application
+    fleetops_reports.domain

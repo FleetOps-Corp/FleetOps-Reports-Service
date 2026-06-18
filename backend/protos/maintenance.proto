@@ -1,0 +1,22 @@
+// SAD Traceability: Maintenance service contract from ADR-001 and process 10.2.
+syntax = "proto3";
+
+package fleetops.maintenance.v1;
+
+service MaintenanceService {
+  rpc ListMaintenance (ListMaintenanceRequest) returns (ListMaintenanceResponse);
+}
+
+message ListMaintenanceRequest {}
+
+message MaintenanceMessage {
+  string vehicle_id = 1;
+  string maintenance_type = 2;
+  string started_at = 3;
+  string finished_at = 4;
+}
+
+message ListMaintenanceResponse {
+  repeated MaintenanceMessage maintenance = 1;
+}
+
