@@ -3,20 +3,21 @@ syntax = "proto3";
 
 package fleetops.maintenance.v1;
 
-service MaintenanceService {
-  rpc ListMaintenance (ListMaintenanceRequest) returns (ListMaintenanceResponse);
+service MantenimientosService {
+  // Coincide con la llamada real de infraestructura del GrpcMaintenanceClient
+  rpc ListVehicleMaintenances (ListMaintenanceRequest) returns (ListMaintenanceResponse);
 }
 
 message ListMaintenanceRequest {}
 
 message MaintenanceMessage {
-  string vehicle_id = 1;
-  string maintenance_type = 2;
-  string started_at = 3;
-  string finished_at = 4;
+  string id_mantenimiento = 1;          // UUID inmutable de la orden de taller
+  string id_vehiculo = 2;               // UUID de relación con el vehículo
+  uint32 tipo_mantenimiento = 3;        // SMALLINT (0 -> CORRECTIVO, 1 -> PREVENTIVO)
+  string fecha_inicio_mantenimiento = 4;// ISO 8601 string
+  string fecha_fin_mantenimiento = 5;   // ISO 8601 string (puede venir vacío si sigue activo)
 }
 
 message ListMaintenanceResponse {
-  repeated MaintenanceMessage maintenance = 1;
+  repeated MaintenanceMessage maintenances = 1;
 }
-

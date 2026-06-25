@@ -3,19 +3,23 @@ syntax = "proto3";
 
 package fleetops.incidents.v1;
 
-service IncidentsService {
-  rpc ListIncidents (ListIncidentsRequest) returns (ListIncidentsResponse);
+service IncidentesService {
+  // Coincide con la llamada real de infraestructura del GrpcIncidentsClient
+  rpc GetIncidents (IncidentQueryRequest) returns (ListIncidentsResponse);
 }
 
-message ListIncidentsRequest {}
+// Permitimos un mensaje de consulta flexible alineado a la infraestructura
+message IncidentQueryRequest {}
 
 message IncidentMessage {
-  string vehicle_id = 1;
-  string severity = 2;
-  string occurred_at = 3;
+  string id = 1;              // ID legible: 'INC-YYYYMMDD-XXXX'
+  string fecha_hora = 2;      // Instante del suceso (ISO 8601)
+  string id_conductor = 3;    // ID del operador involucrado
+  string placa_vehiculo = 4;  // Placa física del activo (ej: 'ABC-123')
+  string tipo_incidente = 5;  // 'HUMANO' o 'MECANICO'
+  string gravedad = 6;        // 'LEVE' o 'GRAVE'
 }
 
 message ListIncidentsResponse {
   repeated IncidentMessage incidents = 1;
 }
-
