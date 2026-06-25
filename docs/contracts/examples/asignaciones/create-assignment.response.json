@@ -1,0 +1,11 @@
+{
+  "id_asignacion": "asig_1",
+  "id_saga": "saga_1",
+  "id_conductor": "13010",
+  "id_vehiculo": "ABC123",
+  "tipo_vehiculo": "A",
+  "fecha_inicio": "2026-06-25T08:00:00",
+  "fecha_fin": "2026-06-27T18:00:00",
+  "estado": "ACTIVO",
+  "estado_saga": "COMPLETADO"
+}
