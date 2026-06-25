@@ -11,13 +11,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml ./
-COPY scripts ./scripts
-COPY protos ./protos
 COPY src ./src
 
-RUN python -m pip install --no-cache-dir grpcio-tools==1.73.1 \
-    && bash scripts/generate_protos.sh \
-    && python -m pip wheel --wheel-dir /wheels .[test]
+RUN python -m pip wheel --wheel-dir /wheels .[test]
 
 FROM python:3.12.13-slim-bookworm AS runtime
 

@@ -33,10 +33,7 @@ def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         "MINIO_SECURE": "false",
         "MINIO_REPORTS_BUCKET": "reports",
         "MINIO_GRAPHS_BUCKET": "graphs",
-        "VEHICLES_GRPC_TARGET": "example.invalid:50051",
-        "ASSIGNMENTS_GRPC_TARGET": "example.invalid:50052",
-        "INCIDENTS_GRPC_TARGET": "example.invalid:50053",
-        "MAINTENANCE_GRPC_TARGET": "example.invalid:50054",
+        "OPERATIONAL_GATEWAY_BASE_URL": "http://example.invalid:8080",
         "CIRCUIT_BREAKER_FAILURE_THRESHOLD": "3",
         "CIRCUIT_BREAKER_RECOVERY_SECONDS": "30",
     }

@@ -1,7 +1,7 @@
-"""Circuit breaker for gRPC calls.
+"""Circuit breaker for REST/HTTP calls.
 
 SAD Traceability: implements ADR-005 to avoid cascading failures from
-operational services by isolation of network-level RPC exceptions.
+operational services by isolation of network-level transport exceptions.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import TypeVar
 
-import grpc  # <--- Crucial para interceptar fallos reales de infraestructura
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ class CircuitBreakerState(Enum):
 
 
 class CircuitBreakerOpenError(RuntimeError):
-    """Lanzada cuando el circuito está ABIERTO y bloquea el tráfico proactivamente."""
+    """Raised when the circuit is OPEN and proactively blocks traffic."""
 
     pass
 
@@ -40,7 +40,7 @@ class CircuitBreaker:
         self._opened_at: datetime | None = None
 
     async def call(self, operation: Callable[[], Awaitable[T]]) -> T:
-        """Ejecuta una operación gRPC asíncrona bajo la protección del breaker."""
+        """Execute an async HTTP operation under circuit breaker protection."""
         self._check_state()
 
         if self._state == CircuitBreakerState.OPEN:
@@ -51,21 +51,25 @@ class CircuitBreaker:
 
         try:
             result = await operation()
-        except grpc.RpcError as rpc_err:
-            # 1. ALINEACIÓN ADR-005: Solo los errores de red/gRPC degradan el circuito
+        except (
+            httpx.ConnectError,
+            httpx.TimeoutException,
+            httpx.NetworkError,
+            httpx.RemoteProtocolError,
+        ) as transport_err:
+            # ALINEACIÓN ADR-005: Only transport-level errors degrade the circuit.
+            # HTTP 4xx/5xx are business errors and do NOT open the breaker.
             self._handle_failure()
-            raise rpc_err
+            raise transport_err
         except Exception as app_err:
-            # Errores de mapeo o bugs internos pasan derecho
-            # sin penalizar la disponibilidad del servicio externo
+            # Mapping bugs or business errors pass through without penalizing
+            # the external service's availability score.
             raise app_err
         else:
-            # Si la petición es exitosa, restauramos el circuito por completo
             self._handle_success()
             return result
 
     def _check_state(self) -> None:
-        """Evalúa si el circuito ha cumplido su tiempo de cuarentena para pasar a HALF_OPEN."""
         if self._state == CircuitBreakerState.OPEN and self._opened_at is not None:
             elapsed = datetime.now(UTC) - self._opened_at
             if elapsed >= timedelta(seconds=self._recovery_seconds):
@@ -79,18 +83,15 @@ class CircuitBreaker:
         ):
             self._state = CircuitBreakerState.OPEN
             self._opened_at = datetime.now(UTC)
-            logger.warning(
-                f"Circuit breaker OPENED after {self._failures} failures"
-            )  # ← Add this
+            logger.warning(f"Circuit breaker OPENED after {self._failures} failures")
 
     def _handle_success(self) -> None:
         self._failures = 0
         self._state = CircuitBreakerState.CLOSED
         self._opened_at = None
-        logger.info("Circuit breaker CLOSED - service recovered")  # ← Add this
+        logger.info("Circuit breaker CLOSED - service recovered")
 
     def _get_remaining_recovery_time(self) -> int:
-        """Calcula los segundos restantes para que el circuito intente reabrirse."""
         if self._opened_at is None:
             return 0
         elapsed = datetime.now(UTC) - self._opened_at
@@ -99,5 +100,4 @@ class CircuitBreaker:
 
     @property
     def state(self) -> CircuitBreakerState:
-        """Permite monitorear el estado actual del componente desde logs o métricas."""
         return self._state
