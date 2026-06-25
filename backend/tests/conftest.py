@@ -52,24 +52,38 @@ def report_period() -> ReportPeriod:
 @pytest.fixture
 def sample_vehicles() -> list[Vehicle]:
     return [
-        Vehicle("veh-001", "FOP-001", "operational", "bogota", "van"),
-        Vehicle("veh-002", "FOP-002", "maintenance", "medellin", "truck"),
-        Vehicle("veh-003", "FOP-003", "operational", "cali", "van"),
+        Vehicle("veh-001", "FOP-001", "DISPONIBLE", "bogota", "van", "2024"),
+        Vehicle("veh-002", "FOP-002", "MANTENIMIENTO", "medellin", "truck", "2023"),
+        Vehicle("veh-003", "FOP-003", "DISPONIBLE", "cali", "van", "2024"),
     ]
 
 
 @pytest.fixture
 def sample_assignments() -> list[AssignmentRecord]:
     now = datetime.now(UTC)
-    return [AssignmentRecord("veh-001", "route-a", now)]
+    return [AssignmentRecord("veh-001", "route-a", "cond-01", "van", now, None)]
 
 
 @pytest.fixture
 def sample_incidents() -> list[IncidentRecord]:
     now = datetime.now(UTC)
     return [
-        IncidentRecord("veh-002", "critical", now),
-        IncidentRecord("veh-002", "major", now),
+        IncidentRecord(
+            incident_id="inc-001",
+            id_conductor="cond-01",
+            placa_vehiculo="FOP-002",
+            tipo_incidente="CHOQUE",
+            severity="critical",
+            occurred_at=now,
+        ),
+        IncidentRecord(
+            incident_id="inc-002",
+            id_conductor="cond-02",
+            placa_vehiculo="FOP-002",
+            tipo_incidente="FALLA_MECANICA",
+            severity="major",
+            occurred_at=now,
+        ),
     ]
 
 
@@ -77,8 +91,12 @@ def sample_incidents() -> list[IncidentRecord]:
 def sample_maintenance() -> list[MaintenanceRecord]:
     finished_at = datetime.now(UTC)
     return [
-        MaintenanceRecord("veh-002", "corrective", finished_at - timedelta(hours=5), finished_at),
-        MaintenanceRecord("veh-003", "preventive", finished_at - timedelta(hours=2), finished_at),
+        MaintenanceRecord(
+            "veh-002", "corrective", finished_at - timedelta(hours=5), finished_at
+        ),
+        MaintenanceRecord(
+            "veh-003", "preventive", finished_at - timedelta(hours=2), finished_at
+        ),
     ]
 
 
@@ -91,7 +109,9 @@ class FakeRepository:
         return report
 
     async def get_report(self, report_id):
-        return next((report for report in self.saved if report.report_id == report_id), None)
+        return next(
+            (report for report in self.saved if report.report_id == report_id), None
+        )
 
 
 class FakeStorage:
@@ -155,4 +175,3 @@ def fake_storage() -> FakeStorage:
 @pytest.fixture
 def fake_renderer() -> FakeRenderer:
     return FakeRenderer()
-
