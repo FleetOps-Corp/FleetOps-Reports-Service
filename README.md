@@ -34,9 +34,29 @@ The local API Gateway exposes the backend at the port configured by
 cd backend
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[test]"
+python -m pip install -e ".[dev]"
 bash scripts/generate_protos.sh
 pytest
+```
+
+## Development Setup
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
+
+This installs:
+
+- Runtime dependencies
+- Testing tools
+- Import Linter
+- MyPy
+- Ruff
+- Coverage
 ```
 
 ## Coverage
@@ -56,6 +76,8 @@ fleetops-reports/
 ├─ README.md
 ├─ docker-compose.yml
 ├─ .env.example
+├─ docs/
+│  ├─ base/
 ├─ gateway/
 │  ├─ Dockerfile
 │  └─ nginx.conf

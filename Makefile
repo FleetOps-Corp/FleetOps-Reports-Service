@@ -3,7 +3,7 @@
 .PHONY: proto up down test coverage lint import-linter mypy ruff validate
 
 proto:
-	cd backend && bash scripts/generate_protos.sh
+	cd backend && python scripts/generate_protos.py
 
 up:
 	docker compose up --build

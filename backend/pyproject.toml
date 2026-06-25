@@ -15,7 +15,7 @@ build-backend = "setuptools.build_meta"
 name = "fleetops-reports"
 version = "0.1.0"
 description = "FleetOps Reports analytical microservice archetype"
-requires-python = "==3.12.*"
+requires-python = "==3.13.*"
 dependencies = [
   "fastapi==0.115.14",
   "uvicorn[standard]==0.34.3",
@@ -40,6 +40,16 @@ test = [
   "coverage==7.9.1"
 ]
 lint = [
+  "import-linter==2.1",
+  "mypy==1.16.1",
+  "ruff==0.12.0",
+  "types-protobuf==6.30.2.20250506"
+]
+dev = [
+  "pytest==8.4.1",
+  "pytest-asyncio==1.0.0",
+  "httpx==0.28.1",
+  "coverage==7.9.1",
   "import-linter==2.1",
   "mypy==1.16.1",
   "ruff==0.12.0",
