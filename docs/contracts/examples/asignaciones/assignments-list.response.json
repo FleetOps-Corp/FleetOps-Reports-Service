@@ -1,0 +1,18 @@
+[
+  {
+    "id_asignacion": "asig_1",
+    "id_conductor": "13010",
+    "id_vehiculo": "ABC123",
+    "fecha_inicio": "2026-06-25T08:00:00",
+    "fecha_fin": "2026-06-27T18:00:00",
+    "estado": "ACTIVO"
+  },
+  {
+    "id_asignacion": "asig_2",
+    "id_conductor": "13011",
+    "id_vehiculo": "XYZ456",
+    "fecha_inicio": "2026-06-20T08:00:00",
+    "fecha_fin": "2026-06-21T18:00:00",
+    "estado": "FINALIZADO"
+  }
+]
