@@ -18,7 +18,9 @@ from fleetops_reports.application.ports.operational_clients import (
     MaintenanceClient,
     VehiclesClient,
 )
-from fleetops_reports.application.services.availability_service import AvailabilityService
+from fleetops_reports.application.services.availability_service import (
+    AvailabilityService,
+)
 from fleetops_reports.application.services.incident_service import IncidentService
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
 from fleetops_reports.application.services.report_service import ReportService
@@ -68,7 +70,9 @@ class GenerateReportUseCase:
                 kpis = [
                     self._availability_service.calculate_global_kpi(vehicles),
                     self._maintenance_service.calculate_mttr_kpi(maintenance),
-                    self._incident_service.calculate_critical_vehicle_kpi(incidents, maintenance),
+                    self._incident_service.calculate_critical_vehicle_kpi(
+                        incidents, maintenance, vehicles
+                    ),
                 ]
                 report = Report(
                     report_id=command.report_id,
@@ -81,4 +85,3 @@ class GenerateReportUseCase:
             raise
         except Exception as exc:
             raise ReportGenerationError(command.report_id, str(exc)) from exc
-

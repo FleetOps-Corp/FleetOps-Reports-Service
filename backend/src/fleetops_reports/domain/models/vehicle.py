@@ -11,12 +11,15 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Vehicle:
-    vehicle_id: str
-    plate: str
-    status: str
-    site: str
-    category: str
+    id_vehiculo: str  # UUID v4 global
+    numero_placa: str  # Placa del vehículo (ej: 'TYX-789')
+    estado_vehiculo: str  # 'DISPONIBLE', 'EN_MANTENIMIENTO', etc.
+    ciudad_operacion: str  # Ciudad asignada
+    marca: str  # Fabricante de la unidad
+    modelo: str  # Modelo comercial
 
-    def is_operational(self) -> bool:
-        return self.status.lower() == "operational"
-
+    @property
+    def is_available(self) -> bool:
+        return (
+            self.estado_vehiculo == "DISPONIBLE"
+        )  # O el estado equivalente de tu lógica

@@ -3,19 +3,22 @@ syntax = "proto3";
 
 package fleetops.assignments.v1;
 
-service AssignmentsService {
-  rpc ListAssignments (ListAssignmentsRequest) returns (ListAssignmentsResponse);
+service AsignacionesService {
+  // Coincide con la llamada real de infraestructura del GrpcAssignmentsClient
+  rpc ListAllAssignments (ListAssignmentsRequest) returns (ListAssignmentsResponse);
 }
 
 message ListAssignmentsRequest {}
 
 message AssignmentMessage {
-  string vehicle_id = 1;
-  string assignee = 2;
-  string started_at = 3;
+  string id = 1;              // UUID inmutable de la asignación
+  string vehiculo_id = 2;     // UUID del vehículo (puede venir vacío/nulo)
+  string conductor_id = 3;    // UUID de relación con el operador
+  string tipo_vehiculo = 4;   // Categoría autorizada (ej: 'CAMION')
+  string fecha_inicio = 5;    // Timestamp en formato DATE string (YYYY-MM-DD)
+  string fecha_fin = 6;       // Timestamp en formato DATE string (YYYY-MM-DD)
 }
 
 message ListAssignmentsResponse {
   repeated AssignmentMessage assignments = 1;
 }
-
