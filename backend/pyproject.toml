@@ -1,11 +1,5 @@
-# SAD Traceability: Python 3.12/FastAPI/gRPC/Beanie/MinIO/WeasyPrint stack
+# SAD Traceability: Python 3.13/FastAPI/httpx/Beanie/MinIO/WeasyPrint stack
 # from the SAD technology table and prompt testing requirements.
-#
-# Proto generation step:
-#   bash scripts/generate_protos.sh
-# This generates:
-#   src/fleetops_reports/infrastructure/grpc_clients/generated/
-# and must run BEFORE pytest or docker build.
 
 [build-system]
 requires = ["setuptools==80.9.0", "wheel==0.45.1"]
@@ -23,9 +17,7 @@ dependencies = [
   "pydantic-settings==2.10.1",
   "beanie==2.1.0",
   "minio==7.2.15",
-  "grpcio==1.73.1",
-  "grpcio-tools==1.73.1",
-  "protobuf==6.31.1",
+  "httpx>=0.28",
   "Jinja2==3.1.6",
   "WeasyPrint==65.1",
   "prometheus-client==0.22.1",
@@ -36,24 +28,20 @@ dependencies = [
 test = [
   "pytest==8.4.1",
   "pytest-asyncio==1.0.0",
-  "httpx==0.28.1",
   "coverage==7.9.1"
 ]
 lint = [
   "import-linter==2.1",
   "mypy==1.16.1",
-  "ruff==0.12.0",
-  "types-protobuf==6.30.2.20250506"
+  "ruff==0.12.0"
 ]
 dev = [
   "pytest==8.4.1",
   "pytest-asyncio==1.0.0",
-  "httpx==0.28.1",
   "coverage==7.9.1",
   "import-linter==2.1",
   "mypy==1.16.1",
-  "ruff==0.12.0",
-  "types-protobuf==6.30.2.20250506"
+  "ruff==0.12.0"
 ]
 
 [tool.setuptools.packages.find]
@@ -86,7 +74,6 @@ partial_branches = [
 target-version = "py312"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["src/fleetops_reports/infrastructure/grpc_clients/generated"]
 
 [tool.ruff.lint]
 select = [
@@ -96,4 +83,3 @@ ignore = ["B008"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["fleetops_reports"]
-

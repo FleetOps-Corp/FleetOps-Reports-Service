@@ -1,7 +1,7 @@
-"""Operational gRPC ports.
+"""Operational REST client ports.
 
 SAD Traceability: contracts for Vehicles, Assignments, Incidents and
-Maintenance service integrations from ADR-001 and deployment topology.
+Maintenance service integrations via REST Gateway and deployment topology.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ class AssignmentRecord:
     conductor_id: str  # Relación con el operador (UUID string)
     tipo_vehiculo: str  # ej: 'CAMION'
     start_date: datetime  # Mapeo de fecha_inicio
-    end_date: datetime  # Mapeo de fecha_fin
+    end_date: datetime | None  # Mapeo de fecha_fin (puede ser None si la asignación sigue activa)
 
 
 @dataclass(frozen=True)
