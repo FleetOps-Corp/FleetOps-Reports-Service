@@ -14,7 +14,6 @@ from fastapi import FastAPI
 from fleetops_reports.composition.wiring import (
     configure_application,
     get_settings,
-    shutdown_application,
 )
 from fleetops_reports.infrastructure.observability.logging import configure_logging
 from fleetops_reports.infrastructure.persistence.mongodb.mongo_client import (
@@ -22,7 +21,6 @@ from fleetops_reports.infrastructure.persistence.mongodb.mongo_client import (
 )
 from fleetops_reports.presentation.api.routes import health, metrics, reports
 
-# Inicializa y cablea las fábricas del caso de uso y circuitos independientes en el arranque
 configure_application()
 
 
@@ -34,9 +32,6 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     try:
         yield
     finally:
-        # 1. Cierre ordenado de los canales gRPC asíncronos para evitar sockets huérfanos
-        await shutdown_application()
-        # 2. Cierre del pool de conexiones a la base de datos analítica
         app.state.mongodb_client.close()
 
 

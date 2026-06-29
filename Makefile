@@ -1,9 +1,6 @@
 # SAD Traceability: copy-pasteable developer commands required by the prompt.
 
-.PHONY: proto up down test coverage lint import-linter mypy ruff validate
-
-proto:
-	cd backend && python scripts/generate_protos.py
+.PHONY: up down test coverage lint import-linter mypy ruff validate
 
 up:
 	docker compose up --build
@@ -11,10 +8,10 @@ up:
 down:
 	docker compose down
 
-test: proto
+test:
 	cd backend && pytest
 
-coverage: proto
+coverage:
 	cd backend && coverage run -m pytest tests/unit/domain tests/unit/application && coverage report && coverage html
 
 import-linter:
@@ -29,4 +26,3 @@ ruff:
 lint: import-linter mypy ruff
 
 validate: lint test coverage
-
