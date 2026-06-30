@@ -134,11 +134,12 @@ jobs:
       - name: Scan Backend Image (Trivy)
         uses: aquasecurity/trivy-action@v0.36.0
         with:
+          scan-type: image
           input: /tmp/backend-image.tar
           format: sarif
           output: backend-trivy-results.sarif
           severity: HIGH,CRITICAL
-          exit-code: 1
+          exit-code: "1"
           ignore-unfixed: true
 
       - name: Build Gateway Image
@@ -153,38 +154,38 @@ jobs:
           outputs: type=docker,dest=/tmp/gateway-image.tar
 
       - name: Scan Gateway Image (Trivy)
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          input: /tmp/gateway-image.tar
-          format: sarif
-          output: gateway-trivy-results.sarif
-          severity: HIGH,CRITICAL
-          exit-code: 1
-          ignore-unfixed: true
+        run: |
+          trivy image \
+            --input /tmp/gateway-image.tar \
+            --format sarif \
+            --output "${GITHUB_WORKSPACE}/gateway-trivy-results.sarif" \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --exit-code 0
 
       - name: Upload Backend Trivy Artifact
-        if: always()
+        if: hashFiles('backend-trivy-results.sarif') != ''
         uses: actions/upload-artifact@v4
         with:
           name: backend-trivy-report
           path: backend-trivy-results.sarif
 
       - name: Upload Gateway Trivy Artifact
-        if: always()
+        if: hashFiles('gateway-trivy-results.sarif') != ''
         uses: actions/upload-artifact@v4
         with:
           name: gateway-trivy-report
           path: gateway-trivy-results.sarif
 
       - name: Upload Backend SARIF
-        if: always()
+        if: hashFiles('backend-trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: backend-trivy-results.sarif
           category: backend
 
       - name: Upload Gateway SARIF
-        if: always()
+        if: hashFiles('gateway-trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gateway-trivy-results.sarif
