@@ -4,12 +4,15 @@
 build/
 dist/
 .venv/
-
+*.egg-info/
 __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 node_modules/
+backend/coverage.xml
+bandit-report.json
+
 coverage/
 .coverage
 htmlcov/
