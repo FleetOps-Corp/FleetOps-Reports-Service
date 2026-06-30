@@ -71,8 +71,12 @@ class GenerateReportUseCase:
                     self._availability_service.calculate_global_kpi(vehicles),
                     self._maintenance_service.calculate_mttr_kpi(maintenance),
                     self._incident_service.calculate_critical_vehicle_kpi(
-                        incidents, maintenance, vehicles
+                        incidents, maintenance
                     ),
+                    self._incident_service.calculate_high_severity_rate(incidents),
+                    self._incident_service.calculate_human_incident_rate(incidents),
+                    self._incident_service.calculate_recurrent_vehicle_kpi(incidents),
+                    
                 ]
                 report = Report(
                     report_id=command.report_id,
