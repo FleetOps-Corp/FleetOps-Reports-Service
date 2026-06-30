@@ -19,6 +19,10 @@ from fleetops_reports.domain.models.vehicle import Vehicle
 from fleetops_reports.domain.value_objects.report_period import ReportPeriod
 
 
+async def _async_value[T](value: T) -> T:
+    return value
+
+
 @pytest.fixture(autouse=True)
 def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     values = {
@@ -103,28 +107,28 @@ class FakeRepository:
 
     async def save_report(self, report):
         self.saved.append(report)
-        return report
+        return await _async_value(report)
 
     async def get_report(self, report_id):
-        return next(
-            (report for report in self.saved if report.report_id == report_id), None
+        return await _async_value(
+            next((report for report in self.saved if report.report_id == report_id), None)
         )
 
 
 class FakeStorage:
     async def upload_report_pdf(self, report_id: str, content: bytes) -> str:
-        return f"{report_id}.pdf"
+        return await _async_value(f"{report_id}.pdf")
 
     async def upload_graph(self, graph_name: str, content: bytes) -> str:
-        return graph_name
+        return await _async_value(graph_name)
 
     async def create_presigned_url(self, object_name: str, expires_seconds: int) -> str:
-        return f"https://minio.test/{object_name}?expires={expires_seconds}"
+        return await _async_value(f"https://minio.test/{object_name}?expires={expires_seconds}")
 
 
 class FakeRenderer:
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:
-        return f"PDF:{template_name}:{context['report_id']}".encode()
+        return await _async_value(f"PDF:{template_name}:{context['report_id']}".encode())
 
 
 class FakeVehiclesClient:
@@ -132,7 +136,7 @@ class FakeVehiclesClient:
         self._vehicles = vehicles
 
     async def list_vehicles(self):
-        return self._vehicles
+        return await _async_value(self._vehicles)
 
 
 class FakeAssignmentsClient:
@@ -140,7 +144,7 @@ class FakeAssignmentsClient:
         self._assignments = assignments
 
     async def list_assignments(self):
-        return self._assignments
+        return await _async_value(self._assignments)
 
 
 class FakeIncidentsClient:
@@ -148,7 +152,7 @@ class FakeIncidentsClient:
         self._incidents = incidents
 
     async def list_incidents(self):
-        return self._incidents
+        return await _async_value(self._incidents)
 
 
 class FakeMaintenanceClient:
@@ -156,7 +160,7 @@ class FakeMaintenanceClient:
         self._maintenance = maintenance
 
     async def list_maintenance(self):
-        return self._maintenance
+        return await _async_value(self._maintenance)
 
 
 @pytest.fixture

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
+
 import pytest
 
 import fleetops_reports.application.dependencies as deps
@@ -19,7 +21,7 @@ class _FakeUseCase:
 
 
 @pytest.fixture(autouse=True)
-def reset_dependency_providers() -> None:
+def reset_dependency_providers() -> Generator[None]:
     deps._use_case_provider = None
     deps._metrics_exporter = None
     yield

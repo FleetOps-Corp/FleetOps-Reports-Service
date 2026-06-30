@@ -1,5 +1,5 @@
 # SAD Traceability: containerizes the FastAPI analytical microservice from ADR-004.
-FROM python:3.12.13-slim-bookworm AS builder
+FROM python:3.13-slim-bookworm AS builder
 
 ENV PIP_NO_CACHE_DIR=1 \
     PYTHONDONTWRITEBYTECODE=1
@@ -15,7 +15,7 @@ COPY src ./src
 
 RUN python -m pip wheel --wheel-dir /wheels .[test]
 
-FROM python:3.12.13-slim-bookworm AS runtime
+FROM python:3.13-slim-bookworm AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

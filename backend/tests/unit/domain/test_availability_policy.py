@@ -12,7 +12,7 @@ from fleetops_reports.domain.policies.availability_policy import AvailabilityPol
 
 def test_calculate_global_availability(sample_vehicles) -> None:
     result = AvailabilityPolicy().calculate_global_availability(sample_vehicles)
-    assert round(result.value, 2) == 66.67
+    assert result.value == pytest.approx(66.67, abs=0.01)
 
 
 def test_calculate_global_availability_rejects_empty_dataset() -> None:
