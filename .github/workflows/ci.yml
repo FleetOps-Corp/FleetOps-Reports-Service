@@ -63,6 +63,11 @@ jobs:
       - name: Run Tests & Coverage
         run: make coverage
 
+      - name: Verify Coverage Report for Sonar
+        run: |
+          test -f backend/coverage.xml
+          grep -q "backend/src/fleetops_reports" backend/coverage.xml
+
       - name: Upload Coverage Report
         if: always()
         uses: actions/upload-artifact@v4

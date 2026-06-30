@@ -24,6 +24,7 @@ coverage:
 		coverage xml && \
 		coverage report && \
 		coverage html
+	python scripts/normalize_coverage_for_sonar.py
 
 import-linter:
 	cd backend && lint-imports
