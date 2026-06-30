@@ -90,6 +90,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   build-docker:
     name: Build Docker Images
     needs: quality-gate
@@ -191,6 +197,8 @@ jobs:
 
     steps:
       - name: Notify Slack
+        if: ${{ vars.SLACK_NOTIFICATIONS_ENABLED == 'true' }}
+        continue-on-error: true
         uses: slackapi/slack-github-action@v2
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK }}
