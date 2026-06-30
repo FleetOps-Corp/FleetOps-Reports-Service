@@ -23,19 +23,14 @@ concurrency:
 jobs:
 
   quality-gate:
-
     name: Quality Gate
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 40
-
     permissions:
       contents: read
       pull-requests: write
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -96,21 +91,15 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-docker:
-
     name: Build Docker Images
-
     needs: quality-gate
-
     runs-on: ubuntu-latest
-
     timeout-minutes: 20
-
     permissions:
       contents: read
       security-events: write
 
     steps:
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -191,26 +180,21 @@ jobs:
           category: gateway
 
   notify:
-
     name: Notify Failure
-
-    if: failure()
-
+    if: always() && (needs.quality-gate.result == 'failure' || needs.build-docker.result == 'failure')
     needs:
       - quality-gate
       - build-docker
-
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
 
     steps:
-
       - name: Notify Slack
         uses: slackapi/slack-github-action@v2
         with:
-          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
           payload: |
             {
               "text": "❌ FleetOps Reports CI failed",
