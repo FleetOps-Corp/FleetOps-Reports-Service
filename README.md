@@ -11,7 +11,7 @@ Grafana and Loki.
 
 - Docker Engine 27.x
 - Docker Compose v2.29.x
-- Python 3.12.13 for local development
+- Python 3.13.x for local development
 - GNU Make 4.x or compatible
 - Bash 5.x for `backend/scripts/generate_protos.sh`
 
@@ -30,13 +30,32 @@ The local API Gateway exposes the backend at the port configured by
 
 ## Local Tests
 
+### Linux
+
 ```bash
 cd backend
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
-bash scripts/generate_protos.sh
 pytest
+```
+
+### Windows
+
+```bash
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+pytest
+```
+
+## Exit virtual env
+
+```bash
+deactivate
+cd backend
+Remove-Item -Recurse -Force .venv
 ```
 
 ## Development Setup
@@ -75,6 +94,8 @@ fleetops-reports/
 ├─ Makefile
 ├─ README.md
 ├─ docker-compose.yml
+├─ .gitignore
+├─ .gitattributes
 ├─ .env.example
 ├─ docs/
 │  ├─ base/
@@ -84,8 +105,6 @@ fleetops-reports/
 ├─ backend/
 │  ├─ Dockerfile
 │  ├─ pyproject.toml
-│  ├─ scripts/generate_protos.sh
-│  ├─ protos/
 │  ├─ src/fleetops_reports/
 │  │  ├─ presentation/
 │  │  ├─ application/
