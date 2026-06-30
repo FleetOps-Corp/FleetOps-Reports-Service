@@ -11,11 +11,14 @@ __pycache__/
 .ruff_cache/
 node_modules/
 backend/coverage.xml
+backend/coverage-relative.xml
+backend/coverage-test.xml
 bandit-report.json
 
-coverage/
-.coverage
-htmlcov/
-generated/
+*.xml
+backend/.coverage.*
+backend/coverage/
+backend/.coverage
+backend/htmlcov/
+backend/generated/
 backend/src/fleetops_reports/infrastructure/grpc_clients/generated/
-
