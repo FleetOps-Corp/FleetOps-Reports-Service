@@ -6,6 +6,8 @@ in SAD section 10.6.
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from fleetops_reports.application.dependencies import get_generate_report_use_case
@@ -24,7 +26,6 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 
 @router.post(
     "/generate",
-    response_model=GenerateReportResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Generar Reporte Operativo Consolidado",
     description=(
@@ -35,8 +36,8 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 
 async def generate_report(
     request: GenerateReportRequest,
-    use_case: GenerateReportUseCase = Depends(get_generate_report_use_case),
-    mapper: ReportMapper = Depends(get_report_mapper),
+    use_case: Annotated[GenerateReportUseCase, Depends(get_generate_report_use_case)],
+    mapper: Annotated[ReportMapper, Depends(get_report_mapper)],
 ) -> GenerateReportResponse:
 
     # 1. Transformamos la petición HTTP entrante a un comando de la capa de aplicación

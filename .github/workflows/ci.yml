@@ -127,7 +127,7 @@ jobs:
           outputs: type=docker,dest=/tmp/backend-image.tar
 
       - name: Scan Backend Image (Trivy)
-        uses: aquasecurity/trivy-action@v1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           input: /tmp/backend-image.tar
           format: sarif
@@ -148,7 +148,7 @@ jobs:
           outputs: type=docker,dest=/tmp/gateway-image.tar
 
       - name: Scan Gateway Image (Trivy)
-        uses: aquasecurity/trivy-action@v1
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           input: /tmp/gateway-image.tar
           format: sarif

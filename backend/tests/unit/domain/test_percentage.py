@@ -10,7 +10,7 @@ from fleetops_reports.domain.value_objects.percentage import Percentage
 
 
 def test_percentage_as_ratio() -> None:
-    assert Percentage(25).as_ratio() == 0.25
+    assert Percentage(25).as_ratio() == pytest.approx(0.25)
 
 
 def test_percentage_rejects_out_of_range_value() -> None:
