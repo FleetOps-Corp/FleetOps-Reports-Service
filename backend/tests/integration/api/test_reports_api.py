@@ -18,4 +18,4 @@ def test_generate_report_endpoint(api_client) -> None:
     assert response.status_code == 201
     body = response.json()
     assert body["status"] == "generated"
-    assert len(body["kpis"]) == 3
+    assert len(body["kpis"]) == 6

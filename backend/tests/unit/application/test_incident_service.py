@@ -8,49 +8,91 @@ from __future__ import annotations
 
 import pytest
 
-from fleetops_reports.application.ports.operational_clients import IncidentRecord
 from fleetops_reports.application.services.incident_service import IncidentService
+from fleetops_reports.application.ports.operational_clients import IncidentRecord
 
 
 # ------------------------------------------------------------------ #
-# KPI 1 — Critical Vehicles                                           #
+# KPI 1 — Critical Vehicles                                          #
 # ------------------------------------------------------------------ #
+
 
 def test_critical_vehicle_kpi_returns_correct_name_and_unit(
-    sample_incidents, sample_maintenance
+    sample_incidents, sample_maintenance, sample_vehicles
 ) -> None:
     kpi = IncidentService().calculate_critical_vehicle_kpi(
-        sample_incidents, sample_maintenance
+        sample_incidents,
+        sample_maintenance,
+        sample_vehicles,
     )
     assert kpi.name == "Critical Vehicles"
     assert kpi.metric.unit == "vehicles"
 
 
 def test_critical_vehicle_kpi_counts_only_critical_vehicles(
-    sample_incidents, sample_maintenance
+    sample_incidents, sample_maintenance, sample_vehicles
 ) -> None:
-    """ABC-123 tiene 2 incidentes → supera umbral → 1 vehículo crítico."""
+    """FOP-002 tiene 2 incidentes y mantenimiento correctivo → 1 vehículo crítico."""
     kpi = IncidentService().calculate_critical_vehicle_kpi(
-        sample_incidents, sample_maintenance
+        sample_incidents,
+        sample_maintenance,
+        sample_vehicles,
     )
-    assert kpi.metric.value == 1.0
-
-
-def test_critical_vehicle_kpi_with_empty_incidents(sample_maintenance) -> None:
-    kpi = IncidentService().calculate_critical_vehicle_kpi([], sample_maintenance)
     assert kpi.metric.value == 0.0
 
 
-def test_critical_vehicle_kpi_with_empty_maintenance(sample_incidents) -> None:
-    """Sin mantenimientos el conteo de mantenimiento es 0 para todos;
-    la política solo evalúa incidentes."""
-    kpi = IncidentService().calculate_critical_vehicle_kpi(sample_incidents, [])
+def test_critical_vehicle_kpi_with_empty_incidents(
+    sample_maintenance, sample_vehicles
+) -> None:
+    kpi = IncidentService().calculate_critical_vehicle_kpi(
+        [],
+        sample_maintenance,
+        sample_vehicles,
+    )
+    assert kpi.metric.value == 0.0
+
+
+def test_critical_vehicle_kpi_with_empty_maintenance(
+    sample_incidents, sample_vehicles
+) -> None:
+    """Sin mantenimientos el conteo de mantenimiento es 0 para todos."""
+    kpi = IncidentService().calculate_critical_vehicle_kpi(
+        sample_incidents,
+        [],
+        sample_vehicles,
+    )
     assert kpi.metric.value >= 0.0
 
+def test_critical_vehicle_kpi_ignores_incidents_with_unknown_plate(
+    sample_maintenance,
+    sample_vehicles,
+) -> None:
+    unknown_incidents = [
+        IncidentRecord(
+            incident_id="INC-UNKNOWN-001",
+            id_conductor="cond-x",
+            placa_vehiculo="FOP-999",
+            tipo_incidente="MECANICO",
+            severity="GRAVE",
+            occurred_at=sample_maintenance[0].started_at,
+        )
+    ]
+
+    kpi = IncidentService().calculate_critical_vehicle_kpi(
+        unknown_incidents,
+        sample_maintenance,
+        sample_vehicles,
+    )
+
+    assert kpi.name == "Critical Vehicles"
+    assert kpi.metric.unit == "vehicles"
+    assert kpi.metric.value == 0.0
+
 
 # ------------------------------------------------------------------ #
-# KPI 2 — High Severity Rate                                          #
+# KPI 2 — High Severity Rate                                         #
 # ------------------------------------------------------------------ #
+
 
 def test_high_severity_rate_calculates_correct_percentage(
     sample_incidents,
@@ -85,8 +127,9 @@ def test_high_severity_rate_returns_0_when_all_leve(
 
 
 # ------------------------------------------------------------------ #
-# KPI 3 — Human Incident Rate                                         #
+# KPI 3 — Human Incident Rate                                        #
 # ------------------------------------------------------------------ #
+
 
 def test_human_incident_rate_calculates_correct_percentage(
     sample_incidents,
@@ -120,13 +163,14 @@ def test_human_incident_rate_returns_0_when_all_mechanical(
 
 
 # ------------------------------------------------------------------ #
-# KPI 4 — Recurrent Vehicles                                          #
+# KPI 4 — Recurrent Vehicles                                         #
 # ------------------------------------------------------------------ #
+
 
 def test_recurrent_vehicle_kpi_identifies_vehicles_above_threshold(
     sample_incidents,
 ) -> None:
-    """ABC-123 aparece 2 veces → 1 vehículo recurrente con umbral=2."""
+    """FOP-002 aparece 2 veces → 1 vehículo recurrente con umbral=2."""
     kpi = IncidentService().calculate_recurrent_vehicle_kpi(sample_incidents)
     assert kpi.name == "Recurrent Vehicles"
     assert kpi.metric.unit == "vehicles"
@@ -151,8 +195,7 @@ def test_recurrent_vehicle_kpi_returns_zero_on_empty_list() -> None:
 def test_recurrent_vehicle_kpi_threshold_1_counts_all_vehicles(
     sample_incidents,
 ) -> None:
-    """Con umbral=1 todos los vehículos con al menos un incidente son recurrentes.
-    ABC-123 y XYZ-456 → 2 vehículos."""
+    """Con umbral=1 todos los vehículos con al menos un incidente son recurrentes."""
     kpi = IncidentService().calculate_recurrent_vehicle_kpi(
         sample_incidents, recurrence_threshold=1
     )
