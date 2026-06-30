@@ -6,6 +6,7 @@ executive documents according to sections 6 and 10.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from fleetops_reports.domain.exceptions import InvalidMetricError
@@ -20,6 +21,6 @@ class Metric:
     def __post_init__(self) -> None:
         if not self.name.strip():
             raise InvalidMetricError("unknown", "metric name is required", self.name)
-        if self.value != self.value:
+        if math.isnan(self.value):
             raise InvalidMetricError(self.name, "metric value cannot be NaN", self.value)
 

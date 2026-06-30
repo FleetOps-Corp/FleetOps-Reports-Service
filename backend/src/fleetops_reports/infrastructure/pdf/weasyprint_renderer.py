@@ -5,6 +5,8 @@ SAD Traceability: concrete PDF generation pipeline for SAD section 10.6.
 
 from __future__ import annotations
 
+import asyncio
+
 from weasyprint import HTML
 
 from fleetops_reports.infrastructure.templates.jinja_renderer import JinjaRenderer
@@ -16,6 +18,5 @@ class WeasyPrintRenderer:
 
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:
         html = self._jinja_renderer.render(template_name, context)
-        pdf_bytes: bytes = HTML(string=html).write_pdf()
-        return pdf_bytes
+        return await asyncio.to_thread(lambda: HTML(string=html).write_pdf())
 
