@@ -68,6 +68,7 @@ pythonpath = ["src", "."]
 
 [tool.coverage.run]
 branch = true
+relative_files = true
 source = [
   "src/fleetops_reports/domain",
   "src/fleetops_reports/application"
