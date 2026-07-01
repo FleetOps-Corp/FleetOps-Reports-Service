@@ -4,15 +4,21 @@
 build/
 dist/
 .venv/
-
+*.egg-info/
 __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 node_modules/
-coverage/
-.coverage
-htmlcov/
-generated/
-backend/src/fleetops_reports/infrastructure/grpc_clients/generated/
+backend/coverage.xml
+backend/coverage-relative.xml
+backend/coverage-test.xml
+bandit-report.json
 
+*.xml
+backend/.coverage.*
+backend/coverage/
+backend/.coverage
+backend/htmlcov/
+backend/generated/
+backend/src/fleetops_reports/infrastructure/grpc_clients/generated/

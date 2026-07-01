@@ -11,7 +11,7 @@ from fleetops_reports.domain.value_objects.metric import Metric
 
 def test_metric_accepts_valid_value() -> None:
     metric = Metric("mttr", 2.5, "hours")
-    assert metric.value == 2.5
+    assert metric.value == pytest.approx(2.5)
 
 
 def test_metric_rejects_blank_name() -> None:
