@@ -6,16 +6,11 @@ ADR-001 and functional processes 10.1 and 10.4, via REST Gateway.
 
 from __future__ import annotations
 
-from datetime import datetime
-
 import httpx
 
 from fleetops_reports.application.ports.operational_clients import IncidentRecord
 from fleetops_reports.infrastructure.rest_clients.circuit_breaker import CircuitBreaker
-
-
-def _parse_dt(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+from fleetops_reports.infrastructure.rest_clients.datetime_parsing import parse_utc_datetime
 
 
 class RestIncidentsClient:
@@ -35,7 +30,7 @@ class RestIncidentsClient:
                         placa_vehiculo=item["placa_vehiculo"],
                         tipo_incidente=item["tipo_incidente"],
                         severity=item["gravedad"],
-                        occurred_at=_parse_dt(item["fecha_hora"]),
+                        occurred_at=parse_utc_datetime(item["fecha_hora"]),
                     )
                     for item in response.json()
                 ]

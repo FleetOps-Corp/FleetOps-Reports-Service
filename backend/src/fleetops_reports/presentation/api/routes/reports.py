@@ -26,6 +26,7 @@ router = APIRouter(prefix="/reports", tags=["Reports"])
 
 @router.post(
     "/generate",
+    response_model=GenerateReportResponse,
     status_code=status.HTTP_201_CREATED,
     summary="Generar Reporte Operativo Consolidado",
     description=(
