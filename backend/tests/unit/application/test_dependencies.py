@@ -21,7 +21,7 @@ class _FakeUseCase:
 
 
 @pytest.fixture(autouse=True)
-def reset_dependency_providers() -> Generator[None]:
+def reset_dependency_providers() -> Generator[None, None, None]:  # noqa: UP043
     deps._use_case_provider = None
     deps._metrics_exporter = None
     yield

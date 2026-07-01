@@ -9,14 +9,13 @@ from fleetops_reports.application.services.traceability_service import (
 
 
 def test_traceability_service_builds_timeline(
-    sample_vehicles,
     sample_assignments,
     sample_incidents,
     sample_maintenance,
 ) -> None:
     timeline = TraceabilityService().build_timeline(
         "veh-002",
-        sample_vehicles,
+        "FOP-002",
         sample_assignments,
         sample_incidents,
         sample_maintenance,
