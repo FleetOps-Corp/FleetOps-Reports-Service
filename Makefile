@@ -1,9 +1,13 @@
-# SAD Traceability: copy-pasteable developer commands required by the prompt.
+# SAD Traceability: developer commands for local development and CI.
 
-.PHONY: proto up down test coverage lint import-linter mypy ruff validate
-
-proto:
-	cd backend && bash scripts/generate_protos.sh
+.PHONY: \
+	up down \
+	test coverage \
+	import-linter mypy ruff lint \
+	bandit security \
+	compose-validate \
+	build-backend build-gateway build \
+	validate release clean
 
 up:
 	docker compose up --build
@@ -11,11 +15,16 @@ up:
 down:
 	docker compose down
 
-test: proto
+test:
 	cd backend && pytest
 
-coverage: proto
-	cd backend && coverage run -m pytest tests/unit/domain tests/unit/application && coverage report && coverage html
+coverage:
+	cd backend && \
+		coverage run -m pytest tests/unit/domain tests/unit/application && \
+		coverage xml && \
+		coverage report && \
+		coverage html
+	python scripts/normalize_coverage_for_sonar.py
 
 import-linter:
 	cd backend && lint-imports
@@ -28,5 +37,39 @@ ruff:
 
 lint: import-linter mypy ruff
 
-validate: lint test coverage
+bandit:
+	cd backend && bandit -r src -f json -o ../bandit-report.json
 
+security: bandit
+
+compose-validate:
+	docker compose config
+
+build-backend:
+	docker build \
+		-t fleetops-reports-backend:local \
+		./backend
+
+build-gateway:
+	docker build \
+		-t fleetops-reports-gateway:local \
+		./gateway
+
+build: \
+	compose-validate \
+	build-backend \
+	build-gateway
+
+validate: \
+	lint \
+	security \
+	test \
+	coverage
+
+release: validate build
+
+clean:
+	rm -rf backend/htmlcov
+	rm -f backend/.coverage
+	rm -f backend/coverage.xml
+	rm -f bandit-report.json

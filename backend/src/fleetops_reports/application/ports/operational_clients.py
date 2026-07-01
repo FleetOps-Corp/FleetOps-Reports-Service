@@ -1,7 +1,7 @@
-"""Operational gRPC ports.
+"""Operational REST client ports.
 
 SAD Traceability: contracts for Vehicles, Assignments, Incidents and
-Maintenance service integrations from ADR-001 and deployment topology.
+Maintenance service integrations via REST Gateway and deployment topology.
 """
 
 from __future__ import annotations
@@ -15,24 +15,34 @@ from fleetops_reports.domain.models.vehicle import Vehicle
 
 @dataclass(frozen=True)
 class AssignmentRecord:
-    vehicle_id: str
-    assignee: str
-    started_at: datetime
+    assignment_id: str  # id de la asignación (UUID string)
+    vehicle_id: str | None  # Puede ser None si está pendiente en la SAGA
+    conductor_id: str  # Relación con el operador (UUID string)
+    tipo_vehiculo: str  # ej: 'CAMION'
+    start_date: datetime  # Mapeo de fecha_inicio
+    end_date: datetime | None  # Mapeo de fecha_fin (puede ser None si la asignación sigue activa)
 
 
 @dataclass(frozen=True)
 class IncidentRecord:
-    vehicle_id: str
-    severity: str
-    occurred_at: datetime
+    incident_id: str  # Cambiado para alinearse al formato 'INC-YYYYMMDD-XXXX'
+    id_conductor: str  # ID del conductor involucrado
+    placa_vehiculo: str  # Placa normalizada (ej: 'ABC-123')
+    tipo_incidente: str  # 'HUMANO' o 'MECANICO'
+    severity: str  # 'LEVE' o 'GRAVE'
+    occurred_at: datetime  # fecha_hora del incidente mapeada a datetime
 
 
 @dataclass(frozen=True)
 class MaintenanceRecord:
-    vehicle_id: str
-    maintenance_type: str
-    started_at: datetime
-    finished_at: datetime
+    vehicle_id: str  # id_vehiculo (UUID string)
+    maintenance_type: (
+        str  # Traducido de SMALLINT (0 -> 'CORRECTIVO', 1 -> 'PREVENTIVO')
+    )
+    started_at: datetime  # fecha_inicio_mantenimiento
+    finished_at: (
+        datetime | None
+    )  # fecha_fin_mantenimiento (puede ser nulo si sigue en taller)
 
 
 class VehiclesClient(Protocol):
@@ -53,4 +63,3 @@ class IncidentsClient(Protocol):
 class MaintenanceClient(Protocol):
     async def list_maintenance(self) -> list[MaintenanceRecord]:
         """Fetch maintenance history from the operational Maintenance service."""
-

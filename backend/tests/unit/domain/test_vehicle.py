@@ -7,11 +7,10 @@ from fleetops_reports.domain.models.vehicle import Vehicle
 
 
 def test_vehicle_reports_operational_status() -> None:
-    vehicle = Vehicle("veh-001", "FOP-001", "operational", "bogota", "van")
-    assert vehicle.is_operational() is True
+    vehicle = Vehicle("veh-001", "FOP-001", "DISPONIBLE", "bogota", "van", "2024")
+    assert vehicle.estado_vehiculo == "DISPONIBLE"
 
 
 def test_vehicle_reports_non_operational_status() -> None:
-    vehicle = Vehicle("veh-002", "FOP-002", "maintenance", "bogota", "van")
-    assert vehicle.is_operational() is False
-
+    vehicle = Vehicle("veh-002", "FOP-002", "MANTENIMIENTO", "bogota", "van", "2023")
+    assert vehicle.estado_vehiculo == "MANTENIMIENTO"

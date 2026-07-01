@@ -7,7 +7,7 @@ case from SAD section 10.6.
 
 def test_generate_report_endpoint(api_client) -> None:
     response = api_client.post(
-        "/reports",
+        "/reports/generate",
         json={
             "report_id": "rep-001",
             "title": "Executive Report",
@@ -19,4 +19,3 @@ def test_generate_report_endpoint(api_client) -> None:
     body = response.json()
     assert body["status"] == "generated"
     assert len(body["kpis"]) == 3
-

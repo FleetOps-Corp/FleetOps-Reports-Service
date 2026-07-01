@@ -1,0 +1,8 @@
+{
+  "id_asignacion": "asig_1",
+  "id_saga": "saga_1",
+  "estado_asignacion": "CANCELADO",
+  "estado_saga": "CANCELADO",
+  "estado_conductor": "DISPONIBLE",
+  "message": "Asignación cancelada correctamente."
+}

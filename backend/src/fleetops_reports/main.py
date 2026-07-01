@@ -11,9 +11,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from fleetops_reports.composition.wiring import configure_application, get_settings
+from fleetops_reports.composition.wiring import (
+    configure_application,
+    get_settings,
+)
 from fleetops_reports.infrastructure.observability.logging import configure_logging
-from fleetops_reports.infrastructure.persistence.mongodb.mongo_client import init_mongodb
+from fleetops_reports.infrastructure.persistence.mongodb.mongo_client import (
+    init_mongodb,
+)
 from fleetops_reports.presentation.api.routes import health, metrics, reports
 
 configure_application()
