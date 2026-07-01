@@ -6,7 +6,7 @@ events across distributed bounded contexts.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from fleetops_reports.application.ports.operational_clients import (
     AssignmentRecord,
@@ -51,7 +51,7 @@ class TraceabilityService:
                 event_date = (
                     record.finished_at
                     if record.finished_at is not None
-                    else datetime.now()
+                    else datetime.now(UTC)
                 )
 
                 # Modificación semántica de la descripción si sigue en el taller
