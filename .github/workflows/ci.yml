@@ -89,17 +89,40 @@ jobs:
           name: bandit-report
           path: bandit-report.json
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v3
+  sonarcloud:
+    name: SonarCloud Analysis
+    needs: quality-gate
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Coverage XML
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-xml
+          path: .
+
+      - name: Download Bandit Report
+        uses: actions/download-artifact@v4
+        with:
+          name: bandit-report
+          path: .
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v8.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: SonarQube Quality Gate
-        uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
 
   build-docker:
     name: Build Docker Images
@@ -205,9 +228,16 @@ jobs:
 
   notify:
     name: Notify Failure
-    if: always() && (needs.quality-gate.result == 'failure' || needs.build-docker.result == 'failure')
+    if: >-
+      always() &&
+      (
+        needs.quality-gate.result == 'failure' ||
+        needs.sonarcloud.result == 'failure' ||
+        needs.build-docker.result == 'failure'
+      )
     needs:
       - quality-gate
+      - sonarcloud
       - build-docker
     runs-on: ubuntu-latest
     permissions:
