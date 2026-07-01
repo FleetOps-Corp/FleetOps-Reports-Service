@@ -86,6 +86,7 @@ partial_branches = [
 target-version = "py313"
 line-length = 100
 src = ["src", "tests"]
+extend-exclude = ["src/fleetops_reports/infrastructure/grpc_clients/generated"]
 
 [tool.ruff.lint]
 select = [
