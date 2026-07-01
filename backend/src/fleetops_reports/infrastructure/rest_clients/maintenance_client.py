@@ -6,18 +6,13 @@ ADR-001 and functional processes 10.1 and 10.4, via REST Gateway.
 
 from __future__ import annotations
 
-from datetime import datetime
-
 import httpx
 
 from fleetops_reports.application.ports.operational_clients import MaintenanceRecord
 from fleetops_reports.infrastructure.rest_clients.circuit_breaker import CircuitBreaker
+from fleetops_reports.infrastructure.rest_clients.datetime_parsing import parse_utc_datetime
 
 _MAINTENANCE_TYPE_MAP = {0: "CORRECTIVO", 1: "PREVENTIVO"}
-
-
-def _parse_dt(value: str) -> datetime:
-    return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
 class RestMaintenanceClient:
@@ -36,9 +31,9 @@ class RestMaintenanceClient:
                         maintenance_type=_MAINTENANCE_TYPE_MAP.get(
                             item["tipo_mantenimiento"], "DESCONOCIDO"
                         ),
-                        started_at=_parse_dt(item["fecha_inicio_mantenimiento"]),
+                        started_at=parse_utc_datetime(item["fecha_inicio_mantenimiento"]),
                         finished_at=(
-                            _parse_dt(item["fecha_fin_mantenimiento"])
+                            parse_utc_datetime(item["fecha_fin_mantenimiento"])
                             if item.get("fecha_fin_mantenimiento")
                             else None
                         ),
