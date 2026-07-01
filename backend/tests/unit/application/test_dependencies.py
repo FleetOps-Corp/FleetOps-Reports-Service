@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Iterator
 
 import pytest
 
@@ -21,7 +21,7 @@ class _FakeUseCase:
 
 
 @pytest.fixture(autouse=True)
-def reset_dependency_providers() -> Generator[None]:
+def reset_dependency_providers() -> Iterator[None]:
     deps._use_case_provider = None
     deps._metrics_exporter = None
     yield
