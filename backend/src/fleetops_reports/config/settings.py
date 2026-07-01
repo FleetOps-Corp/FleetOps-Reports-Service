@@ -11,7 +11,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+    )
 
     app_name: str = "FleetOps Reports"
     app_environment: str = Field(alias="APP_ENVIRONMENT")
@@ -28,13 +30,13 @@ class Settings(BaseSettings):
     minio_reports_bucket: str = Field(alias="MINIO_REPORTS_BUCKET")
     minio_graphs_bucket: str = Field(alias="MINIO_GRAPHS_BUCKET")
 
-    vehicles_grpc_target: str = Field(alias="VEHICLES_GRPC_TARGET")
-    assignments_grpc_target: str = Field(alias="ASSIGNMENTS_GRPC_TARGET")
-    incidents_grpc_target: str = Field(alias="INCIDENTS_GRPC_TARGET")
-    maintenance_grpc_target: str = Field(alias="MAINTENANCE_GRPC_TARGET")
+    operational_gateway_base_url: str = Field(alias="OPERATIONAL_GATEWAY_BASE_URL")
 
-    circuit_breaker_failure_threshold: int = Field(alias="CIRCUIT_BREAKER_FAILURE_THRESHOLD")
-    circuit_breaker_recovery_seconds: int = Field(alias="CIRCUIT_BREAKER_RECOVERY_SECONDS")
+    circuit_breaker_failure_threshold: int = Field(
+        alias="CIRCUIT_BREAKER_FAILURE_THRESHOLD"
+    )
+    circuit_breaker_recovery_seconds: int = Field(
+        alias="CIRCUIT_BREAKER_RECOVERY_SECONDS"
+    )
 
     templates_dir: str | None = Field(default=None, alias="TEMPLATES_DIR")
-

@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import pytest
 
-from fleetops_reports.application.services.availability_service import AvailabilityService
+from fleetops_reports.application.services.availability_service import (
+    AvailabilityService,
+)
 from fleetops_reports.application.services.incident_service import IncidentService
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
 from fleetops_reports.application.services.report_service import ReportService
@@ -46,4 +48,3 @@ def unit_generate_report_use_case(
         MaintenanceService(),
         unit_report_service,
     )
-

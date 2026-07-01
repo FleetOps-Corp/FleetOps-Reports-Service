@@ -1,0 +1,245 @@
+name: FleetOps Reports Continuous Integration
+
+run-name: >
+  ${{ github.event_name }} -
+  ${{ github.ref_name }} -
+  ${{ github.actor }}
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+  push:
+    branches:
+      - develop
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  quality-gate:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install Python Dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test,lint,security]"
+
+      - name: Validate Architecture Contracts
+        run: make import-linter
+
+      - name: Static Type Checking
+        run: make mypy
+
+      - name: Ruff Lint
+        run: make ruff
+
+      - name: Security Scan
+        run: make security
+
+      - name: Run Tests & Coverage
+        run: make coverage
+
+      - name: Verify Coverage Report for Sonar
+        run: |
+          test -f backend/coverage.xml
+          grep -q "backend/src/fleetops_reports" backend/coverage.xml
+
+      - name: Upload Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-html
+          path: backend/htmlcov
+
+      - name: Upload Coverage XML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: backend/coverage.xml
+
+      - name: Upload Bandit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: SonarCloud Scan
+        if: github.event_name == 'pull_request'
+        uses: SonarSource/sonarqube-scan-action@v8.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+
+  build-docker:
+    name: Build Docker Images
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.3.1
+        with:
+          version: v0.72.0
+          cache: true
+
+      - name: Build Backend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: false
+          provenance: false
+          tags: fleetops-reports-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/backend-image.tar
+
+      - name: Scan Backend Image (Trivy)
+        run: |
+          trivy image \
+            --input /tmp/backend-image.tar \
+            --format sarif \
+            --output "${GITHUB_WORKSPACE}/backend-trivy-results.sarif" \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --scanners vuln \
+            --exit-code 0
+
+      - name: Build Gateway Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./gateway
+          push: false
+          provenance: false
+          tags: fleetops-reports-gateway:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker,dest=/tmp/gateway-image.tar
+
+      - name: Scan Gateway Image (Trivy)
+        run: |
+          trivy image \
+            --input /tmp/gateway-image.tar \
+            --format sarif \
+            --output "${GITHUB_WORKSPACE}/gateway-trivy-results.sarif" \
+            --severity HIGH,CRITICAL \
+            --ignore-unfixed \
+            --scanners vuln \
+            --exit-code 0
+
+      - name: Verify Trivy SARIF Reports
+        run: |
+          test -s backend-trivy-results.sarif
+          test -s gateway-trivy-results.sarif
+
+      - name: Upload Backend Trivy Artifact
+        if: hashFiles('backend-trivy-results.sarif') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-trivy-report
+          path: backend-trivy-results.sarif
+
+      - name: Upload Gateway Trivy Artifact
+        if: hashFiles('gateway-trivy-results.sarif') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: gateway-trivy-report
+          path: gateway-trivy-results.sarif
+
+      - name: Upload Backend SARIF
+        if: hashFiles('backend-trivy-results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: backend-trivy-results.sarif
+          category: backend
+
+      - name: Upload Gateway SARIF
+        if: hashFiles('gateway-trivy-results.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gateway-trivy-results.sarif
+          category: gateway
+
+  notify:
+    name: Notify Failure
+    if: always() && (needs.quality-gate.result == 'failure' || needs.build-docker.result == 'failure')
+    needs:
+      - quality-gate
+      - build-docker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Notify Slack
+        if: ${{ vars.SLACK_NOTIFICATIONS_ENABLED == 'true' }}
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v2
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "text": "❌ FleetOps Reports CI failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Author:* ${{ github.actor }}\n*Workflow:* ${{ github.workflow }}\n*Status:* Failed ❌"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
