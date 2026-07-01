@@ -62,7 +62,7 @@ def sample_vehicles() -> list[Vehicle]:
 @pytest.fixture
 def sample_assignments() -> list[AssignmentRecord]:
     now = datetime.now(UTC)
-    return [AssignmentRecord("veh-001", "route-a", "cond-01", "van", now, None)]
+    return [AssignmentRecord("asig-001", "veh-001", "cond-01", "van", now, None)]
 
 
 @pytest.fixture
