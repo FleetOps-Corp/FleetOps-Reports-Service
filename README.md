@@ -253,7 +253,7 @@ python -m venv .venv
 
 python -m pip install --upgrade pip
 
-pip install -e ".[dev]"
+python -m pip install -e ".[dev]"
 ```
 
 ### Available Commands
