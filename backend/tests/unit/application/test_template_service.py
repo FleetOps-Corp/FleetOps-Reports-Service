@@ -43,3 +43,4 @@ def test_template_service_builds_context(report_period, sample_vehicles) -> None
     assert kpi_context["value"] == kpi.metric.value
     assert kpi_context["unit"] == kpi.metric.unit
     assert kpi_context["source"] == kpi.source
+    
