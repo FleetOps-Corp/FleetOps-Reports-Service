@@ -17,29 +17,29 @@ from fleetops_reports.domain.value_objects.percentage import Percentage
 class AvailabilityPolicy:
     def calculate_global_availability(self, vehicles: list[Vehicle]) -> Percentage:
         """Calculate operational vehicle percentage using SAD availability rules."""
-        self._ensure_non_empty_dataset(vehicles)
-
         available = self.count_available_vehicles(vehicles)
         return Percentage(round((available / len(vehicles)) * 100, 2))
 
     def calculate_global_unavailability(self, vehicles: list[Vehicle]) -> Percentage:
         """Calculate operational vehicle unavailability percentage."""
-        self._ensure_non_empty_dataset(vehicles)
-
         unavailable = self.count_unavailable_vehicles(vehicles)
         return Percentage(round((unavailable / len(vehicles)) * 100, 2))
 
     def count_available_vehicles(self, vehicles: list[Vehicle]) -> int:
         """Count vehicles that are operationally available."""
-        self._ensure_non_empty_dataset(vehicles)
-
-        return sum(1 for vehicle in vehicles if vehicle.is_available)
+        return len(self.filter_available_vehicles(vehicles))
 
     def count_unavailable_vehicles(self, vehicles: list[Vehicle]) -> int:
         """Count vehicles that are not operationally available."""
         self._ensure_non_empty_dataset(vehicles)
 
         return sum(1 for vehicle in vehicles if not vehicle.is_available)
+
+    def filter_available_vehicles(self, vehicles: list[Vehicle]) -> list[Vehicle]:
+        """Return vehicles that are operationally available."""
+        self._ensure_non_empty_dataset(vehicles)
+
+        return [vehicle for vehicle in vehicles if vehicle.is_available]
 
     def ensure_vehicle_available(self, vehicle: Vehicle) -> None:
         """Reject vehicles that cannot participate in an operational report."""

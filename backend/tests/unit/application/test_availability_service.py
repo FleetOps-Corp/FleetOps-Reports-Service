@@ -84,3 +84,28 @@ def test_availability_service_rejects_empty_dataset_for_unavailable_kpi() -> Non
 def test_availability_service_raises_error_for_unavailability_kpi_when_dataset_is_empty() -> None:
     with pytest.raises(EmptyDatasetError):
         AvailabilityService().calculate_unavailability_kpi([])
+
+def test_availability_service_lists_available_vehicles() -> None:
+    vehicles = [
+        Vehicle("veh-001", "ABC-123", "DISPONIBLE", "bogota", "van", "2024"),
+        Vehicle("veh-002", "DEF-456", "MANTENIMIENTO", "bogota", "car", "2023"),
+        Vehicle("veh-003", "GHI-789", "DISPONIBLE", "medellin", "truck", "2021"),
+    ]
+
+    available_vehicles = AvailabilityService().list_available_vehicles(vehicles)
+
+    assert len(available_vehicles) == 2
+    assert [vehicle.id_vehiculo for vehicle in available_vehicles] == [
+        "veh-001",
+        "veh-003",
+    ]
+    assert [vehicle.numero_placa for vehicle in available_vehicles] == [
+        "ABC-123",
+        "GHI-789",
+    ]
+    assert all(vehicle.estado_vehiculo == "DISPONIBLE" for vehicle in available_vehicles)
+
+
+def test_availability_service_rejects_empty_dataset_for_available_vehicle_list() -> None:
+    with pytest.raises(EmptyDatasetError):
+        AvailabilityService().list_available_vehicles([])

@@ -67,3 +67,6 @@ class AvailabilityService:
             metric=metric,
             source="vehicles",
         )
+
+    def list_available_vehicles(self, vehicles: list[Vehicle]) -> list[Vehicle]:
+        return self._policy.filter_available_vehicles(vehicles)
