@@ -56,15 +56,15 @@ class CircuitBreaker:
             httpx.TimeoutException,
             httpx.NetworkError,
             httpx.RemoteProtocolError,
-        ) as transport_err:
+        ):
             # ALINEACIÓN ADR-005: Only transport-level errors degrade the circuit.
             # HTTP 4xx/5xx are business errors and do NOT open the breaker.
             self._handle_failure()
-            raise transport_err
-        except Exception as app_err:
+            raise
+        except Exception:
             # Mapping bugs or business errors pass through without penalizing
             # the external service's availability score.
-            raise app_err
+            raise
         else:
             self._handle_success()
             return result
