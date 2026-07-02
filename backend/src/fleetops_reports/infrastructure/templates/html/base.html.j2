@@ -7,78 +7,154 @@
     <style>
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            color: #1f2937;
-            margin: 32px;
-            line-height: 1.5;
-            font-size: 14px;
-        }
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    color: #2d3748;
+    background: #ffffff;
+    margin: 40px;
+    line-height: 1.6;
+    font-size: 13px;
+}
 
-        h1 {
-            color: #1e3a8a;
-            margin-bottom: 0;
-        }
+/* ---------- TITLES ---------- */
 
-        h2 {
-            color: #374151;
-            margin-top: 30px;
-            border-bottom: 2px solid #d1d5db;
-            padding-bottom: 5px;
-        }
+h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #0f4c81;
+    font-weight: 700;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
+h2 {
+    font-size: 18px;
+    color: #1f2937;
+    margin-top: 35px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #dbe4ee;
+}
 
-        th {
-            background: #1e3a8a;
-            color: white;
-            padding: 10px;
-        }
+/* ---------- HEADER ---------- */
 
-        td {
-            border: 1px solid #d1d5db;
-            padding: 8px;
-        }
+.metadata {
+    margin-top: 22px;
+    margin-bottom: 30px;
+    padding: 18px;
+    background: #f8fafc;
+    border-left: 6px solid #0f4c81;
+    border-radius: 4px;
+}
 
-        .metadata {
-            margin-top: 20px;
-            background: #f9fafb;
-            border: 1px solid #d1d5db;
-            padding: 15px;
-        }
+.metadata p {
+    margin: 6px 0;
+}
 
-        .metadata p {
-            margin: 4px 0;
-        }
+.metadata strong {
+    display: inline-block;
+    width: 120px;
+    color: #1f2937;
+}
+.report-header {
+    border-bottom: 3px solid #0f4c81;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
 
-        .summary {
-            margin-top: 25px;
-            padding: 18px;
-            background: #f8fafc;
-            border-left: 4px solid #2563eb;
-        }
+.subtitle {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
 
-        .graph {
-            text-align: center;
-            margin-top: 25px;
-        }
+/* ---------- EXECUTIVE SUMMARY ---------- */
 
-        .graph img {
-            max-width: 100%;
-        }
+.summary {
+    background: #f9fbfd;
+    border: 1px solid #dde6ef;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 25px;
+}
 
-        footer {
-            margin-top: 40px;
-            font-size: 12px;
-            color: gray;
-            text-align: center;
-            border-top: 1px solid #d1d5db;
-            padding-top: 10px;
-        }
+.summary p {
+    text-align: justify;
+}
 
+/* ---------- TABLE ---------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    font-size: 13px;
+}
+
+thead {
+    background: #0f4c81;
+}
+
+thead th {
+    color: white;
+    padding: 12px;
+    font-weight: 600;
+    text-align: left;
+}
+
+tbody tr:nth-child(even) {
+    background: #f7f9fb;
+}
+
+tbody tr:hover {
+    background: #edf5fc;
+}
+
+tbody td:first-child {
+    font-weight: 600;
+    color: #0f4c81;
+}
+
+tbody td:first-child {
+    font-weight: 600;
+    color: #0f4c81;
+}
+
+td {
+    padding: 11px;
+    border-bottom: 1px solid #dbe4ee;
+}
+
+/* ---------- GRAPH ---------- */
+
+.graph {
+    margin-top: 35px;
+    text-align: center;
+}
+
+.graph img {
+    width: 90%;
+    max-width: 650px;
+    border: 1px solid #dbe4ee;
+    border-radius: 5px;
+    padding: 10px;
+    background: white;
+}
+
+/* ---------- FOOTER ---------- */
+
+footer {
+    margin-top: 50px;
+    padding-top: 15px;
+    border-top: 1px solid #dbe4ee;
+    text-align: center;
+    color: #6b7280;
+    font-size: 11px;
+}
+
+/* ---------- PRINT ---------- */
+
+@page {
+    size: A4;
+    margin: 2cm;
+}
     </style>
 
 </head>
