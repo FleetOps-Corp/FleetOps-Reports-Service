@@ -70,19 +70,19 @@ def sample_incidents() -> list[IncidentRecord]:
     now = datetime.now(UTC)
     return [
         IncidentRecord(
-            incident_id="inc-001",
+            incident_id="INC-20260601-001",
             id_conductor="cond-01",
             placa_vehiculo="FOP-002",
-            tipo_incidente="CHOQUE",
-            severity="critical",
+            tipo_incidente="MECANICO",   # era "CHOQUE"
+            severity="GRAVE",            # era "critical"
             occurred_at=now,
         ),
         IncidentRecord(
-            incident_id="inc-002",
-            id_conductor="cond-02",
-            placa_vehiculo="FOP-002",
-            tipo_incidente="FALLA_MECANICA",
-            severity="major",
+            incident_id="INC-20260610-002",
+            id_conductor="cond-01",
+            placa_vehiculo="FOP-002",    # mismo vehículo → recurrente
+            tipo_incidente="MECANICO",   # era "FALLA_MECANICA"
+            severity="GRAVE",            # era "major"
             occurred_at=now,
         ),
     ]

@@ -48,7 +48,7 @@ async def test_generate_report_use_case_executes_transaction(
     command = GenerateReportCommand("rep-001", "Executive Report", report_period)
     result = await use_case.execute(command)
     assert result.status == "generated"
-    assert len(result.kpis) == 3
+    assert len(result.kpis) == 6
 
 
 @pytest.mark.asyncio
