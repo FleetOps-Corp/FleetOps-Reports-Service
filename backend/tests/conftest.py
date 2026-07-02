@@ -93,10 +93,10 @@ def sample_maintenance() -> list[MaintenanceRecord]:
     finished_at = datetime.now(UTC)
     return [
         MaintenanceRecord(
-            "veh-002", "corrective", finished_at - timedelta(hours=5), finished_at
+            "veh-002", "CORRECTIVO", finished_at - timedelta(hours=5), finished_at
         ),
         MaintenanceRecord(
-            "veh-003", "preventive", finished_at - timedelta(hours=2), finished_at
+            "veh-003", "PREVENTIVO", finished_at - timedelta(hours=2), finished_at
         ),
     ]
 
