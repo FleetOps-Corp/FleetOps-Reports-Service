@@ -101,7 +101,7 @@ fleetops-reports/
 │   ├── adr/                           # Architecture Decision Records
 │   ├── SAD.md                         # Software Architecture Document
 │   ├── api.md                         # API specification
-│   └── deployment.md                  # Production deployment guide
+│   └── deployment/                    # Production deployment guides
 │
 ├── .github/
 │   └── workflows/                     # CI/CD pipeline definitions
@@ -515,7 +515,8 @@ sudo make up
 - [Software Architecture Document](./docs/SAD.md) — Architecture overview and design decisions
 - [Architecture Decision Records](./docs/adr/) — Detailed ADR documentation
 - [API Specification](./docs/contracts/) — REST API contracts and schemas
-- [Deployment Guide](./docs/deployment.md) — Production deployment procedures
+- [Deployment Configuration](./docs/deployment/DEPLOYMENT_CONFIGURATION.md) — CI/CD and infrastructure setup
+- [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md) — Step-by-step EC2 free-tier deployment
 - [Contributing Guide](./CONTRIBUTING.md) — Development and contribution guidelines
 
 ---
