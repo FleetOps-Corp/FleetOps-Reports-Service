@@ -44,6 +44,7 @@ security: bandit
 
 compose-validate:
 	docker compose config
+	docker compose -f docker-compose.prod.yml --env-file .env.production.example config
 
 build-backend:
 	docker build \
