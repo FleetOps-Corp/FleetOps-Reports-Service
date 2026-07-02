@@ -38,6 +38,7 @@ def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         "MINIO_REPORTS_BUCKET": "reports",
         "MINIO_GRAPHS_BUCKET": "graphs",
         "OPERATIONAL_GATEWAY_BASE_URL": "https://example.invalid:8080",
+        "OPERATIONAL_GATEWAY_BEARER_TOKEN": "test-gateway-token",
         "CIRCUIT_BREAKER_FAILURE_THRESHOLD": "3",
         "CIRCUIT_BREAKER_RECOVERY_SECONDS": "30",
     }
@@ -53,16 +54,46 @@ def report_period() -> ReportPeriod:
 @pytest.fixture
 def sample_vehicles() -> list[Vehicle]:
     return [
-        Vehicle("veh-001", "FOP-001", "DISPONIBLE", "bogota", "van", "2024"),
-        Vehicle("veh-002", "FOP-002", "MANTENIMIENTO", "medellin", "truck", "2023"),
-        Vehicle("veh-003", "FOP-003", "DISPONIBLE", "cali", "van", "2024"),
+        Vehicle(
+            "8c12bda5-7482-4168-96ea-5fd3a9254c2a",
+            "FOP-001",
+            "DISPONIBLE",
+            "Bogotá",
+            "Kenworth",
+            "T800",
+        ),
+        Vehicle(
+            "9d23cea6-8593-5279-a7fb-6ge4b0365d3b",
+            "FOP-002",
+            "EN_MANTENIMIENTO",
+            "Medellín",
+            "Kenworth",
+            "T800",
+        ),
+        Vehicle(
+            "ae34dfb7-96a4-6380-b8gc-7hf5c1476e4c",
+            "FOP-003",
+            "DISPONIBLE",
+            "Cali",
+            "Kenworth",
+            "T800",
+        ),
     ]
 
 
 @pytest.fixture
 def sample_assignments() -> list[AssignmentRecord]:
     now = datetime.now(UTC)
-    return [AssignmentRecord("asig-001", "veh-001", "cond-01", "van", now, None)]
+    return [
+        AssignmentRecord(
+            "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+            "8c12bda5-7482-4168-96ea-5fd3a9254c2a",
+            "11111111-1111-1111-1111-111111111111",
+            "CAMION",
+            now,
+            None,
+        )
+    ]
 
 
 @pytest.fixture
@@ -71,18 +102,18 @@ def sample_incidents() -> list[IncidentRecord]:
     return [
         IncidentRecord(
             incident_id="INC-20260601-001",
-            id_conductor="cond-01",
+            id_conductor="11111111-1111-1111-1111-111111111111",
             placa_vehiculo="FOP-002",
-            tipo_incidente="MECANICO",   # era "CHOQUE"
-            severity="GRAVE",            # era "critical"
+            tipo_incidente="MECANICO",
+            severity="GRAVE",
             occurred_at=now,
         ),
         IncidentRecord(
             incident_id="INC-20260610-002",
-            id_conductor="cond-01",
-            placa_vehiculo="FOP-002",    # mismo vehículo → recurrente
-            tipo_incidente="MECANICO",   # era "FALLA_MECANICA"
-            severity="GRAVE",            # era "major"
+            id_conductor="11111111-1111-1111-1111-111111111111",
+            placa_vehiculo="FOP-002",
+            tipo_incidente="MECANICO",
+            severity="GRAVE",
             occurred_at=now,
         ),
     ]
@@ -93,10 +124,16 @@ def sample_maintenance() -> list[MaintenanceRecord]:
     finished_at = datetime.now(UTC)
     return [
         MaintenanceRecord(
-            "veh-002", "corrective", finished_at - timedelta(hours=5), finished_at
+            "9d23cea6-8593-5279-a7fb-6ge4b0365d3b",
+            "CORRECTIVO",
+            finished_at - timedelta(hours=5),
+            finished_at,
         ),
         MaintenanceRecord(
-            "veh-003", "preventive", finished_at - timedelta(hours=2), finished_at
+            "ae34dfb7-96a4-6380-b8gc-7hf5c1476e4c",
+            "PREVENTIVO",
+            finished_at - timedelta(hours=2),
+            finished_at,
         ),
     ]
 
@@ -111,7 +148,9 @@ class FakeRepository:
 
     async def get_report(self, report_id):
         return await _async_value(
-            next((report for report in self.saved if report.report_id == report_id), None)
+            next(
+                (report for report in self.saved if report.report_id == report_id), None
+            )
         )
 
 
@@ -123,12 +162,16 @@ class FakeStorage:
         return await _async_value(graph_name)
 
     async def create_presigned_url(self, object_name: str, expires_seconds: int) -> str:
-        return await _async_value(f"https://minio.test/{object_name}?expires={expires_seconds}")
+        return await _async_value(
+            f"https://minio.test/{object_name}?expires={expires_seconds}"
+        )
 
 
 class FakeRenderer:
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:
-        return await _async_value(f"PDF:{template_name}:{context['report_id']}".encode())
+        return await _async_value(
+            f"PDF:{template_name}:{context['report_id']}".encode()
+        )
 
 
 class FakeVehiclesClient:
