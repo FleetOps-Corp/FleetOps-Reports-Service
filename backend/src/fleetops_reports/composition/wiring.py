@@ -60,6 +60,7 @@ def _build_circuit_breaker(settings: Settings) -> CircuitBreaker:
 
 def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase:
     gateway_url = settings.operational_gateway_base_url
+    gateway_token = settings.operational_gateway_bearer_token
 
     # ALINEACIÓN ADR-005: 4 independent circuit breakers to isolate cascading failures
     vehicles_breaker = _build_circuit_breaker(settings)
@@ -76,10 +77,14 @@ def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase
     )
 
     return GenerateReportUseCase(
-        vehicles_client=RestVehiclesClient(gateway_url, vehicles_breaker),
-        assignments_client=RestAssignmentsClient(gateway_url, assignments_breaker),
-        incidents_client=RestIncidentsClient(gateway_url, incidents_breaker),
-        maintenance_client=RestMaintenanceClient(gateway_url, maintenance_breaker),
+        vehicles_client=RestVehiclesClient(gateway_url, vehicles_breaker, gateway_token),
+        assignments_client=RestAssignmentsClient(
+            gateway_url, assignments_breaker, gateway_token
+        ),
+        incidents_client=RestIncidentsClient(gateway_url, incidents_breaker, gateway_token),
+        maintenance_client=RestMaintenanceClient(
+            gateway_url, maintenance_breaker, gateway_token
+        ),
         availability_service=AvailabilityService(),
         incident_service=IncidentService(),
         maintenance_service=MaintenanceService(),
