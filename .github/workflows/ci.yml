@@ -102,6 +102,8 @@ jobs:
   build-docker:
     name: Build Docker Images
     needs: quality-gate
+    # TODO-FASE-DOCKER: publish backend and gateway images to GHCR (or another registry)
+    # and switch deploy.yml from on-host `docker compose build` to registry pulls.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
