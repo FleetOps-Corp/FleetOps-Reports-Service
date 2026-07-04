@@ -21,7 +21,7 @@ class RestIncidentsClient:
         circuit_breaker: CircuitBreaker,
         bearer_token: str | None = None,
     ) -> None:
-        self._url = f"{gateway_base_url.rstrip('/')}/incidentes"
+        self._url = f"{gateway_base_url.rstrip('/')}/incidentes/"
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
 

@@ -16,7 +16,7 @@ def build_gateway_headers(bearer_token: str | None = None) -> dict[str, str]:
 
 async def fetch_gateway_list(url: str, bearer_token: str | None = None) -> list[dict]:
     headers = build_gateway_headers(bearer_token)
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(follow_redirects=True) as client:
         response = await client.get(url, headers=headers)
         response.raise_for_status()
         return extract_gateway_list(response.json())
