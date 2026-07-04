@@ -19,4 +19,3 @@ class WeasyPrintRenderer:
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:
         html = self._jinja_renderer.render(template_name, context)
         return await asyncio.to_thread(lambda: HTML(string=html).write_pdf())
-
