@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     minio_graphs_bucket: str = Field(alias="MINIO_GRAPHS_BUCKET")
 
     operational_gateway_base_url: str = Field(alias="OPERATIONAL_GATEWAY_BASE_URL")
+    operational_gateway_bearer_token: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_BEARER_TOKEN"
+    )
 
     circuit_breaker_failure_threshold: int = Field(
         alias="CIRCUIT_BREAKER_FAILURE_THRESHOLD"
