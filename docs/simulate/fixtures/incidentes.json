@@ -1,0 +1,18 @@
+[
+  {
+    "id": "INC-20260601-001",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-002",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-15T10:30:00Z"
+  },
+  {
+    "id": "INC-20260610-002",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-002",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-20T14:00:00Z"
+  }
+]
