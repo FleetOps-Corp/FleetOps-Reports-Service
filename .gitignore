@@ -14,6 +14,11 @@ backend/coverage.xml
 backend/coverage-relative.xml
 backend/coverage-test.xml
 bandit-report.json
+certs/
+*.pem
+*.crt
+*.~/AppData/
+_avast_/
 
 *.xml
 backend/.coverage.*
