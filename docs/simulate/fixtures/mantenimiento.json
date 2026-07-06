@@ -1,0 +1,14 @@
+[
+  {
+    "id_vehiculo": "9d23cea6-8593-5279-a7fb-6ge4b0365d3b",
+    "tipo_mantenimiento": 0,
+    "fecha_inicio_mantenimiento": "2026-05-10T08:00:00Z",
+    "fecha_fin_mantenimiento": "2026-05-10T13:00:00Z"
+  },
+  {
+    "id_vehiculo": "ae34dfb7-96a4-6380-b8gc-7hf5c1476e4c",
+    "tipo_mantenimiento": 1,
+    "fecha_inicio_mantenimiento": "2026-05-18T09:00:00Z",
+    "fecha_fin_mantenimiento": "2026-05-18T11:00:00Z"
+  }
+]

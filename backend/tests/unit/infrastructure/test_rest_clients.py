@@ -58,7 +58,7 @@ async def test_vehicles_client_maps_gateway_payload(monkeypatch: pytest.MonkeyPa
     ]
 
     async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/vehiculos"
+        assert url == "http://gateway:8000/vehiculos/"
         assert bearer_token == "admin-token"
         return payload
 
@@ -95,7 +95,7 @@ async def test_assignments_client_maps_date_only_fields(
     ]
 
     async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/asignaciones"
+        assert url == "http://gateway:8000/asignaciones/"
         return payload
 
     monkeypatch.setattr(
@@ -130,7 +130,7 @@ async def test_incidents_client_maps_gateway_payload(
     ]
 
     async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/incidentes"
+        assert url == "http://gateway:8000/incidentes/"
         return payload
 
     monkeypatch.setattr(
@@ -163,7 +163,7 @@ async def test_maintenance_client_uses_gateway_route_prefix(
     ]
 
     async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/mantenimiento"
+        assert url == "http://gateway:8000/mantenimiento/"
         return payload
 
     monkeypatch.setattr(

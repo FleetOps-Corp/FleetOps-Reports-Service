@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "FleetOps Simulation",
+    "description": "Smoke tests for Reports, Security Gateway, and Incidents integration.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "reports_base", "value": "http://localhost:8080" },
+    { "key": "gateway_base", "value": "http://localhost:8000" },
+    { "key": "incidents_direct", "value": "http://localhost:8030" },
+    { "key": "admin_email", "value": "simulator@example.com" },
+    { "key": "admin_password", "value": "Simulate123" },
+    { "key": "gateway_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "0 - Auth",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": "{{gateway_base}}/auth/register"
+          }
+        },
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var json = pm.response.json();",
+                  "  pm.collectionVariables.set('gateway_token', json.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": "{{gateway_base}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1 - Health",
+      "item": [
+        {
+          "name": "Reports Health",
+          "request": { "method": "GET", "url": "{{reports_base}}/health" }
+        },
+        {
+          "name": "Gateway Docs",
+          "request": { "method": "GET", "url": "{{gateway_base}}/docs" }
+        },
+        {
+          "name": "Incidents Health",
+          "request": { "method": "GET", "url": "{{incidents_direct}}/health" }
+        }
+      ]
+    },
+    {
+      "name": "2 - Incidents",
+      "item": [
+        {
+          "name": "Incidents Direct List",
+          "request": { "method": "GET", "url": "{{incidents_direct}}/api/incidents/" }
+        },
+        {
+          "name": "Incidents Gateway List",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{gateway_token}}" }],
+            "url": "{{gateway_base}}/incidentes/"
+          }
+        },
+        {
+          "name": "Incidents Gateway Create",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{gateway_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_conductor\": \"11111111-1111-1111-1111-111111111111\",\n  \"placa_vehiculo\": \"FOP-002\",\n  \"tipo_incidente\": \"MECANICO\",\n  \"gravedad\": \"GRAVE\",\n  \"descripcion\": \"Postman test\",\n  \"fecha_hora\": \"2026-05-15T10:30:00Z\"\n}"
+            },
+            "url": "{{gateway_base}}/incidentes/create/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Reports",
+      "item": [
+        {
+          "name": "Generate Report Direct",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_id\": \"rep-postman-direct\",\n  \"title\": \"Postman Direct\",\n  \"start_date\": \"2026-05-01\",\n  \"end_date\": \"2026-05-31\"\n}"
+            },
+            "url": "{{reports_base}}/reports/generate"
+          }
+        },
+        {
+          "name": "Generate Report via Gateway",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{gateway_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_id\": \"rep-postman-gw\",\n  \"title\": \"Postman Gateway\",\n  \"start_date\": \"2026-05-01\",\n  \"end_date\": \"2026-05-31\"\n}"
+            },
+            "url": "{{gateway_base}}/reportes/generate"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4 - EC2 Deployed",
+      "item": [
+        {
+          "name": "EC2 Health",
+          "request": { "method": "GET", "url": "{{reports_base}}/health" }
+        },
+        {
+          "name": "EC2 Generate Report",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report_id\": \"rep-ec2-postman\",\n  \"title\": \"EC2 Postman\",\n  \"start_date\": \"2026-05-01\",\n  \"end_date\": \"2026-05-31\"\n}"
+            },
+            "url": "{{reports_base}}/reports/generate"
+          }
+        }
+      ]
+    }
+  ]
+}

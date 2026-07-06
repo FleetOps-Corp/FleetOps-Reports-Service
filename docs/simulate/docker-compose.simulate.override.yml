@@ -1,0 +1,5 @@
+# Local simulation override: use embedded MongoDB instead of Atlas for docker-compose dev stack.
+services:
+  backend:
+    environment:
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin
