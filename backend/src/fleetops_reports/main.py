@@ -19,6 +19,7 @@ from fleetops_reports.infrastructure.observability.logging import configure_logg
 from fleetops_reports.infrastructure.persistence.mongodb.mongo_client import (
     init_mongodb,
 )
+from fleetops_reports.presentation.api.middleware import register_auth_middleware
 from fleetops_reports.presentation.api.routes import health, metrics, reports
 
 configure_application()
@@ -38,6 +39,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
+    register_auth_middleware(app)
     app.include_router(health.router)
     app.include_router(metrics.router)
     app.include_router(reports.router)
