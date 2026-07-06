@@ -1,0 +1,10 @@
+[
+  {
+    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "8c12bda5-7482-4168-96ea-5fd3a9254c2a",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  }
+]

@@ -30,7 +30,7 @@ class RestMaintenanceClient:
         bearer_token: str | None = None,
     ) -> None:
         # Security Gateway route prefix: /mantenimiento/**
-        self._url = f"{gateway_base_url.rstrip('/')}/mantenimiento"
+        self._url = f"{gateway_base_url.rstrip('/')}/mantenimiento/"
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
 

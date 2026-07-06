@@ -22,6 +22,7 @@ from fleetops_reports.presentation.schemas.report_schemas import (
 
 # Cambiamos el tag a mayúscula 'Reports' para mejorar la visualización en Swagger / OpenAPI Docs
 router = APIRouter(prefix="/reports", tags=["Reports"])
+gateway_router = APIRouter(prefix="/reportes", tags=["Reports (Gateway)"])
 
 
 @router.post(
@@ -57,3 +58,14 @@ async def generate_report(
 
     # 4. Mapeo de la entidad de dominio de salida al formato JSON de Pydantic
     return mapper.report_to_response(report)
+
+
+gateway_router.add_api_route(
+    "/generate",
+    generate_report,
+    methods=["POST"],
+    response_model=GenerateReportResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Generar Reporte (alias Security Gateway /reportes)",
+    description="Alias compatible con el prefijo /reportes expuesto por FleetOps Security Gateway.",
+)
