@@ -21,7 +21,7 @@ class RestAssignmentsClient:
         circuit_breaker: CircuitBreaker,
         bearer_token: str | None = None,
     ) -> None:
-        self._url = f"{gateway_base_url.rstrip('/')}/asignaciones"
+        self._url = f"{gateway_base_url.rstrip('/')}/asignaciones/"
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
 
