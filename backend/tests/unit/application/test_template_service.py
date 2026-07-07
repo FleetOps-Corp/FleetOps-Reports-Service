@@ -20,15 +20,21 @@ def test_template_service_builds_context(report_period, sample_vehicles) -> None
         kpis=[kpi],
     )
 
-    graph_url = "https://minio.test/graph.svg"
+    graph_urls = {
+        "availability": "https://minio.test/rep-001-availability.svg",
+        "incidents": "https://minio.test/rep-001-incidents.svg",
+        "maintenance": "https://minio.test/rep-001-maintenance.svg",
+        "mttr": "https://minio.test/rep-001-mttr.svg",
+        "critical-ranking": "https://minio.test/rep-001-critical-ranking.svg",
+    }
 
-    context = TemplateService().build_context(report, graph_url)
+    context = TemplateService().build_context(report, graph_urls)
 
     assert context["report_id"] == "rep-001"
     assert context["title"] == "Executive Report"
     assert context["period"] == report_period.label()
     assert context["status"] == "draft"
-    assert context["graph_url"] == graph_url
+    assert context["graph_urls"] == graph_urls
 
     # New field used by the report header
     assert "created_at" in context

@@ -13,7 +13,7 @@ from fleetops_reports.application.ports.operational_clients import (
     MaintenanceRecord,
 )
 from fleetops_reports.domain.models.kpi import KPI
-from fleetops_reports.domain.models.vehicle import Vehicle
+from fleetops_reports.domain.models.vehicle import Vehicle, plate_to_vehicle_id_map
 from fleetops_reports.domain.policies.criticality_policy import CriticalityPolicy
 from fleetops_reports.domain.value_objects.metric import Metric
 
@@ -28,11 +28,7 @@ class IncidentService:
         maintenance: list[MaintenanceRecord],
         vehicles: list[Vehicle],
     ) -> KPI:
-        plate_to_vehicle_id = {
-            vehicle.numero_placa: vehicle.id_vehiculo
-            for vehicle in vehicles
-            if vehicle.numero_placa
-        }
+        plate_to_vehicle_id = plate_to_vehicle_id_map(vehicles)
 
         incident_counts: Counter[str] = Counter()
         for record in incidents:

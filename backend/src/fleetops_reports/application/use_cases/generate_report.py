@@ -87,7 +87,12 @@ class GenerateReportUseCase:
                     period=command.period,
                     kpis=kpis,
                 )
-                return await self._report_service.generate(report)
+                return await self._report_service.generate(
+                    report,
+                    vehicles=vehicles,
+                    incidents=incidents,
+                    maintenance=maintenance,
+                )
         except DomainError:
             raise
         except Exception as exc:

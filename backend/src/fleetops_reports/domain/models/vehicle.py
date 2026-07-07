@@ -23,3 +23,12 @@ class Vehicle:
         return (
             self.estado_vehiculo == "DISPONIBLE"
         )  # O el estado equivalente de tu lógica
+
+
+def plate_to_vehicle_id_map(vehicles: list[Vehicle]) -> dict[str, str]:
+    """Map numero_placa to id_vehiculo, skipping vehicles without a plate."""
+    return {
+        vehicle.numero_placa: vehicle.id_vehiculo
+        for vehicle in vehicles
+        if vehicle.numero_placa
+    }
