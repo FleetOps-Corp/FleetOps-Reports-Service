@@ -61,7 +61,7 @@ dev = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-"fleetops_reports.infrastructure.templates" = ["html/*.j2"]
+"fleetops_reports.infrastructure.templates" = ["html/**/*.j2"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
