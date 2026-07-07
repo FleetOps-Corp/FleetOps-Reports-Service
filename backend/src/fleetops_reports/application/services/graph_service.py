@@ -14,6 +14,7 @@ from fleetops_reports.application.ports.operational_clients import (
 from fleetops_reports.application.services.charts import (
     AvailabilityChartBuilder,
     CriticalRankingChartBuilder,
+    EmptyStateChartBuilder,
     IncidentChartBuilder,
     MaintenanceChartBuilder,
     MTTRChartBuilder,
@@ -96,4 +97,13 @@ class GraphService:
             maintenance,
             vehicles,
         ).with_title("Vehicle Criticality Ranking").build()
+        return svg.encode("utf-8")
+
+    def build_empty_state_chart(self, reason: str) -> bytes:
+        """Render a neutral placeholder when chart data is unavailable.
+
+        SAD Traceability: preserves report layout for empty datasets in SAD
+        section 10.5 without altering chart builder input validation contracts.
+        """
+        svg = EmptyStateChartBuilder().with_reason(reason).build()
         return svg.encode("utf-8")

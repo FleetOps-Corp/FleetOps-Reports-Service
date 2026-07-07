@@ -14,6 +14,9 @@ from fleetops_reports.application.ports.operational_clients import (
 from fleetops_reports.application.services.charts.availability_chart_builder import (
     AvailabilityChartBuilder,
 )
+from fleetops_reports.application.services.charts.empty_state_chart_builder import (
+    EmptyStateChartBuilder,
+)
 from fleetops_reports.application.services.charts.svg_primitives import (
     render_grouped_bar_chart,
     render_horizontal_bar_chart,
@@ -25,6 +28,15 @@ from fleetops_reports.application.services.graph_service import GraphService
 @pytest.fixture
 def graph_service() -> GraphService:
     return GraphService()
+
+
+def test_empty_state_chart_builder_renders_reason() -> None:
+    svg = EmptyStateChartBuilder().with_reason(
+        "Dataset 'vehicles' cannot be empty for this calculation"
+    ).build()
+    assert svg.startswith("<svg")
+    assert "Sin datos disponibles:" in svg
+    assert "vehicles" in svg
 
 
 def test_chart_builder_fluent_methods(sample_vehicles) -> None:

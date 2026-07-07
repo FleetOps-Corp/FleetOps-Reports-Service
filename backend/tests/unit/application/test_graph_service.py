@@ -114,3 +114,17 @@ def test_build_critical_ranking_chart_raises_on_empty_dataset(
             [],
         )
     assert exc_info.value.details["dataset_name"] == "vehicles"
+
+
+def test_build_empty_state_chart_returns_svg_with_reason(graph_service) -> None:
+    reason = "Dataset 'incidents' cannot be empty for this calculation"
+    graph = graph_service.build_empty_state_chart(reason)
+    assert graph.startswith(b"<svg")
+    assert b"Sin datos disponibles:" in graph
+    assert b"incidents" in graph
+
+
+def test_build_empty_state_chart_escapes_special_characters(graph_service) -> None:
+    graph = graph_service.build_empty_state_chart("Dataset 'vehicles' <missing>")
+    assert graph.startswith(b"<svg")
+    assert b"&lt;missing&gt;" in graph
