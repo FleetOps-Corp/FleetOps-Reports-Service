@@ -23,6 +23,7 @@ class SecuritySettings(BaseSettings):
     )
     jwt_algorithm: str = Field(default="RS256", alias="JWT_ALGORITHM")
     jwt_public_key_path: str | None = Field(default=None, alias="JWT_PUBLIC_KEY_PATH")
+    jwt_secret_key: str | None = Field(default=None, alias="JWT_SECRET_KEY")
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -61,3 +62,4 @@ class Settings(BaseSettings):
 
     jwt_algorithm: str = Field(default="RS256", alias="JWT_ALGORITHM")
     jwt_public_key_path: str | None = Field(default=None, alias="JWT_PUBLIC_KEY_PATH")
+    jwt_secret_key: str | None = Field(default=None, alias="JWT_SECRET_KEY")

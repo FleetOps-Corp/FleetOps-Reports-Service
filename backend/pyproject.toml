@@ -6,7 +6,7 @@ requires = ["setuptools==80.9.0", "wheel==0.45.1"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "fleetops-reports"
-version = "0.1.0"
+version = "2.1.0"
 description = "FleetOps Reports analytical microservice archetype"
 requires-python = "==3.13.*"
 dependencies = [

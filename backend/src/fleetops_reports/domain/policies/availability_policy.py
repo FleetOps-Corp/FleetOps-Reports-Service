@@ -17,6 +17,8 @@ from fleetops_reports.domain.value_objects.percentage import Percentage
 class AvailabilityPolicy:
     def calculate_global_availability(self, vehicles: list[Vehicle]) -> Percentage:
         """Calculate operational vehicle percentage using SAD availability rules."""
+        if not vehicles:
+            return Percentage(0.0)
         available = self.count_available_vehicles(vehicles)
         return Percentage(round((available / len(vehicles)) * 100, 2))
 
@@ -27,6 +29,8 @@ class AvailabilityPolicy:
 
     def count_available_vehicles(self, vehicles: list[Vehicle]) -> int:
         """Count vehicles that are operationally available."""
+        if not vehicles:
+            return 0
         return len(self.filter_available_vehicles(vehicles))
 
     def count_unavailable_vehicles(self, vehicles: list[Vehicle]) -> int:

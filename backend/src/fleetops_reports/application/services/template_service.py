@@ -16,6 +16,7 @@ class TemplateService:
             "title": report.title,
             "period": report.period.label(),
             "status": report.status,
+            "sede_operacion": report.sede_operacion or "All sites",
             "created_at": report.created_at.strftime("%Y-%m-%d %H:%M UTC"),
             "graph_urls": graph_urls,
             "kpis": [

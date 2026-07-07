@@ -23,18 +23,19 @@ class AvailabilityChartBuilder(ChartBuilder):
         if not self._vehicles:
             raise EmptyDatasetError("vehicles")
 
-        by_city: dict[str, list[Vehicle]] = defaultdict(list)
+        by_location: dict[str, list[Vehicle]] = defaultdict(list)
         for vehicle in self._vehicles:
-            by_city[vehicle.ciudad_operacion].append(vehicle)
+            location = vehicle.sede_operacion or vehicle.ciudad_operacion or "Unknown"
+            by_location[location].append(vehicle)
 
         series: list[tuple[str, float]] = []
-        for city in sorted(by_city):
-            city_vehicles = by_city[city]
-            available = sum(1 for vehicle in city_vehicles if vehicle.is_available)
-            percentage = round((available / len(city_vehicles)) * 100, 2)
-            series.append((city, percentage))
+        for location in sorted(by_location):
+            location_vehicles = by_location[location]
+            available = sum(1 for vehicle in location_vehicles if vehicle.is_available)
+            percentage = round((available / len(location_vehicles)) * 100, 2)
+            series.append((location, percentage))
 
-        title = self._title or "Availability by Operation City"
+        title = self._title or "Availability by Operation Site"
         return render_vertical_bar_chart(
             title=title,
             series=series,
