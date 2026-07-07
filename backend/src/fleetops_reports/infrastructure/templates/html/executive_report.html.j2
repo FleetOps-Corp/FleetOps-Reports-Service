@@ -23,6 +23,10 @@ The information presented is intended to support operational monitoring and mana
 
 </div>
 
+{% if vehicles %}
+{% include "components/vehicles_table.html.j2" %}
+{% endif %}
+
 {% include "components/kpi_table.html.j2" %}
 
 {% include "components/graph.html.j2" %}

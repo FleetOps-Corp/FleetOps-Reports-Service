@@ -7,9 +7,13 @@ This guide explains how to validate a deployed FleetOps Reports instance (EC2 or
 - Running Reports stack (`docker-compose.prod.yml` on EC2 or local)
 - FleetOps Security Gateway reachable from the Reports backend (`OPERATIONAL_GATEWAY_BASE_URL`)
 - `OPERATIONAL_GATEWAY_BEARER_TOKEN` configured with an `ADMINISTRADOR` JWT
-- Matching inbound JWT settings on Reports:
-  - **HS256 (default):** `JWT_ALGORITHM=HS256` and `JWT_SECRET_KEY` identical to Security Service
-  - **RS256 (optional):** `JWT_ALGORITHM=RS256` and `JWT_PUBLIC_KEY_PATH=/app/certs/public.pem`
+- Matching inbound JWT settings on Reports (must match how Security **signs** tokens today):
+  - **HS256 (current Security Service):** `JWT_ALGORITHM=HS256` and `JWT_SECRET_KEY` identical to Security Service
+  - **RS256 (future / public-key verification):** `JWT_ALGORITHM=RS256` and `JWT_PUBLIC_KEY_PATH=/app/certs/public.pem`
+
+> **Architecture note:** FleetOps Security currently issues HS256 tokens with a shared secret.
+> Reports supports both HS256 (production today) and RS256 public-key verification (see `certs/README.md`
+> and `docs/token/Miniguia para verificar los tokens con llave publica.md`).
 
 ## Public routes (no JWT)
 
@@ -108,10 +112,31 @@ powershell -ExecutionPolicy Bypass -File scripts/simulate/smoke_ec2.ps1 -BearerT
 | Symptom | Likely cause | Action |
 |---------|--------------|--------|
 | 401 on `/reports/*` | Missing or invalid JWT | Login again; verify `JWT_SECRET_KEY` matches Security |
+| 401 after deploy | JWT vars missing in EC2 `.env` | Run `scripts/deploy/ensure_jwt_env.sh` (see below) |
 | 403 on generate | Non-admin role | Use `ADMINISTRADOR` account |
 | 422 on generate | Upstream unavailable | Verify Security Gateway routes and mock/services |
 | Empty KPIs for sede | No vehicles in site | Confirm Vehicles service returns `sede_operacion` |
 | Download 404 | Report not persisted | Check MongoDB URI and MinIO buckets |
+
+## EC2 — apply JWT variables (required once)
+
+Protected routes return **401** until Reports shares the same HS256 secret as Security Service.
+
+On the EC2 host (`/opt/fleetops-reports`):
+
+```bash
+export JWT_SECRET_KEY='<same value as FleetOps-Security-Service>'
+chmod +x scripts/deploy/ensure_jwt_env.sh
+./scripts/deploy/ensure_jwt_env.sh .env
+docker compose -f docker-compose.prod.yml --env-file .env up -d backend
+```
+
+Verify (from SSH on EC2, with a valid admin token):
+
+```bash
+curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/reports
+# Expect 401 without Authorization header after JWT is configured
+```
 
 ## Version
 

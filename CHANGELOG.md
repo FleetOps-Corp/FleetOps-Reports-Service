@@ -5,6 +5,23 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-07-07
+
+### Added
+- Fleet inventory table in executive PDF (plate, brand/model, status, operation site) sorted with available units first.
+- KPI table **Description** column replacing internal metric identifiers.
+- Expanded local simulation fixtures (32 vehicles, 36 incidents, 39 maintenance records) for richer charts.
+- `certs/README.md` and deployment script `scripts/deploy/ensure_jwt_env.sh` for JWT configuration on EC2.
+
+### Changed
+- Chart section titles in PDF use human-readable labels.
+- Default JWT algorithm setting aligned to HS256 (current Security Service signing mode).
+- Environment templates document dual JWT modes: HS256 shared secret (today) and RS256 public key (target).
+
+### Fixed
+- Jinja2 component templates packaged correctly for Docker PDF generation (`html/**/*.j2`).
+- Local simulation routes operational reads to mock gateway for complete sede-filtered datasets.
+
 ## [2.1.0] - 2026-07-07
 
 ### Added

@@ -1,10 +1,82 @@
 [
   {
-    "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+    "id": "56915eff-9f85-4297-b279-ab1007b6f270",
     "conductor_id": "11111111-1111-1111-1111-111111111111",
-    "vehiculo_id": "8c12bda5-7482-4168-96ea-5fd3a9254c2a",
+    "vehiculo_id": "0e295003-ccc2-489b-b6d9-e23867eb2cf1",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-05-20"
+  },
+  {
+    "id": "7d5971e2-e9aa-4803-b84c-fc3b8812aa02",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "0114e58f-8dfd-4436-abf8-febe3cf35ea6",
     "tipo_vehiculo": "CAMION",
     "fecha_inicio": "2026-05-01",
     "fecha_fin": null
+  },
+  {
+    "id": "c28f07e1-91ff-4ed1-a203-ab8753981f7c",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "3a7bb855-41c3-4c18-aa1f-671327c45044",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  },
+  {
+    "id": "7dc8e04e-6a3e-414c-92e5-ff6063e41d98",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "02abe97a-27ac-4984-a4f6-fe99c8b43fd9",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-05-20"
+  },
+  {
+    "id": "6a032403-fad2-40c9-8d43-9c1c9d98c2dc",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "93f24135-f7fe-4549-a6dd-43a43b962ca2",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  },
+  {
+    "id": "06cfed28-52ac-43f1-89c9-c086f12303db",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "6e74b701-f7a7-454a-84a7-a912346caaf2",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  },
+  {
+    "id": "fb4ef2af-82c5-4c44-80dd-cc746bde4d89",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "d4b47341-4580-4795-8e4e-36a9af2191c8",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-05-20"
+  },
+  {
+    "id": "9bf50786-fe9d-489b-be31-24d806b86769",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "85a9cbc1-70d4-43c0-931a-d129ea472e45",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  },
+  {
+    "id": "dce87e9a-2e4a-41f1-95f6-e5cd0182a8ec",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "32fd7427-fbc5-4fbf-a69a-4fea3b630b2f",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": null
+  },
+  {
+    "id": "9e92d71a-bb21-47a4-bc0c-206db3e221ad",
+    "conductor_id": "11111111-1111-1111-1111-111111111111",
+    "vehiculo_id": "43c868ec-b8d0-47c5-871e-1dd8faeefd35",
+    "tipo_vehiculo": "CAMION",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-05-20"
   }
 ]

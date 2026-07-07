@@ -4,9 +4,17 @@
 Fleet operational indicators for the selected reporting period.
 </p>
 
+{% set chart_labels = {
+  "availability": "Availability by Operation Site",
+  "incidents": "Incident Distribution",
+  "maintenance": "Maintenance Activity",
+  "mttr": "Mean Time To Repair",
+  "critical-ranking": "Vehicle Criticality Ranking"
+} %}
+
 {% for chart_key, chart_url in graph_urls.items() %}
 <div class="graph">
-  <h3>{{ chart_key.replace('-', ' ') | title }}</h3>
-  <img src="{{ chart_url }}" alt="{{ chart_key }}">
+  <h3>{{ chart_labels.get(chart_key, chart_key.replace('-', ' ') | title) }}</h3>
+  <img src="{{ chart_url }}" alt="{{ chart_labels.get(chart_key, chart_key) }}">
 </div>
 {% endfor %}

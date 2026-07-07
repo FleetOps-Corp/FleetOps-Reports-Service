@@ -14,7 +14,8 @@ backend/coverage.xml
 backend/coverage-relative.xml
 backend/coverage-test.xml
 bandit-report.json
-certs/
+certs/*
+!certs/README.md
 *.pem
 *.crt
 *.~/AppData/

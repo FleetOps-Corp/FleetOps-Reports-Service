@@ -87,7 +87,11 @@ class ReportService:
                 graph_object, expires_seconds=600
             )
 
-        context = self._template_service.build_context(report, graph_urls)
+        context = self._template_service.build_context(
+            report,
+            graph_urls,
+            vehicles=vehicles,
+        )
         pdf_content = await self._renderer.render("executive_report.html.j2", context)
         document_url = await self._storage.upload_report_pdf(report.report_id, pdf_content)
         report.mark_generated(document_url)

@@ -43,7 +43,11 @@ def test_load_verification_material_requires_secret_for_hs256(
     monkeypatch.setenv("JWT_ALGORITHM", "HS256")
     monkeypatch.delenv("JWT_SECRET_KEY", raising=False)
     get_security_settings.cache_clear()
-    settings = SecuritySettings()
+    settings = SecuritySettings.model_construct(
+        jwt_algorithm="HS256",
+        jwt_secret_key=None,
+        jwt_public_key_path=None,
+    )
     with pytest.raises(HTTPException):
         from fleetops_reports.config.security import load_verification_material
 
