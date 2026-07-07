@@ -4,6 +4,7 @@
     "numero_placa": "FOP-001",
     "estado_vehiculo": "DISPONIBLE",
     "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
     "marca": "Kenworth",
     "modelo": "T800"
   },
@@ -12,6 +13,7 @@
     "numero_placa": "FOP-002",
     "estado_vehiculo": "EN_MANTENIMIENTO",
     "ciudad_operacion": "Medellín",
+    "sede_operacion": "Patio Medellín",
     "marca": "Kenworth",
     "modelo": "T800"
   },
@@ -20,7 +22,26 @@
     "numero_placa": "FOP-003",
     "estado_vehiculo": "DISPONIBLE",
     "ciudad_operacion": "Cali",
+    "sede_operacion": "Patio Cali",
     "marca": "Kenworth",
     "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "bf45egc8-a7b5-7491-c9hd-8ig6d2587f5d",
+    "numero_placa": "FOP-004",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Sur Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "cg56fhd9-b8c6-8502-d0ie-9jh7e3698g6e",
+    "numero_placa": "FOP-005",
+    "estado_vehiculo": "FUERA_DE_SERVICIO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
   }
 ]

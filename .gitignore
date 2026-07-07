@@ -19,6 +19,7 @@ certs/
 *.crt
 *.~/AppData/
 _avast_/
+docs/token/
 
 *.xml
 backend/.coverage.*

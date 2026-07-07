@@ -1,6 +1,7 @@
 # FleetOps Reports
 
 [![Python 3.13](https://img.shields.io/badge/Python-3.13-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Version](https://img.shields.io/badge/Version-2.1.0-blue)](./VERSION)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-7.0+-green?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Docker](https://img.shields.io/badge/Docker-27+-blue?logo=docker&logoColor=white)](https://www.docker.com/)
@@ -18,7 +19,9 @@ FleetOps Reports is the analytical reporting microservice of the FleetOps platfo
 
 ## Features
 
-- REST API with FastAPI
+- Report listing and PDF download APIs
+- Optional operation-site (`sede_operacion`) filtering aligned with Vehicles service data
+- JWT-protected report endpoints with public health/metrics probes
 - Layered Architecture (Clean Architecture)
 - Domain-Driven Design (DDD)
 - MongoDB persistence
@@ -512,12 +515,12 @@ sudo make up
 
 ## Documentation
 
-- [Software Architecture Document](./docs/SAD.md) — Architecture overview and design decisions
-- [Architecture Decision Records](./docs/adr/) — Detailed ADR documentation
-- [API Specification](./docs/contracts/) — REST API contracts and schemas
+- [Software Architecture Document](./docs/base/SAD%20Reportes.md) — Architecture overview and design decisions
+- [Deployment Testing Guide](./docs/deployment/DEPLOYMENT_TESTING.md) — Validate deployed instances, routes, and sede filtering
 - [Deployment Configuration](./docs/deployment/DEPLOYMENT_CONFIGURATION.md) — CI/CD and infrastructure setup
 - [Deployment Guide](./docs/deployment/DEPLOYMENT_GUIDE.md) — Step-by-step EC2 free-tier deployment
-- [Contributing Guide](./CONTRIBUTING.md) — Development and contribution guidelines
+- [Simulation Guide](./docs/simulate/README.md) — Local and EC2 integration smoke tests
+- [CHANGELOG](./CHANGELOG.md) — Release history
 
 ---
 

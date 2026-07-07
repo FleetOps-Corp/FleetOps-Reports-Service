@@ -49,9 +49,9 @@ Reports does **not** embed business logic from upstream services; it maps their 
 
 | Consumer | Access pattern | Auth |
 |----------|----------------|------|
-| **Administrators / clients** | Direct: `POST /reports/generate` via Reports Nginx gateway | Expected at corporate gateway layer (local Nginx does not enforce JWT) |
-| **FleetOps Security Gateway** | Proxy: `POST /reportes/generate` → Reports backend | Gateway validates JWT (`ADMINISTRADOR` role) before forwarding |
-| **Operators** | `GET /health`, `GET /metrics` | Unauthenticated health; metrics for observability stack |
+| **Administrators / clients** | `POST /reports/generate` via Reports Nginx gateway | ADMINISTRADOR JWT validated by Reports middleware |
+| **FleetOps Security Gateway** | Proxy: `POST /reportes/generate` → Reports backend | Gateway validates JWT/RBAC before forwarding the same token |
+| **Operators** | `GET /health`, `GET /metrics` | Unauthenticated probes |
 
 No other FleetOps microservice is required to call Reports for the platform to operate; Reports is an on-demand analytical endpoint.
 
@@ -99,10 +99,13 @@ Report aggregate (metadata, period, KPIs, generation status) persisted through `
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/health` | Liveness probe |
-| GET | `/metrics` | Prometheus metrics |
-| POST | `/reports/generate` | Generate consolidated operational report |
+| GET | `/health` | Liveness probe (public) |
+| GET | `/metrics` | Prometheus metrics (public) |
+| POST | `/reports/generate` | Generate consolidated operational report (ADMINISTRADOR JWT) |
 | POST | `/reportes/generate` | Gateway-compatible alias |
+| GET | `/reports` | List stored reports (`?sede_operacion=` optional) |
+| GET | `/reports/{report_id}` | Report metadata |
+| GET | `/reports/{report_id}/download` | Download PDF from MinIO |
 | GET | `/docs` | OpenAPI Swagger UI (FastAPI) |
 
 Default local URL: `http://localhost:8080` (Nginx gateway port).
@@ -117,6 +120,7 @@ Default local URL: `http://localhost:8080` (Nginx gateway port).
 | `OPERATIONAL_GATEWAY_BEARER_TOKEN` | JWT with `ADMINISTRADOR` role |
 | `MONGODB_URI` / `MONGODB_DATABASE` | Analytical database |
 | `MINIO_*` | Object storage connection and bucket names |
+| `JWT_ALGORITHM` / `JWT_SECRET_KEY` / `JWT_PUBLIC_KEY_PATH` | Inbound JWT validation (HS256 or RS256) |
 | `GATEWAY_HTTP_PORT` | Host port for the Nginx gateway |
 
 See `.env.example` and `.env.production.example` for the full list.

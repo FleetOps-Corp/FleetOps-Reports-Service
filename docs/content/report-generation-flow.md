@@ -34,8 +34,9 @@ sequenceDiagram
 ### 1. Request validation
 
 - Entry: `POST /reports/generate` (or `/reportes/generate` via Security Gateway proxy)
-- Validated fields: `report_id`, `title`, `start_date`, `end_date` (see [operational-json-contracts.md](./operational-json-contracts.md))
-- No inbound JWT is enforced by Reports itself; authorization is delegated to the corporate gateway when applicable
+- Validated fields: `report_id`, `title`, `start_date`, `end_date`, optional `sede_operacion`
+- Inbound JWT is enforced on protected routes; `/health` and `/metrics` remain public
+- Security Gateway validates RBAC before forwarding requests to `/reportes/**`
 
 ### 2. Operational data collection
 
