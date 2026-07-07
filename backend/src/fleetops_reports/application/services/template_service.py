@@ -10,14 +10,14 @@ from fleetops_reports.domain.models.report import Report
 
 
 class TemplateService:
-    def build_context(self, report: Report, graph_url: str) -> dict[str, object]:
+    def build_context(self, report: Report, graph_urls: dict[str, str]) -> dict[str, object]:
         return {
             "report_id": report.report_id,
             "title": report.title,
             "period": report.period.label(),
             "status": report.status,
             "created_at": report.created_at.strftime("%Y-%m-%d %H:%M UTC"),
-            "graph_url": graph_url,
+            "graph_urls": graph_urls,
             "kpis": [
                 {
                     "name": kpi.name,
@@ -29,4 +29,3 @@ class TemplateService:
                 for kpi in report.kpis
             ],
         }
-
