@@ -52,7 +52,7 @@ async def test_generate_report_use_case_executes_transaction(
 
 
 @pytest.mark.asyncio
-async def test_generate_report_use_case_reraises_domain_errors(
+async def test_generate_report_use_case_handles_empty_vehicle_dataset(
     report_period,
     sample_assignments,
     sample_incidents,
@@ -73,6 +73,34 @@ async def test_generate_report_use_case_reraises_domain_errors(
         report_service,
     )
 
+    command = GenerateReportCommand("rep-empty-vehicles", "Executive Report", report_period)
+    result = await use_case.execute(command)
+    assert result.status == "generated"
+    assert result.kpis[0].metric.value == 0.0
+
+
+@pytest.mark.asyncio
+async def test_generate_report_use_case_reraises_domain_errors(
+    report_period,
+    sample_vehicles,
+    fake_repository,
+    fake_storage,
+    fake_renderer,
+) -> None:
+    class FailingReportService(ReportService):
+        async def generate(self, report, *, vehicles, incidents, maintenance):
+            raise EmptyDatasetError("forced")
+
+    use_case = GenerateReportUseCase(
+        FakeVehiclesClient(sample_vehicles),
+        FakeAssignmentsClient([]),
+        FakeIncidentsClient([]),
+        FakeMaintenanceClient([]),
+        AvailabilityService(),
+        IncidentService(),
+        MaintenanceService(),
+        FailingReportService(fake_repository, fake_storage, fake_renderer),
+    )
     command = GenerateReportCommand("rep-domain-error", "Executive Report", report_period)
     with pytest.raises(EmptyDatasetError):
         await use_case.execute(command)

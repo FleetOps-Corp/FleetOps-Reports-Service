@@ -13,7 +13,6 @@ import pytest
 
 from fleetops_reports.application.ports.operational_clients import MaintenanceRecord
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
-from fleetops_reports.domain.exceptions import EmptyDatasetError
 
 # ------------------------------------------------------------------ #
 # KPI 0 — MTTR (completar cobertura del método existente)            #
@@ -45,19 +44,18 @@ def test_maintenance_service_mttr_ignores_open_records() -> None:
     assert kpi.metric.value == pytest.approx(4.0, abs=0.01)
 
 
-def test_maintenance_service_mttr_raises_when_all_records_are_open() -> None:
-    """Sin registros cerrados la política lanza EmptyDatasetError."""
+def test_maintenance_service_mttr_returns_zero_when_all_records_are_open() -> None:
     now = datetime.now(UTC)
     records = [
         MaintenanceRecord("veh-001", "CORRECTIVO", now - timedelta(hours=3), None),
     ]
-    with pytest.raises(EmptyDatasetError):
-        MaintenanceService().calculate_mttr_kpi(records)
+    kpi = MaintenanceService().calculate_mttr_kpi(records)
+    assert kpi.metric.value == 0.0
 
 
-def test_maintenance_service_mttr_raises_on_empty_list() -> None:
-    with pytest.raises(EmptyDatasetError):
-        MaintenanceService().calculate_mttr_kpi([])
+def test_maintenance_service_mttr_returns_zero_on_empty_list() -> None:
+    kpi = MaintenanceService().calculate_mttr_kpi([])
+    assert kpi.metric.value == 0.0
 
 
 # ------------------------------------------------------------------ #
