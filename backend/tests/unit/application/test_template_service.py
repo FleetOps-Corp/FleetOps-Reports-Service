@@ -4,7 +4,10 @@ SAD Traceability: validates Template View context assembly for SAD process 10.6.
 """
 
 from fleetops_reports.application.services.availability_service import AvailabilityService
-from fleetops_reports.application.services.template_service import TemplateService
+from fleetops_reports.application.services.template_service import (
+    KPI_DESCRIPTIONS,
+    TemplateService,
+)
 from fleetops_reports.domain.models.report import Report
 
 
@@ -47,7 +50,7 @@ def test_template_service_builds_context(report_period, sample_vehicles) -> None
     kpi_context = context["kpis"][0]
 
     assert kpi_context["name"] == kpi.name
-    assert kpi_context["description"] == "Share of fleet units that are operational and ready for dispatch."
+    assert kpi_context["description"] == KPI_DESCRIPTIONS["fleet_availability"]
     assert kpi_context["value"] == kpi.metric.value
     assert kpi_context["unit"] == kpi.metric.unit
     assert kpi_context["source"] == kpi.source
