@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from html import escape
 
+SVG_CLOSE_TAG = "</svg>"
+
 
 def escape_text(value: str) -> str:
     return escape(value, quote=True)
@@ -115,7 +117,7 @@ def render_vertical_bar_chart(
             )
         )
 
-    parts.append("</svg>")
+    parts.append(SVG_CLOSE_TAG)
     return "".join(parts)
 
 
@@ -179,7 +181,7 @@ def render_horizontal_bar_chart(
             )
         )
 
-    parts.append("</svg>")
+    parts.append(SVG_CLOSE_TAG)
     return "".join(parts)
 
 
@@ -260,5 +262,5 @@ def render_grouped_bar_chart(
             )
         )
 
-    parts.append("</svg>")
+    parts.append(SVG_CLOSE_TAG)
     return "".join(parts)
