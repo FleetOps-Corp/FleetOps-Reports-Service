@@ -15,18 +15,8 @@ from fleetops_reports.application.ports.operational_clients import (
 from fleetops_reports.application.services.charts.chart_builder import ChartBuilder
 from fleetops_reports.application.services.charts.svg_primitives import render_horizontal_bar_chart
 from fleetops_reports.domain.exceptions import EmptyDatasetError
-from fleetops_reports.domain.models.vehicle import Vehicle
+from fleetops_reports.domain.models.vehicle import Vehicle, plate_to_vehicle_id_map
 from fleetops_reports.domain.policies.criticality_policy import CriticalityPolicy
-
-
-def _plate_to_vehicle_id(vehicles: list[Vehicle]) -> dict[str, str]:
-    # TODO: duplicated from IncidentService plate-to-vehicle mapping; extract a
-    # shared helper if more services need the same normalization.
-    return {
-        vehicle.numero_placa: vehicle.id_vehiculo
-        for vehicle in vehicles
-        if vehicle.numero_placa
-    }
 
 
 class CriticalRankingChartBuilder(ChartBuilder):
@@ -47,7 +37,7 @@ class CriticalRankingChartBuilder(ChartBuilder):
         if not self._vehicles:
             raise EmptyDatasetError("vehicles")
 
-        plate_to_vehicle_id = _plate_to_vehicle_id(self._vehicles)
+        plate_to_vehicle_id = plate_to_vehicle_id_map(self._vehicles)
 
         incident_counts: Counter[str] = Counter()
         for record in self._incidents:
