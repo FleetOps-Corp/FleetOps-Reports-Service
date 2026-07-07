@@ -38,6 +38,7 @@ services:
       - "8000"
     volumes:
       - backend_logs:/var/log/fleetops-reports
+      - ./certs:/app/certs:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
