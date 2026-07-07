@@ -1,0 +1,3 @@
+# Keep generated PDF artifacts for manual review.
+*
+!.gitignore

@@ -23,6 +23,11 @@ from fleetops_reports.application.services.availability_service import (
 )
 from fleetops_reports.application.services.incident_service import IncidentService
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
+from fleetops_reports.application.services.operational_filter_service import (
+    filter_incidents_for_vehicles,
+    filter_maintenance_for_vehicles,
+    filter_vehicles_by_sede,
+)
 from fleetops_reports.application.services.report_service import ReportService
 from fleetops_reports.domain.exceptions import DomainError, ReportGenerationError
 from fleetops_reports.domain.models.report import Report
@@ -34,6 +39,7 @@ class GenerateReportCommand:
     report_id: str
     title: str
     period: ReportPeriod
+    sede_operacion: str | None = None
 
 
 class GenerateReportUseCase:
@@ -63,10 +69,19 @@ class GenerateReportUseCase:
         self._metrics_recorder.on_request()
         try:
             with self._metrics_recorder.track_generation():
-                vehicles = await self._vehicles_client.list_vehicles()
+                vehicles = filter_vehicles_by_sede(
+                    await self._vehicles_client.list_vehicles(),
+                    command.sede_operacion,
+                )
                 await self._assignments_client.list_assignments()
-                incidents = await self._incidents_client.list_incidents()
-                maintenance = await self._maintenance_client.list_maintenance()
+                incidents = filter_incidents_for_vehicles(
+                    await self._incidents_client.list_incidents(),
+                    vehicles,
+                )
+                maintenance = filter_maintenance_for_vehicles(
+                    await self._maintenance_client.list_maintenance(),
+                    vehicles,
+                )
 
                 kpis = [
                     self._availability_service.calculate_global_kpi(vehicles),
@@ -86,6 +101,7 @@ class GenerateReportUseCase:
                     title=command.title,
                     period=command.period,
                     kpis=kpis,
+                    sede_operacion=command.sede_operacion,
                 )
                 return await self._report_service.generate(
                     report,

@@ -17,6 +17,7 @@ class Vehicle:
     ciudad_operacion: str  # Ciudad asignada
     marca: str  # Fabricante de la unidad
     modelo: str  # Modelo comercial
+    sede_operacion: str = ""  # Sede física / patio de operación
 
     @property
     def is_available(self) -> bool:

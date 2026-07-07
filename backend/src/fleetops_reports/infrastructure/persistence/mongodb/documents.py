@@ -18,6 +18,7 @@ class ReportDocument(Document):
     period: dict[str, str]
     status: str
     document_url: str | None
+    sede_operacion: str | None = None
     kpis: list[dict[str, Any]]
     created_at: datetime
 

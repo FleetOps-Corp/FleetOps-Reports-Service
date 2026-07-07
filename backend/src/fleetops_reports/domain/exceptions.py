@@ -68,6 +68,17 @@ class ReportGenerationError(DomainError):
         )
 
 
+class ReportNotFoundError(DomainError):
+    """Raised when a requested report does not exist or has no stored artifact."""
+
+    def __init__(self, report_id: str) -> None:
+        super().__init__(
+            message=f"Report '{report_id}' was not found",
+            code="REPORT_NOT_FOUND",
+            details={"report_id": report_id},
+        )
+
+
 class InvalidReportPeriodError(DomainError):
     """Raised when a reporting period is chronologically invalid."""
 

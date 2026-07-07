@@ -1,0 +1,25 @@
+== Local integration smoke test ==
+
+[1] Security Gateway liveness (GET /docs)
+OK: GET /docs -> HTTP 200
+
+[2] Register/login admin (ignore register conflict)
+Register skipped (user may exist)
+OK: JWT acquired (expires_in=3600s)
+
+[3] Incidents direct (/api/incidents/)
+OK: direct incidents count=0
+
+[4] Incidents via Security Gateway (/incidentes/)
+OK: gateway incidents count=0
+
+[5] Reports health
+OK: {"status":"ok","service":"fleetops-reports"}
+
+[6] Reports generate (direct API)
+OK: status=generated kpis=6 document=rep-local-sim-20260702-122540.pdf
+
+[7] Reports via Security Gateway (/reportes/generate)
+OK: status=generated kpis=6
+
+All local checks completed.
