@@ -14,6 +14,15 @@ from fleetops_reports.application.services.report_service import ReportService
 from fleetops_reports.domain.models.report import Report
 
 
+class _CapturingRenderer:
+    def __init__(self) -> None:
+        self.last_context: dict[str, object] | None = None
+
+    async def render(self, template_name: str, context: dict[str, object]) -> bytes:
+        self.last_context = context
+        return f"PDF:{template_name}:{context['report_id']}".encode()
+
+
 @pytest.mark.asyncio
 async def test_report_service_generates_report(
     report_period,
@@ -22,14 +31,14 @@ async def test_report_service_generates_report(
     sample_maintenance,
     fake_repository,
     fake_storage,
-    fake_renderer,
 ) -> None:
+    renderer = _CapturingRenderer()
     kpis = [
         AvailabilityService().calculate_global_kpi(sample_vehicles),
         MaintenanceService().calculate_mttr_kpi(sample_maintenance),
     ]
     report = Report("rep-001", "Executive Report", report_period, kpis)
-    result = await ReportService(fake_repository, fake_storage, fake_renderer).generate(
+    result = await ReportService(fake_repository, fake_storage, renderer).generate(
         report,
         vehicles=sample_vehicles,
         incidents=sample_incidents,
@@ -37,6 +46,15 @@ async def test_report_service_generates_report(
     )
     assert result.status == "generated"
     assert result.document_url == "rep-001.pdf"
+    assert renderer.last_context is not None
+    graph_urls = renderer.last_context["graph_urls"]
+    assert set(graph_urls) == {
+        "availability",
+        "incidents",
+        "maintenance",
+        "mttr",
+        "critical-ranking",
+    }
 
 
 @pytest.mark.asyncio

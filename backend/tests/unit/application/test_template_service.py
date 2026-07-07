@@ -26,7 +26,6 @@ def test_template_service_builds_context(report_period, sample_vehicles) -> None
         "maintenance": "https://minio.test/rep-001-maintenance.svg",
         "mttr": "https://minio.test/rep-001-mttr.svg",
         "critical-ranking": "https://minio.test/rep-001-critical-ranking.svg",
-        "kpi-summary": "https://minio.test/rep-001-kpi-summary.svg",
     }
 
     context = TemplateService().build_context(report, graph_urls)

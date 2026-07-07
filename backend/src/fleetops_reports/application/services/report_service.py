@@ -87,17 +87,6 @@ class ReportService:
                 graph_object, expires_seconds=600
             )
 
-        # TODO: remove legacy kpi-summary chart once executive template no longer needs it.
-        # TODO: handle empty report.kpis with empty-state placeholder instead of failing here.
-        kpi_summary_content = self._graph_service.build_kpi_graph(report.kpis)
-        kpi_summary_object = await self._storage.upload_graph(
-            f"{report.report_id}-kpi-summary.svg",
-            kpi_summary_content,
-        )
-        graph_urls["kpi-summary"] = await self._storage.create_presigned_url(
-            kpi_summary_object, expires_seconds=600
-        )
-
         context = self._template_service.build_context(report, graph_urls)
         pdf_content = await self._renderer.render("executive_report.html.j2", context)
         document_url = await self._storage.upload_report_pdf(report.report_id, pdf_content)
