@@ -64,3 +64,19 @@ class MinioObjectStorage:
             expires_seconds,
         )
 
+    async def download_report_pdf(self, object_name: str) -> bytes:
+        await self.ensure_buckets()
+
+        def _download() -> bytes:
+            response = self._client.get_object(
+                self._settings.minio_reports_bucket,
+                object_name,
+            )
+            try:
+                return response.read()
+            finally:
+                response.close()
+                response.release_conn()
+
+        return await asyncio.to_thread(_download)
+

@@ -2,50 +2,46 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
-import jwt
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from fleetops_reports.config.security import get_security_settings
+from fleetops_reports.config.security import (
+    ADMINISTRATOR_ROLE,
+    PUBLIC_PATHS,
+    decode_jwt,
+    get_security_settings,
+)
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Any) -> Any:
+        if request.url.path in PUBLIC_PATHS:
+            return await call_next(request)
+
         authorization = request.headers.get("authorization")
         if not authorization or not authorization.startswith("Bearer "):
             return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
 
         token = authorization.split(" ", 1)[1]
         settings = get_security_settings()
-        public_key_value = settings.jwt_public_key_path
-        if not public_key_value:
+        if not settings.jwt_public_key_path and not settings.jwt_secret_key:
             return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
-
-        public_key = public_key_value
-        candidate_paths = [Path(public_key_value)]
-        if not candidate_paths[0].is_absolute():
-            candidate_paths.append(Path(__file__).resolve().parents[3] / public_key_value)
-            candidate_paths.append(Path(__file__).resolve().parents[4] / public_key_value)
-
-        for candidate_path in candidate_paths:
-            if candidate_path.exists():
-                public_key = candidate_path.read_text(encoding="utf-8")
-                break
 
         try:
-            jwt.decode(
-                token,
-                public_key,
-                algorithms=[settings.jwt_algorithm],
-                options={"require": ["sub"]},
-            )
-        except jwt.InvalidTokenError:
-            return JSONResponse(status_code=401, content={"detail": "Unauthorized"})
+            payload = decode_jwt(token, settings)
+        except HTTPException as exc:
+            return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
+        if str(payload.get("role", "")).upper() != ADMINISTRATOR_ROLE:
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "Administrator role required."},
+            )
+
+        request.state.jwt_payload = payload
         return await call_next(request)
 
 

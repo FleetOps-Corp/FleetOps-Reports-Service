@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from fleetops_reports.domain.exceptions import EmptyDatasetError, InvalidMetricError
+from fleetops_reports.domain.exceptions import InvalidMetricError
 from fleetops_reports.domain.policies.mttr_policy import MTTRPolicy
 
 
@@ -17,9 +17,10 @@ def test_calculate_mttr_hours() -> None:
     assert metric.value == 4
 
 
-def test_calculate_mttr_rejects_empty_dataset() -> None:
-    with pytest.raises(EmptyDatasetError):
-        MTTRPolicy().calculate_hours([])
+def test_calculate_mttr_returns_zero_for_empty_dataset() -> None:
+    metric = MTTRPolicy().calculate_hours([])
+    assert metric.value == 0.0
+    assert metric.unit == "hours"
 
 
 def test_calculate_mttr_rejects_invalid_interval() -> None:

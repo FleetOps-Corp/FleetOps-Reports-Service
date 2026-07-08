@@ -66,14 +66,14 @@ def test_availability_service_calculates_unavailability_kpi() -> None:
     assert kpi.metric.unit == "percent"
 
 
-def test_availability_service_raises_error_when_dataset_is_empty() -> None:
-    with pytest.raises(EmptyDatasetError):
-        AvailabilityService().calculate_global_kpi([])
+def test_availability_service_returns_zero_for_empty_global_kpi() -> None:
+    kpi = AvailabilityService().calculate_global_kpi([])
+    assert kpi.metric.value == 0.0
 
 
-def test_availability_service_rejects_empty_dataset_for_available_kpi() -> None:
-    with pytest.raises(EmptyDatasetError):
-        AvailabilityService().calculate_available_vehicles_kpi([])
+def test_availability_service_returns_zero_for_empty_available_kpi() -> None:
+    kpi = AvailabilityService().calculate_available_vehicles_kpi([])
+    assert kpi.metric.value == 0.0
 
 
 def test_availability_service_rejects_empty_dataset_for_unavailable_kpi() -> None:

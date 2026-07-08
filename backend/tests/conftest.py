@@ -61,6 +61,7 @@ def sample_vehicles() -> list[Vehicle]:
             "Bogotá",
             "Kenworth",
             "T800",
+            "Patio Norte Bogotá",
         ),
         Vehicle(
             "9d23cea6-8593-5279-a7fb-6ge4b0365d3b",
@@ -69,6 +70,7 @@ def sample_vehicles() -> list[Vehicle]:
             "Medellín",
             "Kenworth",
             "T800",
+            "Patio Medellín",
         ),
         Vehicle(
             "ae34dfb7-96a4-6380-b8gc-7hf5c1476e4c",
@@ -77,6 +79,7 @@ def sample_vehicles() -> list[Vehicle]:
             "Cali",
             "Kenworth",
             "T800",
+            "Patio Cali",
         ),
     ]
 
@@ -153,18 +156,41 @@ class FakeRepository:
             )
         )
 
+    async def list_reports(self, sede_operacion: str | None = None):
+        if sede_operacion:
+            normalized = sede_operacion.strip().casefold()
+            filtered = [
+                report
+                for report in self.saved
+                if (report.sede_operacion or "").strip().casefold() == normalized
+            ]
+        else:
+            filtered = list(self.saved)
+        return await _async_value(
+            sorted(filtered, key=lambda report: report.created_at, reverse=True)
+        )
+
 
 class FakeStorage:
+    def __init__(self) -> None:
+        self._objects: dict[str, bytes] = {}
+
     async def upload_report_pdf(self, report_id: str, content: bytes) -> str:
-        return await _async_value(f"{report_id}.pdf")
+        object_name = f"{report_id}.pdf"
+        self._objects[object_name] = content
+        return await _async_value(object_name)
 
     async def upload_graph(self, graph_name: str, content: bytes) -> str:
+        self._objects[graph_name] = content
         return await _async_value(graph_name)
 
     async def create_presigned_url(self, object_name: str, expires_seconds: int) -> str:
         return await _async_value(
             f"https://minio.test/{object_name}?expires={expires_seconds}"
         )
+
+    async def download_report_pdf(self, object_name: str) -> bytes:
+        return await _async_value(self._objects.get(object_name, b"PDF-CONTENT"))
 
 
 class FakeRenderer:

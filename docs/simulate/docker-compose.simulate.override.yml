@@ -3,3 +3,5 @@ services:
   backend:
     environment:
       MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin
+      # Route operational reads to the local mock gateway (see scripts/simulate/mock_operational_gateway.py).
+      OPERATIONAL_GATEWAY_BASE_URL: http://host.docker.internal:8099

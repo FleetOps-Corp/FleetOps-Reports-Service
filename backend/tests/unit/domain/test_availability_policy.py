@@ -25,9 +25,9 @@ def test_calculate_global_availability() -> None:
     assert percentage.value == pytest.approx(66.67, abs=0.01)
 
 
-def test_calculate_global_availability_rejects_empty_dataset() -> None:
-    with pytest.raises(EmptyDatasetError):
-        AvailabilityPolicy().calculate_global_availability([])
+def test_calculate_global_availability_returns_zero_for_empty_dataset() -> None:
+    percentage = AvailabilityPolicy().calculate_global_availability([])
+    assert percentage.value == 0.0
 
 
 def test_calculate_global_unavailability() -> None:

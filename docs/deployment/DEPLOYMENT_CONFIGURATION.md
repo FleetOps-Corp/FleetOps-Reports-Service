@@ -175,6 +175,8 @@ Critical production variables (placeholders only in templates):
 | `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` | Strong random values; MinIO runs locally on EC2 |
 | `OPERATIONAL_GATEWAY_BASE_URL` | URL of FleetOps Security Gateway |
 | `OPERATIONAL_GATEWAY_BEARER_TOKEN` | JWT with `ADMINISTRADOR` role |
+| `JWT_ALGORITHM` | Must match Security Service (`HS256` by default) |
+| `JWT_SECRET_KEY` | Same secret as Security Service — required for inbound JWT on protected routes |
 | `GATEWAY_HTTP_PORT` | Host port for public API access |
 
 ---

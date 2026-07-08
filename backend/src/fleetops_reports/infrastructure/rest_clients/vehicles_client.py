@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from fleetops_reports.domain.models.vehicle import Vehicle
 from fleetops_reports.infrastructure.rest_clients.circuit_breaker import CircuitBreaker
+from fleetops_reports.infrastructure.rest_clients.field_mapping import get_payload_field
 from fleetops_reports.infrastructure.rest_clients.gateway_http import fetch_gateway_list
 
 
@@ -27,12 +28,19 @@ class RestVehiclesClient:
             items = await fetch_gateway_list(self._url, self._bearer_token)
             return [
                 Vehicle(
-                    id_vehiculo=item["id_vehiculo"],
-                    numero_placa=item["numero_placa"],
-                    estado_vehiculo=item["estado_vehiculo"],
-                    ciudad_operacion=item["ciudad_operacion"],
-                    marca=item["marca"],
-                    modelo=item["modelo"],
+                    id_vehiculo=get_payload_field(item, "id_vehiculo", "idVehiculo"),
+                    numero_placa=get_payload_field(item, "numero_placa", "numeroPlaca"),
+                    estado_vehiculo=get_payload_field(
+                        item, "estado_vehiculo", "estadoVehiculo"
+                    ),
+                    ciudad_operacion=get_payload_field(
+                        item, "ciudad_operacion", "ciudadOperacion"
+                    ),
+                    sede_operacion=get_payload_field(
+                        item, "sede_operacion", "sedeOperacion"
+                    ),
+                    marca=get_payload_field(item, "marca"),
+                    modelo=get_payload_field(item, "modelo"),
                 )
                 for item in items
             ]
