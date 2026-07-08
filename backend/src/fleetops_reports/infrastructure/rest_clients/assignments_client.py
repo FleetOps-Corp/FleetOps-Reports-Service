@@ -11,7 +11,10 @@ from fleetops_reports.infrastructure.rest_clients.circuit_breaker import Circuit
 from fleetops_reports.infrastructure.rest_clients.datetime_parsing import (
     parse_operational_datetime,
 )
-from fleetops_reports.infrastructure.rest_clients.gateway_http import fetch_gateway_list
+from fleetops_reports.infrastructure.rest_clients.gateway_http import (
+    build_gateway_resource_url,
+    fetch_gateway_list,
+)
 
 
 class RestAssignmentsClient:
@@ -20,8 +23,10 @@ class RestAssignmentsClient:
         gateway_base_url: str,
         circuit_breaker: CircuitBreaker,
         bearer_token: str | None = None,
+        *,
+        resource_path: str = "/asignaciones/",
     ) -> None:
-        self._url = f"{gateway_base_url.rstrip('/')}/asignaciones/"
+        self._url = build_gateway_resource_url(gateway_base_url, resource_path)
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
 

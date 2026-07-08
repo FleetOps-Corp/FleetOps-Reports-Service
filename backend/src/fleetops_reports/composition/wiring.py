@@ -93,13 +93,29 @@ def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase
     maintenance_breaker = _build_circuit_breaker(settings)
 
     return GenerateReportUseCase(
-        vehicles_client=RestVehiclesClient(gateway_url, vehicles_breaker, gateway_token),
-        assignments_client=RestAssignmentsClient(
-            gateway_url, assignments_breaker, gateway_token
+        vehicles_client=RestVehiclesClient(
+            gateway_url,
+            vehicles_breaker,
+            gateway_token,
+            resource_path=settings.operational_vehicles_path,
         ),
-        incidents_client=RestIncidentsClient(gateway_url, incidents_breaker, gateway_token),
+        assignments_client=RestAssignmentsClient(
+            gateway_url,
+            assignments_breaker,
+            gateway_token,
+            resource_path=settings.operational_assignments_path,
+        ),
+        incidents_client=RestIncidentsClient(
+            gateway_url,
+            incidents_breaker,
+            gateway_token,
+            resource_path=settings.operational_incidents_path,
+        ),
         maintenance_client=RestMaintenanceClient(
-            gateway_url, maintenance_breaker, gateway_token
+            gateway_url,
+            maintenance_breaker,
+            gateway_token,
+            resource_path=settings.operational_maintenance_path,
         ),
         availability_service=AvailabilityService(),
         incident_service=IncidentService(),

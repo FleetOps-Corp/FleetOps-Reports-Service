@@ -11,7 +11,10 @@ from fleetops_reports.infrastructure.rest_clients.assignments_client import (
     RestAssignmentsClient,
 )
 from fleetops_reports.infrastructure.rest_clients.circuit_breaker import CircuitBreaker
-from fleetops_reports.infrastructure.rest_clients.gateway_http import build_gateway_headers
+from fleetops_reports.infrastructure.rest_clients.gateway_http import (
+    build_gateway_headers,
+    build_gateway_resource_url,
+)
 from fleetops_reports.infrastructure.rest_clients.incidents_client import RestIncidentsClient
 from fleetops_reports.infrastructure.rest_clients.maintenance_client import (
     RestMaintenanceClient,
@@ -25,6 +28,34 @@ def test_build_gateway_headers_includes_bearer_token() -> None:
 
     assert headers["Authorization"] == "Bearer admin-token"
     assert headers["Accept"] == "application/json"
+
+
+def test_build_gateway_resource_url_normalizes_trailing_slash() -> None:
+    assert (
+        build_gateway_resource_url("http://gateway:8000", "/api/vehicles")
+        == "http://gateway:8000/api/vehicles/"
+    )
+
+
+@pytest.mark.asyncio
+async def test_vehicles_client_uses_configurable_resource_path(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_fetch(url: str, bearer_token: str | None = None):
+        assert url == "http://gateway:8000/api/vehicles/"
+        return []
+
+    monkeypatch.setattr(
+        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list",
+        fake_fetch,
+    )
+
+    client = RestVehiclesClient(
+        "http://gateway:8000",
+        CircuitBreaker(failure_threshold=1, recovery_seconds=1),
+        resource_path="/api/vehicles",
+    )
+    assert await client.list_vehicles() == []
 
 
 def test_extract_gateway_list_accepts_raw_array() -> None:

@@ -5,6 +5,18 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.2] - 2026-07-07
+
+### Added
+- Configurable Security Gateway operational paths (`OPERATIONAL_*_PATH`) for deployed `/api/*` routes.
+- `/api/reports/**` route aliases matching Security `REPORTS_SERVICE_PREFIX`.
+- RS256 production configuration, EC2 deploy script, and Security integration smoke test.
+- `docs/deployment/SECURITY_INTEGRATION_REPORT.md`.
+
+### Changed
+- Production `.env` template defaults to RS256 + public key verification against deployed Security.
+- Operational REST clients accept configurable resource paths via environment variables.
+
 ## [2.1.1] - 2026-07-07
 
 ### Added

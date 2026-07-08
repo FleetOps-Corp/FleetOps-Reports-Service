@@ -14,6 +14,13 @@ def build_gateway_headers(bearer_token: str | None = None) -> dict[str, str]:
     return headers
 
 
+def build_gateway_resource_url(base_url: str, resource_path: str) -> str:
+    normalized = resource_path if resource_path.startswith("/") else f"/{resource_path}"
+    if not normalized.endswith("/"):
+        normalized = f"{normalized}/"
+    return f"{base_url.rstrip('/')}{normalized}"
+
+
 async def fetch_gateway_list(url: str, bearer_token: str | None = None) -> list[dict]:
     headers = build_gateway_headers(bearer_token)
     async with httpx.AsyncClient(follow_redirects=True) as client:

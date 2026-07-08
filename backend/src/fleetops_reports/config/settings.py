@@ -50,6 +50,22 @@ class Settings(BaseSettings):
     operational_gateway_bearer_token: str | None = Field(
         default=None, alias="OPERATIONAL_GATEWAY_BEARER_TOKEN"
     )
+    operational_vehicles_path: str = Field(
+        default="/vehiculos/",
+        alias="OPERATIONAL_VEHICLES_PATH",
+    )
+    operational_assignments_path: str = Field(
+        default="/asignaciones/",
+        alias="OPERATIONAL_ASSIGNMENTS_PATH",
+    )
+    operational_incidents_path: str = Field(
+        default="/incidentes/",
+        alias="OPERATIONAL_INCIDENTS_PATH",
+    )
+    operational_maintenance_path: str = Field(
+        default="/mantenimiento/",
+        alias="OPERATIONAL_MAINTENANCE_PATH",
+    )
 
     circuit_breaker_failure_threshold: int = Field(
         alias="CIRCUIT_BREAKER_FAILURE_THRESHOLD"
