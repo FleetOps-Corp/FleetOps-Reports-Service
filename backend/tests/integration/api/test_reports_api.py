@@ -2,10 +2,7 @@
 
 import jwt
 
-import jwt
 
-<<<<<<< HEAD
-=======
 def _auth_headers(client) -> dict[str, str]:
     token = jwt.encode(
         {"sub": "test-user", "role": "ADMINISTRADOR"},
@@ -14,7 +11,6 @@ def _auth_headers(client) -> dict[str, str]:
     )
     return {"Authorization": f"Bearer {token}"}
 
->>>>>>> develop
 
 def test_generate_report_endpoint_requires_auth(api_client) -> None:
     response = api_client.post(
@@ -29,15 +25,9 @@ def test_generate_report_endpoint_requires_auth(api_client) -> None:
     assert response.status_code == 401
 
 
-<<<<<<< HEAD
-def test_generate_report_endpoint_accepts_valid_bearer_token(api_client) -> None:
-    token = jwt.encode(
-        {"sub": "test-user", "role": "admin"},
-=======
 def test_generate_report_endpoint_rejects_non_admin_role(api_client) -> None:
     token = jwt.encode(
         {"sub": "test-user", "role": "EMPLEADO"},
->>>>>>> develop
         api_client.private_pem,
         algorithm="RS256",
     )
@@ -51,8 +41,6 @@ def test_generate_report_endpoint_rejects_non_admin_role(api_client) -> None:
             "end_date": "2026-05-31",
         },
     )
-<<<<<<< HEAD
-=======
     assert response.status_code == 403
 
 
@@ -68,7 +56,6 @@ def test_generate_report_endpoint_accepts_valid_bearer_token(api_client) -> None
             "sede_operacion": "Patio Norte Bogotá",
         },
     )
->>>>>>> develop
     assert response.status_code == 201
     body = response.json()
     assert body["status"] == "generated"

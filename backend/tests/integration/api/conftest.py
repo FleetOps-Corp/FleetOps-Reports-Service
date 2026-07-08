@@ -20,13 +20,9 @@ from fleetops_reports.application.services.maintenance_service import Maintenanc
 from fleetops_reports.application.services.report_service import ReportService
 from fleetops_reports.application.use_cases.download_report import DownloadReportUseCase
 from fleetops_reports.application.use_cases.generate_report import GenerateReportUseCase
-<<<<<<< HEAD
-from fleetops_reports.composition.wiring import get_settings
-=======
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.config.security import get_security_settings
->>>>>>> develop
 from fleetops_reports.presentation.api.middleware import register_auth_middleware
 from fleetops_reports.presentation.api.routes import reports
 from tests.conftest import (
@@ -68,12 +64,8 @@ def api_client(
     private_pem, public_key_path = _generate_test_rsa_keys(tmp_path)
     monkeypatch.setenv("JWT_ALGORITHM", "RS256")
     monkeypatch.setenv("JWT_PUBLIC_KEY_PATH", public_key_path)
-<<<<<<< HEAD
-    get_settings.cache_clear()
-=======
     monkeypatch.delenv("JWT_SECRET_KEY", raising=False)
     get_security_settings.cache_clear()
->>>>>>> develop
 
     app = FastAPI()
     register_auth_middleware(app)
@@ -91,10 +83,6 @@ def api_client(
         report_service,
     )
     app.dependency_overrides[get_generate_report_use_case] = lambda: use_case
-<<<<<<< HEAD
-    client = TestClient(app)
-    client.private_pem = private_pem
-=======
     app.dependency_overrides[get_list_reports_use_case] = lambda: ListReportsUseCase(
         fake_repository
     )
@@ -109,5 +97,4 @@ def api_client(
     client.private_pem = private_pem
     client.use_case = use_case
     client.app = app
->>>>>>> develop
     return client
