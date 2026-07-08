@@ -15,15 +15,20 @@ Write-Host "Reports:  $ReportsBase"
 function Test-Status {
     param([string]$Label, [string]$Uri, [int[]]$Expected = @(200, 401, 403))
     try {
-        $response = Invoke-WebRequest -Uri $Uri -TimeoutSec 20 -SkipHttpErrorCheck
-        $ok = $Expected -contains $response.StatusCode
-        $mark = if ($ok) { "OK" } else { "WARN" }
-        Write-Host ('[{0}] {1} -> HTTP {2}' -f $mark, $Label, $response.StatusCode)
-        return $response.StatusCode
+        Invoke-WebRequest -Uri $Uri -TimeoutSec 20 | Out-Null
+        $statusCode = 200
     } catch {
-        Write-Host ('[FAIL] {0} -> {1}' -f $Label, $_.Exception.Message)
-        return -1
+        if ($_.Exception.Response) {
+            $statusCode = [int]$_.Exception.Response.StatusCode
+        } else {
+            Write-Host ('[FAIL] {0} -> {1}' -f $Label, $_.Exception.Message)
+            return -1
+        }
     }
+    $ok = $Expected -contains $statusCode
+    $mark = if ($ok) { "OK" } else { "WARN" }
+    Write-Host ('[{0}] {1} -> HTTP {2}' -f $mark, $Label, $statusCode)
+    return $statusCode
 }
 
 Test-Status "Security OpenAPI" "$SecurityBase/openapi.json" @(200) | Out-Null
