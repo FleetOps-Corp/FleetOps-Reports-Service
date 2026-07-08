@@ -37,6 +37,10 @@ security_api_router = APIRouter(
     prefix="/api/reports",
     tags=["Reports (Security /api/reports)"],
 )
+security_reportes_router = APIRouter(
+    prefix="/api/reportes",
+    tags=["Reports (Security /api/reportes)"],
+)
 
 
 async def generate_report(
@@ -123,6 +127,7 @@ router.add_api_route(
 for alias_router, label in (
     (gateway_router, "/reportes"),
     (security_api_router, "/api/reports"),
+    (security_reportes_router, "/api/reportes"),
 ):
     alias_router.add_api_route(
         "/generate",

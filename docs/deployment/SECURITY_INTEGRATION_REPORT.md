@@ -19,9 +19,12 @@ Generated after aligning Reports EC2 with the deployed Security Gateway (RS256 +
 | Assignments | `GET /api/assignments/` | `/api/assignments` |
 | Incidents | `GET /api/incidents/` | `/api/incidents` |
 | Maintenance | `GET /api/maintenance/` | `/api/maintenance` |
-| Reports proxy | `POST /api/reports/generate` | `/api/reports` |
+| Reports proxy (canonical) | `POST /api/reportes/generate` | `/api/reportes` |
+| Reports proxy (legacy) | `POST /api/reports/generate` | `/api/reports` |
 
-Reports exposes matching aliases at `/api/reports/**` (in addition to `/reports/**` and `/reportes/**`).
+Reports exposes matching aliases at `/api/reportes/**` and `/api/reports/**` (in addition to `/reports/**` and `/reportes/**`).
+
+Inbound JWT roles accepted by Reports: `ADMINISTRADOR`, `EMPLEADO_REPORTES`.
 
 ## JWT model (RS256)
 
@@ -63,14 +66,16 @@ docker compose -f docker-compose.prod.yml --env-file .env up -d --build backend 
 
 ## Required action on Security team
 
-Security Gateway must forward `/api/reports/**` to the Reports public URL:
+Security Gateway must forward `/api/reportes/**` (or `/api/reports/**`) to the Reports public URL:
 
 ```env
 REPORTS_SERVICE_URL=http://18.217.5.127:8081
-REPORTS_SERVICE_PREFIX=/api/reports
+REPORTS_SERVICE_PREFIX=/api/reportes
 ```
 
-Without this, `POST /api/reports/generate` on Security will not reach Reports EC2.
+Without this, `POST /api/reportes/generate` on Security will not reach Reports EC2.
+
+Security must also register role `EMPLEADO_REPORTES` in the role service and allow it on the reports route prefix.
 
 ## Verification checklist
 
@@ -78,9 +83,13 @@ Without this, `POST /api/reports/generate` on Security will not reach Reports EC
 # From your workstation (no token — expect 401 on protected routes)
 powershell -ExecutionPolicy Bypass -File scripts/simulate/smoke_security_integration.ps1
 
-# With admin JWT from Security login
+# With JWT from Security login (do not commit tokens)
 powershell -ExecutionPolicy Bypass -File scripts/simulate/smoke_security_integration.ps1 -BearerToken $token
 ```
+
+To bootstrap a reports test user after Security runs `seed_admin.py`, copy
+`scripts/simulate/bootstrap_security_reports_user.example.ps1` locally and pass
+credentials via parameters or `FLEETOPS_*` environment variables.
 
 ```bash
 # On Reports EC2 (SSH)
@@ -110,6 +119,7 @@ Set `OPERATIONAL_GATEWAY_BEARER_TOKEN=$token` in `/opt/fleetops-reports/.env` an
 |---------|-------|-----|
 | 401 on Reports protected routes | Missing/invalid JWT or wrong public key | Copy `jwt_public.pem` → `certs/public.pem`; verify RS256 tokens from Security |
 | 401 on Security `/api/*` | Missing bearer token | Login again; pass `Authorization: Bearer` |
-| 404 on Security `/reportes` | Legacy path removed | Use `/api/reports` |
+| 404 on Security `/api/reportes` | `REPORTS_SERVICE_PREFIX` not set to `/api/reportes` | Security team sets prefix and URL |
+| 403 on Reports with valid JWT | Role is `EMPLEADO` (default on register) | Admin assigns `EMPLEADO_REPORTES` via `POST /roles/assign` |
 | 503 on Security `/api/reports` | `REPORTS_SERVICE_URL` not set | Security team points to `http://18.217.5.127:8081` |
 | 422 on generate | Upstream microservices unreachable | Confirm Vehicles/Incidents/etc. are deployed and Security routes resolve |

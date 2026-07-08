@@ -45,6 +45,7 @@ def create_app() -> FastAPI:
     app.include_router(reports.router)
     app.include_router(reports.gateway_router)
     app.include_router(reports.security_api_router)
+    app.include_router(reports.security_reportes_router)
     return app
 
 

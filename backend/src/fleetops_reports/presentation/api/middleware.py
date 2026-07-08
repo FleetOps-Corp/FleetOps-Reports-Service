@@ -9,8 +9,8 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from fleetops_reports.config.security import (
-    ADMINISTRATOR_ROLE,
     PUBLIC_PATHS,
+    REPORTS_ALLOWED_ROLES,
     decode_jwt,
     get_security_settings,
 )
@@ -35,10 +35,14 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         except HTTPException as exc:
             return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
-        if str(payload.get("role", "")).upper() != ADMINISTRATOR_ROLE:
+        if str(payload.get("role", "")).upper() not in REPORTS_ALLOWED_ROLES:
             return JSONResponse(
                 status_code=403,
-                content={"detail": "Administrator role required."},
+                content={
+                    "detail": (
+                        "Reports access requires ADMINISTRADOR or EMPLEADO_REPORTES role."
+                    ),
+                },
             )
 
         request.state.jwt_payload = payload
