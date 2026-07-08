@@ -35,6 +35,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
         except HTTPException as exc:
             return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
+<<<<<<< HEAD
         if str(payload.get("role", "")).upper() not in REPORTS_ALLOWED_ROLES:
             return JSONResponse(
                 status_code=403,
@@ -43,6 +44,12 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
                         "Reports access requires ADMINISTRADOR or EMPLEADO_REPORTES role."
                     ),
                 },
+=======
+        if str(payload.get("role", "")).upper() != ADMINISTRATOR_ROLE:
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "Administrator role required."},
+>>>>>>> develop
             )
 
         request.state.jwt_payload = payload
