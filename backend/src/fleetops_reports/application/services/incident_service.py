@@ -41,7 +41,6 @@ class IncidentService:
         )
 
         vehicle_ids = set(incident_counts) | set(maintenance_counts)
-        # 5. Evaluamos la política de criticidad por cada ID unificado
         critical_count = sum(
             1
             for vehicle_id in vehicle_ids
