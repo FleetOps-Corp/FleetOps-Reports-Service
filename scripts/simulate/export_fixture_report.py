@@ -10,11 +10,16 @@ import sys
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("REPORTS_ROOT", Path(__file__).resolve().parents[2]))
+FIXTURES_DIR = Path(os.environ.get("FIXTURES_DIR", ROOT / "docs" / "simulate" / "fixtures"))
+OUTPUT_DEFAULT = Path(os.environ.get("OUTPUT_DIR", ROOT / "docs" / "reports"))
+
 BACKEND = ROOT / "backend"
 SRC = BACKEND / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
+if str(BACKEND) not in sys.path:
+    sys.path.insert(0, str(BACKEND))
 
 from fleetops_reports.application.ports.operational_clients import (  # noqa: E402
     AssignmentRecord,
@@ -40,14 +45,70 @@ from fleetops_reports.infrastructure.pdf.weasyprint_renderer import (  # noqa: E
 )
 from fleetops_reports.config.settings import Settings  # noqa: E402
 from fleetops_reports.infrastructure.templates.jinja_renderer import JinjaRenderer  # noqa: E402
-from tests.conftest import (  # noqa: E402
-    FakeAssignmentsClient,
-    FakeIncidentsClient,
-    FakeMaintenanceClient,
-    FakeRepository,
-    FakeStorage,
-    FakeVehiclesClient,
-)
+
+
+async def _async_value[T](value: T) -> T:
+    return value
+
+
+class FakeRepository:
+    def __init__(self) -> None:
+        self.saved = []
+
+    async def save_report(self, report):
+        self.saved.append(report)
+        return await _async_value(report)
+
+
+class FakeStorage:
+    def __init__(self) -> None:
+        self._objects: dict[str, bytes] = {}
+
+    async def upload_report_pdf(self, report_id: str, content: bytes) -> str:
+        object_name = f"{report_id}.pdf"
+        self._objects[object_name] = content
+        return await _async_value(object_name)
+
+    async def upload_graph(self, graph_name: str, content: bytes) -> str:
+        self._objects[graph_name] = content
+        return await _async_value(graph_name)
+
+    async def create_presigned_url(self, object_name: str, expires_seconds: int) -> str:
+        return await _async_value(
+            f"https://minio.test/{object_name}?expires={expires_seconds}"
+        )
+
+
+class FakeVehiclesClient:
+    def __init__(self, vehicles: list[Vehicle]) -> None:
+        self._vehicles = vehicles
+
+    async def list_vehicles(self) -> list[Vehicle]:
+        return await _async_value(self._vehicles)
+
+
+class FakeAssignmentsClient:
+    def __init__(self, assignments: list[AssignmentRecord]) -> None:
+        self._assignments = assignments
+
+    async def list_assignments(self) -> list[AssignmentRecord]:
+        return await _async_value(self._assignments)
+
+
+class FakeIncidentsClient:
+    def __init__(self, incidents: list[IncidentRecord]) -> None:
+        self._incidents = incidents
+
+    async def list_incidents(self) -> list[IncidentRecord]:
+        return await _async_value(self._incidents)
+
+
+class FakeMaintenanceClient:
+    def __init__(self, maintenance: list[MaintenanceRecord]) -> None:
+        self._maintenance = maintenance
+
+    async def list_maintenance(self) -> list[MaintenanceRecord]:
+        return await _async_value(self._maintenance)
 
 
 def _configure_env() -> None:
@@ -71,7 +132,7 @@ def _configure_env() -> None:
 
 
 def _load_json(name: str) -> list[dict[str, object]]:
-    path = ROOT / "docs" / "simulate" / "fixtures" / name
+    path = FIXTURES_DIR / name
     return json.loads(path.read_text(encoding="utf-8"))
 
 
@@ -227,7 +288,7 @@ async def _generate(report_id: str, output_dir: Path) -> Path:
 def main() -> int:
     _configure_env()
     report_id = f"rep-mock-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}"
-    output_dir = ROOT / "docs" / "reports"
+    output_dir = OUTPUT_DEFAULT
     pdf_path = asyncio.run(_generate(report_id, output_dir))
     print(f"Generated {pdf_path}")
     return 0
