@@ -8,8 +8,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Security, status
 from fastapi.responses import Response
+from fastapi.security import HTTPBearer
 
 from fleetops_reports.application.dependencies import (
     get_download_report_use_case,
@@ -31,10 +32,24 @@ from fleetops_reports.presentation.schemas.report_schemas import (
     ReportSummaryResponse,
 )
 
-router = APIRouter(prefix="/reports", tags=["Reports"])
+_bearer_scheme = HTTPBearer(
+    auto_error=False,
+    description=(
+        "JWT from Security Gateway POST /auth/login. "
+        "Roles allowed: ADMINISTRADOR or EMPLEADO_REPORTES. "
+        "Validated by JWTAuthMiddleware."
+    ),
+)
+
+router = APIRouter(
+    prefix="/reports",
+    tags=["Reports"],
+    dependencies=[Security(_bearer_scheme)],
+)
 security_api_router = APIRouter(
     prefix="/api/reports",
     tags=["Reports (Security /api/reports)"],
+    dependencies=[Security(_bearer_scheme)],
 )
 
 
