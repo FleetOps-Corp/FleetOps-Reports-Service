@@ -303,7 +303,7 @@ def _sanitize_field(key: str, value: Any) -> Any:
 
 
 def _is_gateway_request(path: str, headers: dict[str, str]) -> bool:
-    return path.startswith("/reportes") or any(
+    return path.startswith("/api/reports") or any(
         header in headers
         for header in ("x-forwarded-for", "x-forwarded-proto", "x-real-ip")
     )

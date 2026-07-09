@@ -50,7 +50,7 @@ Reports does **not** embed business logic from upstream services; it maps their 
 | Consumer | Access pattern | Auth |
 |----------|----------------|------|
 | **Administrators / clients** | `POST /reports/generate` via Reports Nginx gateway | ADMINISTRADOR JWT validated by Reports middleware |
-| **FleetOps Security Gateway** | Proxy: `POST /reportes/generate` → Reports backend | Gateway validates JWT/RBAC before forwarding the same token |
+| **FleetOps Security Gateway** | Proxy: `POST /api/reports/generate` → Reports backend | Gateway validates JWT/RBAC before forwarding the same token |
 | **Operators** | `GET /health`, `GET /metrics` | Unauthenticated probes |
 
 No other FleetOps microservice is required to call Reports for the platform to operate; Reports is an on-demand analytical endpoint.
@@ -102,7 +102,7 @@ Report aggregate (metadata, period, KPIs, generation status) persisted through `
 | GET | `/health` | Liveness probe (public) |
 | GET | `/metrics` | Prometheus metrics (public) |
 | POST | `/reports/generate` | Generate consolidated operational report (ADMINISTRADOR JWT) |
-| POST | `/reportes/generate` | Gateway-compatible alias |
+| POST | `/api/reports/generate` | Security Gateway alias |
 | GET | `/reports` | List stored reports (`?sede_operacion=` optional) |
 | GET | `/reports/{report_id}` | Report metadata |
 | GET | `/reports/{report_id}/download` | Download PDF from MinIO |

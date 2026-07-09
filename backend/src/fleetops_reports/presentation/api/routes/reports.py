@@ -32,14 +32,9 @@ from fleetops_reports.presentation.schemas.report_schemas import (
 )
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
-gateway_router = APIRouter(prefix="/reportes", tags=["Reports (Gateway)"])
 security_api_router = APIRouter(
     prefix="/api/reports",
     tags=["Reports (Security /api/reports)"],
-)
-security_reportes_router = APIRouter(
-    prefix="/api/reportes",
-    tags=["Reports (Security /api/reportes)"],
 )
 
 
@@ -96,65 +91,32 @@ async def download_report(
     )
 
 
-router.add_api_route(
-    "/generate",
-    generate_report,
-    methods=["POST"],
-    response_model=GenerateReportResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Generar Reporte Operativo Consolidado",
-)
-router.add_api_route(
-    "",
-    list_reports,
-    methods=["GET"],
-    response_model=ReportListResponse,
-    summary="Listar reportes generados",
-)
-router.add_api_route(
-    "/{report_id}",
-    get_report,
-    methods=["GET"],
-    response_model=ReportSummaryResponse,
-    summary="Consultar metadatos de un reporte",
-)
-router.add_api_route(
-    "/{report_id}/download",
-    download_report,
-    methods=["GET"],
-    summary="Descargar PDF de un reporte",
-)
-
-for alias_router, label in (
-    (gateway_router, "/reportes"),
-    (security_api_router, "/api/reports"),
-    (security_reportes_router, "/api/reportes"),
-):
-    alias_router.add_api_route(
+for report_router in (router, security_api_router):
+    report_router.add_api_route(
         "/generate",
         generate_report,
         methods=["POST"],
         response_model=GenerateReportResponse,
         status_code=status.HTTP_201_CREATED,
-        summary=f"Generar Reporte (alias Security Gateway {label})",
+        summary="Generate consolidated operational report",
     )
-    alias_router.add_api_route(
+    report_router.add_api_route(
         "",
         list_reports,
         methods=["GET"],
         response_model=ReportListResponse,
-        summary=f"Listar reportes (alias Security Gateway {label})",
+        summary="List generated reports",
     )
-    alias_router.add_api_route(
+    report_router.add_api_route(
         "/{report_id}",
         get_report,
         methods=["GET"],
         response_model=ReportSummaryResponse,
-        summary=f"Consultar reporte (alias Security Gateway {label})",
+        summary="Get report metadata",
     )
-    alias_router.add_api_route(
+    report_router.add_api_route(
         "/{report_id}/download",
         download_report,
         methods=["GET"],
-        summary=f"Descargar PDF (alias Security Gateway {label})",
+        summary="Download report PDF",
     )

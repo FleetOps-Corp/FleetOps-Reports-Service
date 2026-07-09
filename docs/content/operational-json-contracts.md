@@ -164,7 +164,7 @@ Reports exposes its own JSON contract (not via Security Gateway for direct acces
 | Route | Method | Body |
 |-------|--------|------|
 | `/reports/generate` | POST | See below |
-| `/reportes/generate` | POST | Alias for Security Gateway proxy compatibility |
+| `/api/reports/generate` | POST | Alias for Security Gateway proxy compatibility |
 
 ### Request body
 

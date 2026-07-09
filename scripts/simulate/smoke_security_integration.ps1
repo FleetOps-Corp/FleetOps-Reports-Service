@@ -33,12 +33,10 @@ function Test-Status {
 
 Test-Status "Security OpenAPI" "$SecurityBase/openapi.json" @(200) | Out-Null
 Test-Status "Security /api/vehicles (auth required)" "$SecurityBase/api/vehicles/" @(401, 403) | Out-Null
-Test-Status "Security /api/reports (auth required)" "$SecurityBase/api/reports/" @(401, 403) | Out-Null
-Test-Status "Security /api/reportes (auth required)" "$SecurityBase/api/reportes/" @(401, 403, 404) | Out-Null
+Test-Status "Security /api/reports (auth required)" "$SecurityBase/api/reports/" @(401, 403, 404) | Out-Null
 Test-Status "Reports /health (public)" "$ReportsBase/health" @(200) | Out-Null
 Test-Status "Reports /reports (JWT required)" "$ReportsBase/reports" @(401) | Out-Null
 Test-Status "Reports /api/reports (JWT required)" "$ReportsBase/api/reports" @(401) | Out-Null
-Test-Status "Reports /api/reportes (JWT required)" "$ReportsBase/api/reportes" @(401) | Out-Null
 
 if (-not $BearerToken) {
     Write-Host '[SKIP] Authenticated generate tests require -BearerToken from Security /auth/login'
@@ -63,20 +61,6 @@ try {
 }
 
 try {
-    $viaSecurityReportes = Invoke-RestMethod -Method Post -Uri "$SecurityBase/api/reportes/generate" `
-        -Headers $headers -ContentType "application/json" -TimeoutSec 120 -Body (@{
-            report_id = "$reportId-reportes"
-            title = "Security Integration Report (reportes)"
-            start_date = "2026-05-01"
-            end_date = "2026-05-31"
-        } | ConvertTo-Json)
-    Write-Host ('[OK] Security POST /api/reportes/generate -> status={0}' -f $viaSecurityReportes.status)
-} catch {
-    Write-Host ('[FAIL] Security POST /api/reportes/generate -> {0}' -f $_.Exception.Message)
-    if ($_.ErrorDetails.Message) { Write-Host $_.ErrorDetails.Message }
-}
-
-try {
     $direct = Invoke-RestMethod -Method Post -Uri "$ReportsBase/api/reports/generate" `
         -Headers $headers -ContentType "application/json" -TimeoutSec 120 -Body (@{
             report_id = "$reportId-direct"
@@ -87,19 +71,5 @@ try {
     Write-Host ('[OK] Reports POST /api/reports/generate -> status={0}' -f $direct.status)
 } catch {
     Write-Host ('[FAIL] Reports POST /api/reports/generate -> {0}' -f $_.Exception.Message)
-    if ($_.ErrorDetails.Message) { Write-Host $_.ErrorDetails.Message }
-}
-
-try {
-    $directReportes = Invoke-RestMethod -Method Post -Uri "$ReportsBase/api/reportes/generate" `
-        -Headers $headers -ContentType "application/json" -TimeoutSec 120 -Body (@{
-            report_id = "$reportId-reportes-direct"
-            title = "Direct Reports API Test (reportes)"
-            start_date = "2026-05-01"
-            end_date = "2026-05-31"
-        } | ConvertTo-Json)
-    Write-Host ('[OK] Reports POST /api/reportes/generate -> status={0}' -f $directReportes.status)
-} catch {
-    Write-Host ('[FAIL] Reports POST /api/reportes/generate -> {0}' -f $_.Exception.Message)
     if ($_.ErrorDetails.Message) { Write-Host $_.ErrorDetails.Message }
 }

@@ -51,10 +51,10 @@ def test_generate_report_endpoint_accepts_empleado_reportes_role(api_client) -> 
         algorithm="RS256",
     )
     response = api_client.post(
-        "/api/reportes/generate",
+        "/api/reports/generate",
         headers={"Authorization": f"Bearer {token}"},
         json={
-            "report_id": "rep-reportes-001",
+            "report_id": "rep-reports-001",
             "title": "Reports Employee Report",
             "start_date": "2026-05-01",
             "end_date": "2026-05-31",

@@ -263,23 +263,21 @@ This section documents **every HTTP route exposed by FleetOps Reports**, includi
 
 ### 6.1 Route prefix overview
 
-Reports registers the **same four business operations** under four prefixes. These are **path aliases** for Security Gateway compatibility — not separate API versions.
+Reports registers the **same four business operations** under two English prefixes (`/reports` and `/api/reports`).
 
 | OpenAPI tag | Prefix | Authentication | Purpose |
 | --- | --- | --- | --- |
 | `health` | `/health` | **Public** | Liveness probe for Docker / load balancers |
 | `metrics` | `/metrics` | **Public** | Prometheus metrics exposition |
 | `Reports` | `/reports` | JWT required | Native service routes (direct access) |
-| `Reports (Gateway)` | `/reportes` | JWT required | Spanish alias (legacy gateway path) |
-| `Reports (Security /api/reports)` | `/api/reports` | JWT required | Security prefix currently deployed |
-| `Reports (Security /api/reportes)` | `/api/reportes` | JWT required | Security prefix (canonical per team) |
+| `Reports (Security /api/reports)` | `/api/reports` | JWT required | Security Gateway prefix |
 
 **Recommended paths:**
 
 | Access pattern | Path to use |
 | --- | --- |
-| Client → Security Gateway → Reports (production) | `/api/reportes/*` |
-| Client → Reports EC2 directly (testing) | `/reports/*` or `/api/reportes/*` |
+| Client → Security Gateway → Reports (production) | `/api/reports/*` |
+| Client → Reports EC2 directly (testing) | `/reports/*` or `/api/reports/*` |
 
 ### 6.2 Public endpoints
 
@@ -323,7 +321,7 @@ Authorization: Bearer <JWT>
 
 **Allowed roles:** `ADMINISTRADOR`, `EMPLEADO_REPORTES`
 
-Each operation is available at **all four report prefixes** (`/reports`, `/reportes`, `/api/reports`, `/api/reportes`). Replace `{prefix}` in the tables below with any of those prefixes.
+Each operation is available at **`/reports`** and **`/api/reports`**. Replace `{prefix}` in the tables below with either prefix.
 
 ---
 
@@ -340,7 +338,7 @@ Each operation is available at **all four report prefixes** (`/reports`, `/repor
 
 | Context | Full path |
 | --- | --- |
-| Via Security Gateway (recommended) | `POST /api/reportes/generate` |
+| Via Security Gateway (recommended) | `POST /api/reports/generate` |
 | Direct to Reports service | `POST /reports/generate` |
 
 **Request body:**
@@ -398,7 +396,7 @@ Each operation is available at **all four report prefixes** (`/reports`, `/repor
 
 | Context | Full path |
 | --- | --- |
-| Via Security Gateway | `GET /api/reportes?sede_operacion=Patio Norte Bogotá` |
+| Via Security Gateway | `GET /api/reports?sede_operacion=Patio Norte Bogotá` |
 | Direct to Reports service | `GET /reports` |
 
 **Success response (`200`):**
@@ -436,7 +434,7 @@ Each operation is available at **all four report prefixes** (`/reports`, `/repor
 
 | Context | Full path |
 | --- | --- |
-| Via Security Gateway | `GET /api/reportes/rep-20260708-001` |
+| Via Security Gateway | `GET /api/reports/rep-20260708-001` |
 | Direct to Reports service | `GET /reports/rep-20260708-001` |
 
 **Success response (`200`):**
@@ -470,7 +468,7 @@ Each operation is available at **all four report prefixes** (`/reports`, `/repor
 
 | Context | Full path |
 | --- | --- |
-| Via Security Gateway | `GET /api/reportes/rep-20260708-001/download` |
+| Via Security Gateway | `GET /api/reports/rep-20260708-001/download` |
 | Direct to Reports service | `GET /reports/rep-20260708-001/download` |
 
 ---
@@ -479,14 +477,14 @@ Each operation is available at **all four report prefixes** (`/reports`, `/repor
 
 All paths below require JWT unless marked **Public**.
 
-| Method | `/reports` | `/reportes` | `/api/reports` | `/api/reportes` | Auth | Description |
-| --- | --- | --- | --- | --- | --- | --- |
-| `GET` | `/health` | — | — | — | Public | Liveness probe |
-| `GET` | `/metrics` | — | — | — | Public | Prometheus metrics |
-| `POST` | `/reports/generate` | `/reportes/generate` | `/api/reports/generate` | `/api/reportes/generate` | JWT | Generate executive report |
-| `GET` | `/reports` | `/reportes` | `/api/reports` | `/api/reportes` | JWT | List generated reports |
-| `GET` | `/reports/{id}` | `/reportes/{id}` | `/api/reports/{id}` | `/api/reportes/{id}` | JWT | Get report metadata |
-| `GET` | `/reports/{id}/download` | `/reportes/{id}/download` | `/api/reports/{id}/download` | `/api/reportes/{id}/download` | JWT | Download PDF |
+| Method | `/reports` | `/api/reports` | Auth | Description |
+| --- | --- | --- | --- | --- |
+| `GET` | `/health` | — | Public | Liveness probe |
+| `GET` | `/metrics` | — | Public | Prometheus metrics |
+| `POST` | `/reports/generate` | `/api/reports/generate` | JWT | Generate executive report |
+| `GET` | `/reports` | `/api/reports` | JWT | List generated reports |
+| `GET` | `/reports/{id}` | `/api/reports/{id}` | JWT | Get report metadata |
+| `GET` | `/reports/{id}/download` | `/api/reports/{id}/download` | JWT | Download PDF |
 
 ### 6.5 HTTP error reference
 
@@ -534,7 +532,7 @@ PDF binaries are stored in MinIO (`MINIO_REPORTS_BUCKET`); chart SVGs in `MINIO_
 ## 9. Data Flow During Generation
 
 ```
-POST /api/reportes/generate
+POST /api/reports/generate
         │
         ├─► GET /api/vehicles/       ──► filter by sede_operacion (optional)
         ├─► GET /api/assignments/    ──► upstream health (not in KPI set today)

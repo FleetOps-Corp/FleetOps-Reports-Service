@@ -21,10 +21,10 @@ The Gateway forwards `{upstream}{path}` without rewrite. Security `*_SERVICE_PRE
 | Assignments | `GET /asignaciones/` | Assignments `@RequestMapping("/asignaciones")` (list may be unavailable) |
 | Incidents | `GET /api/incidents/` | Incidents Django `/api/incidents/` |
 | Maintenance | `GET /api/v1/mantenimientos/` | Maintenance Chi `/api/v1/mantenimientos` |
-| Reports (canonical) | `POST /api/reportes/generate` | Reports `/api/reportes/generate` |
-| Reports (legacy) | `POST /api/reports/generate` | Reports `/api/reports/generate` |
+| Reports (canonical) | `POST /api/reports/generate` | Reports `/api/reports/generate` |
+| Reports (direct) | `POST /reports/generate` | Reports `/reports/generate` |
 
-Reports exposes matching aliases at `/api/reportes/**`, `/api/reports/**`, `/reportes/**`, and `/reports/**`.
+Reports exposes matching aliases at `/api/reports/**` and `/reports/**`.
 
 Inbound JWT roles accepted by Reports: `ADMINISTRADOR`, `EMPLEADO_REPORTES`.
 
@@ -76,7 +76,7 @@ docker compose -f docker-compose.prod.yml --env-file .env up -d --build backend 
 
 ## Required action on Security team
 
-Security Gateway must register aligned prefixes and forward `/api/reportes/**` to Reports:
+Security Gateway must register aligned prefixes and forward `/api/reports/**` to Reports:
 
 ```env
 VEHICLES_SERVICE_PREFIX=/vehiculos
@@ -84,7 +84,7 @@ ASSIGNMENTS_SERVICE_PREFIX=/asignaciones
 INCIDENTS_SERVICE_PREFIX=/api/incidents
 MAINTENANCE_SERVICE_PREFIX=/api/v1/mantenimientos
 REPORTS_SERVICE_URL=http://18.217.5.127:8081
-REPORTS_SERVICE_PREFIX=/api/reportes
+REPORTS_SERVICE_PREFIX=/api/reports
 ```
 
 Security must also register role `EMPLEADO_REPORTES` and allow it on the reports route prefix.
@@ -98,7 +98,7 @@ powershell -ExecutionPolicy Bypass -File scripts/simulate/smoke_security_integra
 
 ```bash
 curl -sS http://127.0.0.1:8081/health
-curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/api/reportes
+curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8081/api/reports
 curl -sS -o /dev/null -w '%{http_code}\n' http://3.237.75.68:8000/vehiculos/
 ```
 
@@ -108,7 +108,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' http://3.237.75.68:8000/vehiculos/
 |---------|-------|-----|
 | 401 on Reports protected routes | Missing/invalid JWT or wrong public key | Copy `jwt_public.pem` → `certs/public.pem`; verify RS256 tokens |
 | 401 on Security upstream routes | Missing outbound token | Set service account credentials or `OPERATIONAL_GATEWAY_BEARER_TOKEN` |
-| 404 on Security `/api/reportes` | Reports route not registered | Security sets `REPORTS_SERVICE_PREFIX=/api/reportes` |
+| 404 on Security `/api/reports` | Reports route not registered | Security sets `REPORTS_SERVICE_PREFIX=/api/reports` |
 | 404 on `/vehiculos/` via Gateway | Prefix mismatch | Security `VEHICLES_SERVICE_PREFIX=/vehiculos` |
 | 403 on Reports with valid JWT | Role not allowed | Admin assigns `EMPLEADO_REPORTES` |
 | 422 on generate | Upstream unreachable or field mismatch | Confirm aligned paths; check backend logs |

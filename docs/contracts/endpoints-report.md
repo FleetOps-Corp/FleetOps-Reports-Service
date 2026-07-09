@@ -31,7 +31,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
 ### Qué funciona hoy
 
 1. **Validación inbound RS256** en Reports (si `certs/public.pem` coincide con la clave de Security).
-2. **Rutas alias de Reports** alineadas con convención Gateway: `/api/reportes`, `/api/reports`, `/reportes`, `/reports`.
+2. **Rutas alias de Reports** alineadas con convención Gateway: `/api/reports`, `/reports`.
 3. **Rol `EMPLEADO_REPORTES`** aceptado dentro de Reports.
 
 ### Qué está roto o incompleto
@@ -41,7 +41,7 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
 | `OPERATIONAL_GATEWAY_BEARER_TOKEN` vacío en EC2 | **401** al llamar `/api/vehicles/`, etc. |
 | Token de servicio manual (~60 min) | Se cae la generación cuando expira; no hay renovación automática en Reports |
 | Gateway **no reescribe rutas** — reenvía `{upstream}{path}` tal cual | Prefijos `/api/*` del Gateway **no coinciden** con rutas internas de varios MS → **404** aunque el token sea válido |
-| `EMPLEADO_REPORTES` no está en el enum del Gateway | Usuario con ese rol puede entrar a Reports directo, pero **Security puede bloquearlo** en `/api/reportes` |
+| `EMPLEADO_REPORTES` no está en el enum del Gateway | Usuario con ese rol puede entrar a Reports directo, pero **Security puede bloquearlo** en `/api/reports` |
 | Rutas upstream solo permiten `ADMINISTRADOR` para reportes en Gateway | Falta registrar `EMPLEADO_REPORTES` en Security |
 | Contratos JSON incidents/maintenance | Campos en español en Reports vs inglés en servicios desplegados |
 
@@ -70,7 +70,7 @@ Hay **tres capas** que deben alinearse:
 | **Assignments** | `/asignaciones` | `/asignaciones` | **Parcial** (list endpoint may be missing) | `/asignaciones/` |
 | **Incidents** | `/api/incidents` | `/api/incidents/` | **Sí** | `/api/incidents/` |
 | **Maintenance** | `/api/v1/mantenimientos` | `/api/v1/mantenimientos` | **Sí** | `/api/v1/mantenimientos/` |
-| **Reports** | `/api/reportes` o `/api/reports` | `/api/reportes`, `/api/reports`, `/reportes`, `/reports` | **Parcial** (Reports sí expone aliases; Security debe registrar el prefijo) | N/A |
+| **Reports** | `/api/reports` | `/api/reports`, `/reports` | **Parcial** (Reports expone ambos prefijos; Security debe registrar el prefijo) | N/A |
 
 **Defaults en código** de Reports (`settings.py`) usan rutas en español **sin** `/api/` (`/vehiculos/`, `/incidentes/`, etc.), que tampoco coinciden con Incidents (`/api/incidents/`) ni Maintenance (`/api/v1/mantenimientos/`).
 
@@ -234,16 +234,16 @@ Roles permitidos (registry local):
 
 **Públicos:** `/health`, `/metrics`, `/docs`, `/openapi.json`, `/redoc`
 
-**Protegidos** (mismos handlers en 4 prefijos):
+**Protegidos** (mismos handlers en 2 prefijos):
 
-| Método | Ruta (×4 prefijos) |
+| Método | Ruta (×2 prefijos) |
 |--------|---------------------|
 | POST | `{prefix}/generate` |
 | GET | `{prefix}` |
 | GET | `{prefix}/{report_id}` |
 | GET | `{prefix}/{report_id}/download` |
 
-Prefijos: `/reports`, `/reportes`, `/api/reports`, `/api/reportes`
+Prefijos: `/reports`, `/api/reports`
 
 ---
 
@@ -252,7 +252,7 @@ Prefijos: `/reports`, `/reportes`, `/api/reports`, `/api/reportes`
 ### Inmediato (ops, sin código)
 
 1. Poblar `OPERATIONAL_GATEWAY_BEARER_TOKEN` con JWT de **`ADMINISTRADOR`** (no sirve el del usuario `EMPLEADO_REPORTES` para upstream).
-2. Security: registrar `REPORTS_SERVICE_URL`, `REPORTS_SERVICE_PREFIX=/api/reportes`, rol `EMPLEADO_REPORTES` en ruta de reportes.
+2. Security: registrar `REPORTS_SERVICE_URL`, `REPORTS_SERVICE_PREFIX=/api/reports`, rol `EMPLEADO_REPORTES` en ruta de reportes.
 
 ### Security / infra (otros equipos)
 
@@ -264,7 +264,7 @@ VEHICLES_SERVICE_PREFIX=/vehiculos
 ASSIGNMENTS_SERVICE_PREFIX=/asignaciones
 INCIDENTS_SERVICE_PREFIX=/api/incidents
 MAINTENANCE_SERVICE_PREFIX=/api/v1/mantenimientos
-REPORTS_SERVICE_PREFIX=/api/reportes
+REPORTS_SERVICE_PREFIX=/api/reports
 ```
 
 Y en Reports EC2 los mismos valores en `OPERATIONAL_*_PATH`.
@@ -283,7 +283,7 @@ Y en Reports EC2 los mismos valores en `OPERATIONAL_*_PATH`.
 
 **¿Funciona el sistema actual de tokens y validaciones?**
 
-- **Entrada a Reports:** Sí, en diseño; falta que Security exponga `/api/reportes` y permita `EMPLEADO_REPORTES`.
+- **Entrada a Reports:** Sí, en diseño; falta que Security exponga `/api/reports` y permita `EMPLEADO_REPORTES`.
 - **Salida Reports → Gateway → otros MS:** **No funciona hoy** (token vacío + desalineación de rutas + contratos JSON + sin listado de asignaciones).
 - **Rutas `/api/*` en Reports EC2:** Correctas **hacia el Gateway**, pero **incorrectas hacia los microservicios** mientras el Gateway no reescriba paths.
 
