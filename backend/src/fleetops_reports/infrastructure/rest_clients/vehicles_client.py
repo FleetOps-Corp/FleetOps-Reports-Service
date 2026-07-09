@@ -11,7 +11,10 @@ from fleetops_reports.infrastructure.rest_clients.circuit_breaker import Circuit
 from fleetops_reports.infrastructure.rest_clients.field_mapping import get_payload_field
 from fleetops_reports.infrastructure.rest_clients.gateway_http import (
     build_gateway_resource_url,
-    fetch_gateway_list,
+    fetch_gateway_list_all_pages,
+)
+from fleetops_reports.infrastructure.rest_clients.gateway_token_provider import (
+    GatewayBearerTokenProvider,
 )
 
 
@@ -22,15 +25,21 @@ class RestVehiclesClient:
         circuit_breaker: CircuitBreaker,
         bearer_token: str | None = None,
         *,
+        token_provider: GatewayBearerTokenProvider | None = None,
         resource_path: str = "/vehiculos/",
     ) -> None:
         self._url = build_gateway_resource_url(gateway_base_url, resource_path)
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
+        self._token_provider = token_provider
 
     async def list_vehicles(self) -> list[Vehicle]:
         async def operation() -> list[Vehicle]:
-            items = await fetch_gateway_list(self._url, self._bearer_token)
+            items = await fetch_gateway_list_all_pages(
+                self._url,
+                self._bearer_token,
+                token_provider=self._token_provider,
+            )
             return [
                 Vehicle(
                     id_vehiculo=get_payload_field(item, "id_vehiculo", "idVehiculo"),

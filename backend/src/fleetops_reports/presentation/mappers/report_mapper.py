@@ -27,10 +27,18 @@ class ReportMapper:
             title=request.title,
             period=ReportPeriod(start_date=request.start_date, end_date=request.end_date),
             sede_operacion=request.sede_operacion,
+            ciudad_operacion=request.ciudad_operacion,
         )
 
-    def list_query(self, sede_operacion: str | None) -> ListReportsQuery:
-        return ListReportsQuery(sede_operacion=sede_operacion)
+    def list_query(
+        self,
+        sede_operacion: str | None,
+        ciudad_operacion: str | None = None,
+    ) -> ListReportsQuery:
+        return ListReportsQuery(
+            sede_operacion=sede_operacion,
+            ciudad_operacion=ciudad_operacion,
+        )
 
     def report_to_response(self, report: Report) -> GenerateReportResponse:
         return GenerateReportResponse(
@@ -39,6 +47,7 @@ class ReportMapper:
             status=report.status,
             document_url=report.document_url,
             sede_operacion=report.sede_operacion,
+            ciudad_operacion=report.ciudad_operacion,
             kpis=[self.kpi_to_response(kpi) for kpi in report.kpis],
         )
 
@@ -49,6 +58,7 @@ class ReportMapper:
             status=report.status,
             document_url=report.document_url,
             sede_operacion=report.sede_operacion,
+            ciudad_operacion=report.ciudad_operacion,
             start_date=report.period.start_date,
             end_date=report.period.end_date,
             created_at=report.created_at,

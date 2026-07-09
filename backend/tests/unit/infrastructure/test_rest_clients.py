@@ -14,6 +14,7 @@ from fleetops_reports.infrastructure.rest_clients.circuit_breaker import Circuit
 from fleetops_reports.infrastructure.rest_clients.gateway_http import (
     build_gateway_headers,
     build_gateway_resource_url,
+    fetch_gateway_list_all_pages,
 )
 from fleetops_reports.infrastructure.rest_clients.incidents_client import RestIncidentsClient
 from fleetops_reports.infrastructure.rest_clients.maintenance_client import (
@@ -32,8 +33,8 @@ def test_build_gateway_headers_includes_bearer_token() -> None:
 
 def test_build_gateway_resource_url_normalizes_trailing_slash() -> None:
     assert (
-        build_gateway_resource_url("http://gateway:8000", "/api/vehicles")
-        == "http://gateway:8000/api/vehicles/"
+        build_gateway_resource_url("http://gateway:8000", "/vehiculos")
+        == "http://gateway:8000/vehiculos/"
     )
 
 
@@ -41,19 +42,19 @@ def test_build_gateway_resource_url_normalizes_trailing_slash() -> None:
 async def test_vehicles_client_uses_configurable_resource_path(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/api/vehicles/"
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        assert url == "http://gateway:8000/vehiculos/"
         return []
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list",
+        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages",
         fake_fetch,
     )
 
     client = RestVehiclesClient(
         "http://gateway:8000",
         CircuitBreaker(failure_threshold=1, recovery_seconds=1),
-        resource_path="/api/vehicles",
+        resource_path="/vehiculos",
     )
     assert await client.list_vehicles() == []
 
@@ -88,13 +89,13 @@ async def test_vehicles_client_maps_gateway_payload(monkeypatch: pytest.MonkeyPa
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None):
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
         assert url == "http://gateway:8000/vehiculos/"
         assert bearer_token == "admin-token"
         return payload
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list",
+        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages",
         fake_fetch,
     )
 
@@ -108,6 +109,33 @@ async def test_vehicles_client_maps_gateway_payload(monkeypatch: pytest.MonkeyPa
     assert len(vehicles) == 1
     assert vehicles[0].numero_placa == "TYX-789"
     assert vehicles[0].estado_vehiculo == "DISPONIBLE"
+
+
+@pytest.mark.asyncio
+async def test_vehicles_client_fetches_all_spring_pages(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    pages = [
+        {"content": [{"idVehiculo": "1", "numeroPlaca": "A"}], "totalPages": 2},
+        {"content": [{"idVehiculo": "2", "numeroPlaca": "B"}]},
+    ]
+    calls: list[str] = []
+
+    async def fake_fetch_json(url: str, bearer_token: str | None = None, **kwargs):
+        calls.append(url)
+        params = kwargs.get("params") or {}
+        page = int(params.get("page", 0))
+        return pages[page]
+
+    monkeypatch.setattr(
+        "fleetops_reports.infrastructure.rest_clients.gateway_http.fetch_gateway_json",
+        fake_fetch_json,
+    )
+
+    items = await fetch_gateway_list_all_pages("http://gateway:8000/vehiculos/")
+
+    assert len(items) == 2
+    assert len(calls) == 2
 
 
 @pytest.mark.asyncio
@@ -125,12 +153,12 @@ async def test_assignments_client_maps_date_only_fields(
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None):
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
         assert url == "http://gateway:8000/asignaciones/"
         return payload
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.assignments_client.fetch_gateway_list",
+        "fleetops_reports.infrastructure.rest_clients.assignments_client.fetch_gateway_list_optional",
         fake_fetch,
     )
 
@@ -146,7 +174,26 @@ async def test_assignments_client_maps_date_only_fields(
 
 
 @pytest.mark.asyncio
-async def test_incidents_client_maps_gateway_payload(
+async def test_assignments_client_returns_empty_list_when_endpoint_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        return []
+
+    monkeypatch.setattr(
+        "fleetops_reports.infrastructure.rest_clients.assignments_client.fetch_gateway_list_optional",
+        fake_fetch,
+    )
+
+    client = RestAssignmentsClient(
+        "http://gateway:8000",
+        CircuitBreaker(failure_threshold=1, recovery_seconds=1),
+    )
+    assert await client.list_assignments() == []
+
+
+@pytest.mark.asyncio
+async def test_incidents_client_maps_spanish_gateway_payload(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     payload = [
@@ -160,8 +207,8 @@ async def test_incidents_client_maps_gateway_payload(
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/incidentes/"
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        assert url == "http://gateway:8000/api/incidents/"
         return payload
 
     monkeypatch.setattr(
@@ -180,6 +227,39 @@ async def test_incidents_client_maps_gateway_payload(
 
 
 @pytest.mark.asyncio
+async def test_incidents_client_maps_deployed_english_payload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payload = [
+        {
+            "incident_id": "INC-001",
+            "event_date": "2026-06-21T22:00:00Z",
+            "driver_id": "CONDUCTOR-001",
+            "vehicle_id": "ABC-123",
+            "incident_type": "MECANICO",
+            "severity": "GRAVE",
+        }
+    ]
+
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        return payload
+
+    monkeypatch.setattr(
+        "fleetops_reports.infrastructure.rest_clients.incidents_client.fetch_gateway_list",
+        fake_fetch,
+    )
+
+    client = RestIncidentsClient(
+        "http://gateway:8000",
+        CircuitBreaker(failure_threshold=1, recovery_seconds=1),
+    )
+    incidents = await client.list_incidents()
+
+    assert incidents[0].placa_vehiculo == "ABC-123"
+    assert incidents[0].severity == "GRAVE"
+
+
+@pytest.mark.asyncio
 async def test_maintenance_client_uses_gateway_route_prefix(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -193,8 +273,8 @@ async def test_maintenance_client_uses_gateway_route_prefix(
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None):
-        assert url == "http://gateway:8000/mantenimiento/"
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        assert url == "http://gateway:8000/api/v1/mantenimientos/"
         return payload
 
     monkeypatch.setattr(
@@ -210,6 +290,38 @@ async def test_maintenance_client_uses_gateway_route_prefix(
 
     assert maintenance[0].maintenance_type == "CORRECTIVO"
     assert maintenance[0].finished_at is not None
+
+
+@pytest.mark.asyncio
+async def test_maintenance_client_maps_deployed_payload(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    payload = [
+        {
+            "id": "9e11fc4a-11bc-4e88-b223-38fa918bca44",
+            "id_vehiculo": "8c12bda5-7482-4168-96ea-5fd3a9254c2a",
+            "tipo": "CORRECTIVO",
+            "creado_en": "2026-06-24T20:15:00Z",
+            "completado_en": "2026-06-25T02:00:00Z",
+        }
+    ]
+
+    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+        return payload
+
+    monkeypatch.setattr(
+        "fleetops_reports.infrastructure.rest_clients.maintenance_client.fetch_gateway_list",
+        fake_fetch,
+    )
+
+    client = RestMaintenanceClient(
+        "http://gateway:8000",
+        CircuitBreaker(failure_threshold=1, recovery_seconds=1),
+    )
+    maintenance = await client.list_maintenance()
+
+    assert maintenance[0].maintenance_type == "CORRECTIVO"
+    assert maintenance[0].vehicle_id == "8c12bda5-7482-4168-96ea-5fd3a9254c2a"
 
 
 @pytest.mark.asyncio

@@ -63,8 +63,9 @@ async def list_reports(
     mapper: Annotated[ReportMapper, Depends(get_report_mapper)],
     use_case: Annotated[ListReportsUseCase, Depends(get_list_reports_use_case)],
     sede_operacion: Annotated[str | None, Query()] = None,
+    ciudad_operacion: Annotated[str | None, Query()] = None,
 ) -> ReportListResponse:
-    reports = await use_case.execute(mapper.list_query(sede_operacion))
+    reports = await use_case.execute(mapper.list_query(sede_operacion, ciudad_operacion))
     return mapper.reports_to_list_response(reports)
 
 

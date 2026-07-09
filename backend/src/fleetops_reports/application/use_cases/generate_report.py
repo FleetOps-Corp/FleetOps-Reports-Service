@@ -24,9 +24,11 @@ from fleetops_reports.application.services.availability_service import (
 from fleetops_reports.application.services.incident_service import IncidentService
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
 from fleetops_reports.application.services.operational_filter_service import (
+    filter_incidents_by_period,
     filter_incidents_for_vehicles,
+    filter_maintenance_by_period,
     filter_maintenance_for_vehicles,
-    filter_vehicles_by_sede,
+    filter_vehicles_for_report,
 )
 from fleetops_reports.application.services.report_service import ReportService
 from fleetops_reports.domain.exceptions import DomainError, ReportGenerationError
@@ -40,6 +42,7 @@ class GenerateReportCommand:
     title: str
     period: ReportPeriod
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
 
 
 class GenerateReportUseCase:
@@ -69,18 +72,27 @@ class GenerateReportUseCase:
         self._metrics_recorder.on_request()
         try:
             with self._metrics_recorder.track_generation():
-                vehicles = filter_vehicles_by_sede(
+                vehicles = filter_vehicles_for_report(
                     await self._vehicles_client.list_vehicles(),
-                    command.sede_operacion,
+                    sede_operacion=command.sede_operacion,
+                    ciudad_operacion=command.ciudad_operacion,
                 )
                 await self._assignments_client.list_assignments()
-                incidents = filter_incidents_for_vehicles(
-                    await self._incidents_client.list_incidents(),
-                    vehicles,
+                incidents = filter_incidents_by_period(
+                    filter_incidents_for_vehicles(
+                        await self._incidents_client.list_incidents(),
+                        vehicles,
+                    ),
+                    command.period.start_date,
+                    command.period.end_date,
                 )
-                maintenance = filter_maintenance_for_vehicles(
-                    await self._maintenance_client.list_maintenance(),
-                    vehicles,
+                maintenance = filter_maintenance_by_period(
+                    filter_maintenance_for_vehicles(
+                        await self._maintenance_client.list_maintenance(),
+                        vehicles,
+                    ),
+                    command.period.start_date,
+                    command.period.end_date,
                 )
 
                 kpis = [
@@ -102,6 +114,7 @@ class GenerateReportUseCase:
                     period=command.period,
                     kpis=kpis,
                     sede_operacion=command.sede_operacion,
+                    ciudad_operacion=command.ciudad_operacion,
                 )
                 return await self._report_service.generate(
                     report,

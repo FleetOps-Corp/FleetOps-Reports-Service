@@ -11,3 +11,11 @@ def get_payload_field(item: dict[str, Any], *keys: str, default: str = "") -> st
         if value is not None:
             return str(value)
     return default
+
+
+def get_payload_optional_field(item: dict[str, Any], *keys: str) -> str | None:
+    for key in keys:
+        value = item.get(key)
+        if value is not None:
+            return str(value)
+    return None

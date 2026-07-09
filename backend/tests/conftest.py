@@ -156,16 +156,26 @@ class FakeRepository:
             )
         )
 
-    async def list_reports(self, sede_operacion: str | None = None):
+    async def list_reports(
+        self,
+        sede_operacion: str | None = None,
+        ciudad_operacion: str | None = None,
+    ):
+        filtered = list(self.saved)
         if sede_operacion:
             normalized = sede_operacion.strip().casefold()
             filtered = [
                 report
-                for report in self.saved
+                for report in filtered
                 if (report.sede_operacion or "").strip().casefold() == normalized
             ]
-        else:
-            filtered = list(self.saved)
+        if ciudad_operacion:
+            normalized = ciudad_operacion.strip().casefold()
+            filtered = [
+                report
+                for report in filtered
+                if (report.ciudad_operacion or "").strip().casefold() == normalized
+            ]
         return await _async_value(
             sorted(filtered, key=lambda report: report.created_at, reverse=True)
         )

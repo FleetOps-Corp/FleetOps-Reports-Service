@@ -50,6 +50,12 @@ class Settings(BaseSettings):
     operational_gateway_bearer_token: str | None = Field(
         default=None, alias="OPERATIONAL_GATEWAY_BEARER_TOKEN"
     )
+    operational_gateway_service_email: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_SERVICE_EMAIL"
+    )
+    operational_gateway_service_password: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_SERVICE_PASSWORD"
+    )
     operational_vehicles_path: str = Field(
         default="/vehiculos/",
         alias="OPERATIONAL_VEHICLES_PATH",
@@ -59,11 +65,11 @@ class Settings(BaseSettings):
         alias="OPERATIONAL_ASSIGNMENTS_PATH",
     )
     operational_incidents_path: str = Field(
-        default="/incidentes/",
+        default="/api/incidents/",
         alias="OPERATIONAL_INCIDENTS_PATH",
     )
     operational_maintenance_path: str = Field(
-        default="/mantenimiento/",
+        default="/api/v1/mantenimientos/",
         alias="OPERATIONAL_MAINTENANCE_PATH",
     )
 

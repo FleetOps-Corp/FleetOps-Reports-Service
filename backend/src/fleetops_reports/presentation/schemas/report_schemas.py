@@ -20,6 +20,10 @@ class GenerateReportRequest(BaseModel):
         default=None,
         description="Optional operation site filter aligned with vehicles sede_operacion.",
     )
+    ciudad_operacion: str | None = Field(
+        default=None,
+        description="Optional city filter aligned with vehicles ciudad_operacion.",
+    )
 
 
 class KPIResponse(BaseModel):
@@ -35,6 +39,7 @@ class GenerateReportResponse(BaseModel):
     status: str
     document_url: str | None
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
     kpis: list[KPIResponse]
 
 
@@ -44,6 +49,7 @@ class ReportSummaryResponse(BaseModel):
     status: str
     document_url: str | None
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
     start_date: date
     end_date: date
     created_at: datetime

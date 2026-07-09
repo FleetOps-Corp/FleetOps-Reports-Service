@@ -3,6 +3,9 @@
 # Usage (on EC2 from /opt/fleetops-reports):
 #   export SECURITY_GATEWAY_URL='http://3.237.75.68:8000'
 #   export OPERATIONAL_GATEWAY_BEARER_TOKEN='<JWT from Security /auth/login>'
+#   # or prefer service-account auto login:
+#   export OPERATIONAL_GATEWAY_SERVICE_EMAIL='reports-service@example.com'
+#   export OPERATIONAL_GATEWAY_SERVICE_PASSWORD='<password>'
 #   ./scripts/deploy/configure_ec2_security_integration.sh .env
 set -euo pipefail
 
@@ -27,13 +30,21 @@ set_or_replace() {
 set_or_replace JWT_ALGORITHM RS256
 set_or_replace JWT_PUBLIC_KEY_PATH /app/certs/public.pem
 set_or_replace OPERATIONAL_GATEWAY_BASE_URL "$SECURITY_GATEWAY_URL"
-set_or_replace OPERATIONAL_VEHICLES_PATH /api/vehicles/
-set_or_replace OPERATIONAL_ASSIGNMENTS_PATH /api/assignments/
+set_or_replace OPERATIONAL_VEHICLES_PATH /vehiculos/
+set_or_replace OPERATIONAL_ASSIGNMENTS_PATH /asignaciones/
 set_or_replace OPERATIONAL_INCIDENTS_PATH /api/incidents/
-set_or_replace OPERATIONAL_MAINTENANCE_PATH /api/maintenance/
+set_or_replace OPERATIONAL_MAINTENANCE_PATH /api/v1/mantenimientos/
 
 if [[ -n "${OPERATIONAL_GATEWAY_BEARER_TOKEN:-}" ]]; then
   set_or_replace OPERATIONAL_GATEWAY_BEARER_TOKEN "$OPERATIONAL_GATEWAY_BEARER_TOKEN"
+fi
+
+if [[ -n "${OPERATIONAL_GATEWAY_SERVICE_EMAIL:-}" ]]; then
+  set_or_replace OPERATIONAL_GATEWAY_SERVICE_EMAIL "$OPERATIONAL_GATEWAY_SERVICE_EMAIL"
+fi
+
+if [[ -n "${OPERATIONAL_GATEWAY_SERVICE_PASSWORD:-}" ]]; then
+  set_or_replace OPERATIONAL_GATEWAY_SERVICE_PASSWORD "$OPERATIONAL_GATEWAY_SERVICE_PASSWORD"
 fi
 
 sed -i '/^JWT_SECRET_KEY=/d' "$ENV_FILE"

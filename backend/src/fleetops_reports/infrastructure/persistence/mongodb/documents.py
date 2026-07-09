@@ -19,6 +19,7 @@ class ReportDocument(Document):
     status: str
     document_url: str | None
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
     kpis: list[dict[str, Any]]
     created_at: datetime
 
