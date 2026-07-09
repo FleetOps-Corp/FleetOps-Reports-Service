@@ -5,6 +5,57 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.3] - 2026-07-09
+
+### Fixed
+- Map operational Security Gateway auth failures to **503** with `OPERATIONAL_GATEWAY_AUTH_FAILED` instead of misleading **422**.
+- Treat empty `OPERATIONAL_GATEWAY_BEARER_TOKEN` as unset so service-account login is attempted.
+
+## [2.2.2] - 2026-07-08
+
+### Added
+- Swagger `/docs` **Authorize** button via `HTTPBearer` on `/reports` and `/api/reports` routes.
+
+## [2.2.1] - 2026-07-08
+
+### Changed
+- Removed Spanish route aliases (`/reportes`, `/api/reportes`); English prefixes only (`/reports`, `/api/reports`).
+
+## [2.2.0] - 2026-07-08
+
+### Added
+- Automatic Security Gateway service-token refresh via `OPERATIONAL_GATEWAY_SERVICE_EMAIL` / `OPERATIONAL_GATEWAY_SERVICE_PASSWORD`.
+- Optional `ciudad_operacion` filter on report generation and listing.
+- Date-range filtering for incidents and maintenance during report generation.
+- Spring pagination support when fetching vehicles through the Gateway.
+- Resilient assignments client (continues when list endpoint is missing).
+- Dual-field mapping for deployed Incidents (English) and Maintenance payloads.
+
+### Changed
+- Operational upstream paths aligned with microservice routes: `/vehiculos/`, `/asignaciones/`, `/api/incidents/`, `/api/v1/mantenimientos/`.
+- EC2 integration script and production env template updated for aligned paths and service-account login.
+
+## [2.1.3] - 2026-07-07
+
+### Added
+- `/api/reportes/**` route aliases matching Security convention `api/<servicio>/...`.
+- JWT middleware accepts `EMPLEADO_REPORTES` in addition to `ADMINISTRADOR` for report endpoints.
+
+### Changed
+- Security integration smoke test covers `/api/reportes` on both Security Gateway and Reports EC2.
+
+## [2.1.2] - 2026-07-07
+
+### Added
+- Configurable Security Gateway operational paths (`OPERATIONAL_*_PATH`) for deployed `/api/*` routes.
+- `/api/reports/**` route aliases matching Security `REPORTS_SERVICE_PREFIX`.
+- RS256 production configuration, EC2 deploy script, and Security integration smoke test.
+- `docs/deployment/SECURITY_INTEGRATION_REPORT.md`.
+
+### Changed
+- Production `.env` template defaults to RS256 + public key verification against deployed Security.
+- Operational REST clients accept configurable resource paths via environment variables.
+
 ## [2.1.1] - 2026-07-07
 
 ### Added

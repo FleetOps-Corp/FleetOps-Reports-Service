@@ -23,6 +23,7 @@ class Report:
     status: str = "draft"
     document_url: str | None = None
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def mark_generated(self, document_url: str) -> None:

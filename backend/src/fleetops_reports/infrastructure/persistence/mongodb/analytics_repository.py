@@ -34,6 +34,7 @@ def _document_to_report(document: ReportDocument) -> Report:
         status=document.status,
         document_url=document.document_url,
         sede_operacion=document.sede_operacion,
+        ciudad_operacion=document.ciudad_operacion,
         created_at=document.created_at,
     )
 
@@ -50,6 +51,7 @@ class MongoAnalyticsRepository:
             status=report.status,
             document_url=report.document_url,
             sede_operacion=report.sede_operacion,
+            ciudad_operacion=report.ciudad_operacion,
             kpis=[
                 {
                     "name": kpi.name,
@@ -73,17 +75,24 @@ class MongoAnalyticsRepository:
             return None
         return _document_to_report(document)
 
-    async def list_reports(self, sede_operacion: str | None = None) -> list[Report]:
+    async def list_reports(
+        self,
+        sede_operacion: str | None = None,
+        ciudad_operacion: str | None = None,
+    ) -> list[Report]:
+        documents = await ReportDocument.find_all().sort("-created_at").to_list()
         if sede_operacion:
             normalized = sede_operacion.strip().casefold()
-            documents = await ReportDocument.find_all().to_list()
-            filtered = [
+            documents = [
                 document
                 for document in documents
                 if (document.sede_operacion or "").strip().casefold() == normalized
             ]
-        else:
-            filtered = await ReportDocument.find_all().sort("-created_at").to_list()
-
-        filtered.sort(key=lambda document: document.created_at, reverse=True)
-        return [_document_to_report(document) for document in filtered]
+        if ciudad_operacion:
+            normalized = ciudad_operacion.strip().casefold()
+            documents = [
+                document
+                for document in documents
+                if (document.ciudad_operacion or "").strip().casefold() == normalized
+            ]
+        return [_document_to_report(document) for document in documents]

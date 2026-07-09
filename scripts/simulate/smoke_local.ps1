@@ -42,9 +42,9 @@ Write-Host "`n[3] Reports health (public route)"
 $repHealth = Invoke-Json -Uri "$ReportsBase/health"
 Write-Host "OK: $($repHealth | ConvertTo-Json -Compress)"
 
-Write-Host "`n[4] Reports generate via Security Gateway (/reportes/generate)"
+Write-Host "`n[4] Reports generate via Security Gateway (/api/reports/generate)"
 $reportId = "rep-local-sim-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-$reportGw = Invoke-Json -Method Post -Uri "$GatewayBase/reportes/generate" -Headers $auth -Body @{
+$reportGw = Invoke-Json -Method Post -Uri "$GatewayBase/api/reports/generate" -Headers $auth -Body @{
     report_id = $reportId
     title = "Gateway Simulation Report"
     start_date = "2026-05-01"

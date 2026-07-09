@@ -24,6 +24,8 @@ PUBLIC_PATHS = frozenset(
     }
 )
 ADMINISTRATOR_ROLE = "ADMINISTRADOR"
+REPORTS_EMPLOYEE_ROLE = "EMPLEADO_REPORTES"
+REPORTS_ALLOWED_ROLES = frozenset({ADMINISTRATOR_ROLE, REPORTS_EMPLOYEE_ROLE})
 
 
 @lru_cache
@@ -102,10 +104,15 @@ def decode_jwt(token: str, settings: SecuritySettings | None = None) -> dict[str
         ) from exc
 
 
-def ensure_administrator(payload: dict[str, Any]) -> None:
+def ensure_reports_access(payload: dict[str, Any]) -> None:
     role = str(payload.get("role", "")).upper()
-    if role != ADMINISTRATOR_ROLE:
+    if role not in REPORTS_ALLOWED_ROLES:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Administrator role required.",
+            detail="Reports access requires ADMINISTRADOR or EMPLEADO_REPORTES role.",
         )
+
+
+def ensure_administrator(payload: dict[str, Any]) -> None:
+    """Backward-compatible alias for operational gateway token checks."""
+    ensure_reports_access(payload)

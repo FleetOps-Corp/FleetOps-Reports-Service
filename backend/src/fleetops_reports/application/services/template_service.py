@@ -49,6 +49,7 @@ class TemplateService:
             "period": report.period.label(),
             "status": report.status,
             "sede_operacion": report.sede_operacion or "All sites",
+            "ciudad_operacion": report.ciudad_operacion or "All cities",
             "created_at": report.created_at.strftime("%Y-%m-%d %H:%M UTC"),
             "graph_urls": graph_urls,
             "vehicles": self._build_vehicle_rows(vehicles or []),

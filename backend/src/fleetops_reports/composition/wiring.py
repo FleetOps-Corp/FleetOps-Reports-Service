@@ -38,6 +38,9 @@ from fleetops_reports.infrastructure.rest_clients.assignments_client import (
     RestAssignmentsClient,
 )
 from fleetops_reports.infrastructure.rest_clients.circuit_breaker import CircuitBreaker
+from fleetops_reports.infrastructure.rest_clients.gateway_token_provider import (
+    GatewayBearerTokenProvider,
+)
 from fleetops_reports.infrastructure.rest_clients.incidents_client import (
     RestIncidentsClient,
 )
@@ -83,9 +86,18 @@ def _build_report_service(settings: Settings) -> ReportService:
     )
 
 
+def _build_gateway_token_provider(settings: Settings) -> GatewayBearerTokenProvider:
+    return GatewayBearerTokenProvider(
+        settings.operational_gateway_base_url,
+        static_token=settings.operational_gateway_bearer_token,
+        service_email=settings.operational_gateway_service_email,
+        service_password=settings.operational_gateway_service_password,
+    )
+
+
 def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase:
     gateway_url = settings.operational_gateway_base_url
-    gateway_token = settings.operational_gateway_bearer_token
+    token_provider = _build_gateway_token_provider(settings)
 
     vehicles_breaker = _build_circuit_breaker(settings)
     assignments_breaker = _build_circuit_breaker(settings)
@@ -93,13 +105,29 @@ def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase
     maintenance_breaker = _build_circuit_breaker(settings)
 
     return GenerateReportUseCase(
-        vehicles_client=RestVehiclesClient(gateway_url, vehicles_breaker, gateway_token),
-        assignments_client=RestAssignmentsClient(
-            gateway_url, assignments_breaker, gateway_token
+        vehicles_client=RestVehiclesClient(
+            gateway_url,
+            vehicles_breaker,
+            token_provider=token_provider,
+            resource_path=settings.operational_vehicles_path,
         ),
-        incidents_client=RestIncidentsClient(gateway_url, incidents_breaker, gateway_token),
+        assignments_client=RestAssignmentsClient(
+            gateway_url,
+            assignments_breaker,
+            token_provider=token_provider,
+            resource_path=settings.operational_assignments_path,
+        ),
+        incidents_client=RestIncidentsClient(
+            gateway_url,
+            incidents_breaker,
+            token_provider=token_provider,
+            resource_path=settings.operational_incidents_path,
+        ),
         maintenance_client=RestMaintenanceClient(
-            gateway_url, maintenance_breaker, gateway_token
+            gateway_url,
+            maintenance_breaker,
+            token_provider=token_provider,
+            resource_path=settings.operational_maintenance_path,
         ),
         availability_service=AvailabilityService(),
         incident_service=IncidentService(),

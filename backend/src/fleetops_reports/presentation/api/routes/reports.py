@@ -8,8 +8,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Security, status
 from fastapi.responses import Response
+from fastapi.security import HTTPBearer
 
 from fleetops_reports.application.dependencies import (
     get_download_report_use_case,
@@ -22,6 +23,7 @@ from fleetops_reports.application.use_cases.generate_report import GenerateRepor
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.domain.exceptions import DomainError, ReportNotFoundError
+from fleetops_reports.presentation.api.error_mapping import http_status_for_domain_error
 from fleetops_reports.presentation.dependencies import get_report_mapper
 from fleetops_reports.presentation.mappers.report_mapper import ReportMapper
 from fleetops_reports.presentation.schemas.report_schemas import (
@@ -31,8 +33,25 @@ from fleetops_reports.presentation.schemas.report_schemas import (
     ReportSummaryResponse,
 )
 
-router = APIRouter(prefix="/reports", tags=["Reports"])
-gateway_router = APIRouter(prefix="/reportes", tags=["Reports (Gateway)"])
+_bearer_scheme = HTTPBearer(
+    auto_error=False,
+    description=(
+        "JWT from Security Gateway POST /auth/login. "
+        "Roles allowed: ADMINISTRADOR or EMPLEADO_REPORTES. "
+        "Validated by JWTAuthMiddleware."
+    ),
+)
+
+router = APIRouter(
+    prefix="/reports",
+    tags=["Reports"],
+    dependencies=[Security(_bearer_scheme)],
+)
+security_api_router = APIRouter(
+    prefix="/api/reports",
+    tags=["Reports (Security /api/reports)"],
+    dependencies=[Security(_bearer_scheme)],
+)
 
 
 async def generate_report(
@@ -45,7 +64,7 @@ async def generate_report(
         report = await use_case.execute(command)
     except DomainError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=http_status_for_domain_error(exc),
             detail=exc.to_dict() if hasattr(exc, "to_dict") else str(exc),
         ) from exc
     return mapper.report_to_response(report)
@@ -55,8 +74,9 @@ async def list_reports(
     mapper: Annotated[ReportMapper, Depends(get_report_mapper)],
     use_case: Annotated[ListReportsUseCase, Depends(get_list_reports_use_case)],
     sede_operacion: Annotated[str | None, Query()] = None,
+    ciudad_operacion: Annotated[str | None, Query()] = None,
 ) -> ReportListResponse:
-    reports = await use_case.execute(mapper.list_query(sede_operacion))
+    reports = await use_case.execute(mapper.list_query(sede_operacion, ciudad_operacion))
     return mapper.reports_to_list_response(reports)
 
 
@@ -87,60 +107,32 @@ async def download_report(
     )
 
 
-router.add_api_route(
-    "/generate",
-    generate_report,
-    methods=["POST"],
-    response_model=GenerateReportResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Generar Reporte Operativo Consolidado",
-)
-router.add_api_route(
-    "",
-    list_reports,
-    methods=["GET"],
-    response_model=ReportListResponse,
-    summary="Listar reportes generados",
-)
-router.add_api_route(
-    "/{report_id}",
-    get_report,
-    methods=["GET"],
-    response_model=ReportSummaryResponse,
-    summary="Consultar metadatos de un reporte",
-)
-router.add_api_route(
-    "/{report_id}/download",
-    download_report,
-    methods=["GET"],
-    summary="Descargar PDF de un reporte",
-)
-
-gateway_router.add_api_route(
-    "/generate",
-    generate_report,
-    methods=["POST"],
-    response_model=GenerateReportResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Generar Reporte (alias Security Gateway /reportes)",
-)
-gateway_router.add_api_route(
-    "",
-    list_reports,
-    methods=["GET"],
-    response_model=ReportListResponse,
-    summary="Listar reportes (alias Security Gateway /reportes)",
-)
-gateway_router.add_api_route(
-    "/{report_id}",
-    get_report,
-    methods=["GET"],
-    response_model=ReportSummaryResponse,
-    summary="Consultar reporte (alias Security Gateway /reportes)",
-)
-gateway_router.add_api_route(
-    "/{report_id}/download",
-    download_report,
-    methods=["GET"],
-    summary="Descargar PDF (alias Security Gateway /reportes)",
-)
+for report_router in (router, security_api_router):
+    report_router.add_api_route(
+        "/generate",
+        generate_report,
+        methods=["POST"],
+        response_model=GenerateReportResponse,
+        status_code=status.HTTP_201_CREATED,
+        summary="Generate consolidated operational report",
+    )
+    report_router.add_api_route(
+        "",
+        list_reports,
+        methods=["GET"],
+        response_model=ReportListResponse,
+        summary="List generated reports",
+    )
+    report_router.add_api_route(
+        "/{report_id}",
+        get_report,
+        methods=["GET"],
+        response_model=ReportSummaryResponse,
+        summary="Get report metadata",
+    )
+    report_router.add_api_route(
+        "/{report_id}/download",
+        download_report,
+        methods=["GET"],
+        summary="Download report PDF",
+    )

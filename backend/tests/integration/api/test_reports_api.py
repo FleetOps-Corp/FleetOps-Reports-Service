@@ -44,6 +44,25 @@ def test_generate_report_endpoint_rejects_non_admin_role(api_client) -> None:
     assert response.status_code == 403
 
 
+def test_generate_report_endpoint_accepts_empleado_reportes_role(api_client) -> None:
+    token = jwt.encode(
+        {"sub": "reports-user", "role": "EMPLEADO_REPORTES"},
+        api_client.private_pem,
+        algorithm="RS256",
+    )
+    response = api_client.post(
+        "/api/reports/generate",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "report_id": "rep-reports-001",
+            "title": "Reports Employee Report",
+            "start_date": "2026-05-01",
+            "end_date": "2026-05-31",
+        },
+    )
+    assert response.status_code == 201
+
+
 def test_generate_report_endpoint_accepts_valid_bearer_token(api_client) -> None:
     response = api_client.post(
         "/reports/generate",

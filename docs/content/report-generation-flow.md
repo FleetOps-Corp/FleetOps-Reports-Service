@@ -33,10 +33,10 @@ sequenceDiagram
 
 ### 1. Request validation
 
-- Entry: `POST /reports/generate` (or `/reportes/generate` via Security Gateway proxy)
+- Entry: `POST /reports/generate` (or `/api/reports/generate` via Security Gateway proxy)
 - Validated fields: `report_id`, `title`, `start_date`, `end_date`, optional `sede_operacion`
 - Inbound JWT is enforced on protected routes; `/health` and `/metrics` remain public
-- Security Gateway validates RBAC before forwarding requests to `/reportes/**`
+- Security Gateway validates RBAC before forwarding requests to `/api/reports/**`
 
 ### 2. Operational data collection
 
@@ -87,8 +87,8 @@ Assignments are retrieved but not yet used in KPI formulas (reserved for future 
 When accessed through the FleetOps Security Gateway:
 
 ```text
-Client → Security Gateway :8000/reportes/generate
-       → Reports :8080/reportes/generate (alias)
+Client → Security Gateway :8000/api/reports/generate
+       → Reports :8080/api/reports/generate (alias)
        → same backend flow as above
 ```
 

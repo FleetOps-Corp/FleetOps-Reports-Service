@@ -41,7 +41,7 @@ def test_audit_middleware_logs_gateway_request_with_sanitized_details(caplog) ->
     app = FastAPI(title="FleetOps Reports")
     app.add_middleware(AuditLoggingMiddleware)
 
-    @app.post("/reportes/generate")
+    @app.post("/api/reports/generate")
     async def generate_report() -> dict[str, str]:
         return {"status": "ok", "email": "private@example.com"}
 
@@ -49,7 +49,7 @@ def test_audit_middleware_logs_gateway_request_with_sanitized_details(caplog) ->
 
     with caplog.at_level(logging.INFO, logger="fleetops_reports.audit"):
         response = client.post(
-            "/reportes/generate?correo=hidden@example.com&sede=Patio+Norte",
+            "/api/reports/generate?correo=hidden@example.com&sede=Patio+Norte",
             headers={
                 "X-Forwarded-For": "10.0.0.1",
                 "Authorization": "Bearer secret-token",
@@ -67,7 +67,7 @@ def test_audit_middleware_logs_gateway_request_with_sanitized_details(caplog) ->
 
     assert audit_event["application"] == "FleetOps Reports"
     assert audit_event["request"]["method"] == "POST"
-    assert audit_event["request"]["route"] == "/reportes/generate"
+    assert audit_event["request"]["route"] == "/api/reports/generate"
     assert audit_event["requested_at"]
     assert audit_event["from_api_gateway"] is True
     assert "authorization" not in audit_event["request"]["headers"]

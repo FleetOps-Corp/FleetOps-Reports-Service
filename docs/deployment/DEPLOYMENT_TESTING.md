@@ -27,9 +27,9 @@ This guide explains how to validate a deployed FleetOps Reports instance (EC2 or
 | Method | Path | Purpose |
 |--------|------|---------|
 | POST | `/reports/generate` | Generate executive report |
-| POST | `/reportes/generate` | Security Gateway alias |
+| POST | `/api/reports/generate` | Security Gateway alias |
 | GET | `/reports` | List stored reports (`?sede_operacion=` optional) |
-| GET | `/reportes` | Gateway alias for listing |
+| GET | `/api/reports` | Gateway alias for listing |
 | GET | `/reports/{report_id}` | Report metadata |
 | GET | `/reports/{report_id}/download` | Download PDF from MinIO |
 
@@ -67,7 +67,7 @@ Expected: `{"status":"ok","service":"fleetops-reports"}`
 ## Step 3 — Generate report via Security Gateway
 
 ```powershell
-Invoke-RestMethod -Method Post -Uri http://<security-host>:8000/reportes/generate `
+Invoke-RestMethod -Method Post -Uri http://<security-host>:8000/api/reports/generate `
   -Headers @{ Authorization = "Bearer $token" } `
   -ContentType "application/json" `
   -Body '{

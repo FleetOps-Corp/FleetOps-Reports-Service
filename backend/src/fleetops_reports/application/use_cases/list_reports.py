@@ -11,6 +11,7 @@ from fleetops_reports.domain.models.report import Report
 @dataclass(frozen=True)
 class ListReportsQuery:
     sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
 
 
 class ListReportsUseCase:
@@ -18,4 +19,7 @@ class ListReportsUseCase:
         self._repository = repository
 
     async def execute(self, query: ListReportsQuery) -> list[Report]:
-        return await self._repository.list_reports(sede_operacion=query.sede_operacion)
+        return await self._repository.list_reports(
+            sede_operacion=query.sede_operacion,
+            ciudad_operacion=query.ciudad_operacion,
+        )

@@ -100,3 +100,17 @@ class EmptyDatasetError(DomainError):
             details={"dataset_name": dataset_name},
         )
 
+
+class OperationalGatewayAuthError(DomainError):
+    """Raised when Reports cannot authenticate outbound calls to Security Gateway."""
+
+    def __init__(self, reason: str) -> None:
+        super().__init__(
+            message=(
+                "Reports cannot authenticate with the operational Security Gateway. "
+                f"{reason}"
+            ),
+            code="OPERATIONAL_GATEWAY_AUTH_FAILED",
+            details={"reason": reason},
+        )
+
