@@ -202,6 +202,9 @@ class FakeStorage:
     async def download_report_pdf(self, object_name: str) -> bytes:
         return await _async_value(self._objects.get(object_name, b"PDF-CONTENT"))
 
+    async def download_graph(self, object_name: str) -> bytes:
+        return await _async_value(self._objects.get(object_name, b"<svg/>"))
+
 
 class FakeRenderer:
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:

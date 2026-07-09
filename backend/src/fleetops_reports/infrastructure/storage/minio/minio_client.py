@@ -65,13 +65,16 @@ class MinioObjectStorage:
         )
 
     async def download_report_pdf(self, object_name: str) -> bytes:
+        return await self._download_object(self._settings.minio_reports_bucket, object_name)
+
+    async def download_graph(self, object_name: str) -> bytes:
+        return await self._download_object(self._settings.minio_graphs_bucket, object_name)
+
+    async def _download_object(self, bucket: str, object_name: str) -> bytes:
         await self.ensure_buckets()
 
         def _download() -> bytes:
-            response = self._client.get_object(
-                self._settings.minio_reports_bucket,
-                object_name,
-            )
+            response = self._client.get_object(bucket, object_name)
             try:
                 return response.read()
             finally:
