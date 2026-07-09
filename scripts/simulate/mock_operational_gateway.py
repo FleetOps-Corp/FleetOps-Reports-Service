@@ -20,9 +20,12 @@ FIXTURES_DIR = ROOT / "docs" / "simulate" / "fixtures"
 
 ROUTE_FILES = {
     "/vehiculos": "vehiculos.json",
+    "/api/vehicles": "vehiculos.json",
     "/asignaciones": "asignaciones.json",
     "/incidentes": "incidentes.json",
+    "/api/incidents": "incidentes.json",
     "/mantenimiento": "mantenimiento.json",
+    "/api/v1/mantenimientos": "mantenimiento.json",
 }
 
 

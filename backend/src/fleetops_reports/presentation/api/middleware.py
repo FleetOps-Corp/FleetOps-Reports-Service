@@ -13,6 +13,10 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from fleetops_reports.application.inbound_token_context import (
+    reset_inbound_bearer_token,
+    set_inbound_bearer_token,
+)
 from fleetops_reports.config.security import (
     PUBLIC_PATHS,
     REPORTS_ALLOWED_ROLES,
@@ -91,8 +95,12 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
                 },
             )
 
+        context_token = set_inbound_bearer_token(token)
         request.state.jwt_payload = payload
-        return await call_next(request)
+        try:
+            return await call_next(request)
+        finally:
+            reset_inbound_bearer_token(context_token)
 
 
 class AuditLoggingMiddleware:

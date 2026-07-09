@@ -125,6 +125,96 @@ async def fetch_gateway_list_all_pages(
     return items
 
 
+async def fetch_gateway_list_with_fallbacks(
+    urls: list[str],
+    bearer_token: str | None = None,
+    *,
+    token_provider: GatewayBearerTokenProvider | None = None,
+    unavailable_log_message: str,
+) -> list[dict[str, Any]]:
+    """Try multiple gateway list URLs until one responds successfully."""
+    last_error: Exception | None = None
+    for index, url in enumerate(urls):
+        try:
+            return await fetch_gateway_list(
+                url,
+                bearer_token,
+                token_provider=token_provider,
+            )
+        except httpx.HTTPStatusError as exc:
+            last_error = exc
+            if exc.response.status_code in _UPSTREAM_UNAVAILABLE_STATUSES:
+                logger.warning(
+                    "%s | status=%s | url=%s",
+                    unavailable_log_message,
+                    exc.response.status_code,
+                    url,
+                )
+                continue
+            raise
+        except httpx.RequestError as exc:
+            last_error = exc
+            if index < len(urls) - 1:
+                logger.warning(
+                    "%s | request_error=%s | url=%s",
+                    unavailable_log_message,
+                    exc,
+                    url,
+                )
+                continue
+            raise
+
+    if last_error is not None:
+        raise last_error
+    return []
+
+
+async def fetch_gateway_list_all_pages_with_fallbacks(
+    urls: list[str],
+    bearer_token: str | None = None,
+    *,
+    token_provider: GatewayBearerTokenProvider | None = None,
+    unavailable_log_message: str,
+    page_size: int = _DEFAULT_PAGE_SIZE,
+) -> list[dict[str, Any]]:
+    """Paginated list fetch with route fallbacks for upstream prefix drift."""
+    last_error: Exception | None = None
+    for index, url in enumerate(urls):
+        try:
+            return await fetch_gateway_list_all_pages(
+                url,
+                bearer_token,
+                token_provider=token_provider,
+                page_size=page_size,
+            )
+        except httpx.HTTPStatusError as exc:
+            last_error = exc
+            if exc.response.status_code in _UPSTREAM_UNAVAILABLE_STATUSES:
+                logger.warning(
+                    "%s | status=%s | url=%s",
+                    unavailable_log_message,
+                    exc.response.status_code,
+                    url,
+                )
+                continue
+            raise
+        except httpx.RequestError as exc:
+            last_error = exc
+            if index < len(urls) - 1:
+                logger.warning(
+                    "%s | request_error=%s | url=%s",
+                    unavailable_log_message,
+                    exc,
+                    url,
+                )
+                continue
+            raise
+
+    if last_error is not None:
+        raise last_error
+    return []
+
+
 async def fetch_gateway_list_optional(
     url: str,
     bearer_token: str | None = None,

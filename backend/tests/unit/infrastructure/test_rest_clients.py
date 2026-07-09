@@ -42,12 +42,12 @@ def test_build_gateway_resource_url_normalizes_trailing_slash() -> None:
 async def test_vehicles_client_uses_configurable_resource_path(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
-        assert url == "http://gateway:8000/vehiculos/"
+    async def fake_fetch(urls: list[str], bearer_token: str | None = None, **kwargs):
+        assert urls[0] == "http://gateway:8000/vehiculos/"
         return []
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages",
+        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages_with_fallbacks",
         fake_fetch,
     )
 
@@ -89,13 +89,13 @@ async def test_vehicles_client_maps_gateway_payload(monkeypatch: pytest.MonkeyPa
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
-        assert url == "http://gateway:8000/vehiculos/"
+    async def fake_fetch(urls: list[str], bearer_token: str | None = None, **kwargs):
+        assert urls[0] == "http://gateway:8000/vehiculos/"
         assert bearer_token == "admin-token"
         return payload
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages",
+        "fleetops_reports.infrastructure.rest_clients.vehicles_client.fetch_gateway_list_all_pages_with_fallbacks",
         fake_fetch,
     )
 
@@ -273,12 +273,12 @@ async def test_maintenance_client_uses_gateway_route_prefix(
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
-        assert url == "http://gateway:8000/api/v1/mantenimientos/"
+    async def fake_fetch(urls: list[str], bearer_token: str | None = None, **kwargs):
+        assert urls[0] == "http://gateway:8000/api/v1/mantenimientos/"
         return payload
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.maintenance_client.fetch_gateway_list",
+        "fleetops_reports.infrastructure.rest_clients.maintenance_client.fetch_gateway_list_with_fallbacks",
         fake_fetch,
     )
 
@@ -306,11 +306,11 @@ async def test_maintenance_client_maps_deployed_payload(
         }
     ]
 
-    async def fake_fetch(url: str, bearer_token: str | None = None, **kwargs):
+    async def fake_fetch(urls: list[str], bearer_token: str | None = None, **kwargs):
         return payload
 
     monkeypatch.setattr(
-        "fleetops_reports.infrastructure.rest_clients.maintenance_client.fetch_gateway_list",
+        "fleetops_reports.infrastructure.rest_clients.maintenance_client.fetch_gateway_list_with_fallbacks",
         fake_fetch,
     )
 

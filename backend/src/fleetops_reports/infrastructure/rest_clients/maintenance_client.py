@@ -19,7 +19,7 @@ from fleetops_reports.infrastructure.rest_clients.field_mapping import (
 )
 from fleetops_reports.infrastructure.rest_clients.gateway_http import (
     build_gateway_resource_url,
-    fetch_gateway_list,
+    fetch_gateway_list_with_fallbacks,
 )
 from fleetops_reports.infrastructure.rest_clients.gateway_token_provider import (
     GatewayBearerTokenProvider,
@@ -55,16 +55,25 @@ class RestMaintenanceClient:
         resource_path: str = "/api/v1/mantenimientos/",
     ) -> None:
         self._url = build_gateway_resource_url(gateway_base_url, resource_path)
+        self._list_urls = list(
+            dict.fromkeys(
+                [
+                    self._url,
+                    build_gateway_resource_url(gateway_base_url, "/mantenimiento/"),
+                ]
+            )
+        )
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
         self._token_provider = token_provider
 
     async def list_maintenance(self) -> list[MaintenanceRecord]:
         async def operation() -> list[MaintenanceRecord]:
-            items = await fetch_gateway_list(
-                self._url,
+            items = await fetch_gateway_list_with_fallbacks(
+                self._list_urls,
                 self._bearer_token,
                 token_provider=self._token_provider,
+                unavailable_log_message="Maintenance upstream route unavailable",
             )
             return [
                 MaintenanceRecord(

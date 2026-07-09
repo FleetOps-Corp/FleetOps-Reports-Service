@@ -38,7 +38,7 @@ def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         "MINIO_REPORTS_BUCKET": "reports",
         "MINIO_GRAPHS_BUCKET": "graphs",
         "OPERATIONAL_GATEWAY_BASE_URL": "https://example.invalid:8080",
-        "OPERATIONAL_GATEWAY_BEARER_TOKEN": "test-gateway-token",
+        "OPERATIONAL_GATEWAY_BEARER_TOKEN": "test-gateway-token-value-12345",
         "CIRCUIT_BREAKER_FAILURE_THRESHOLD": "3",
         "CIRCUIT_BREAKER_RECOVERY_SECONDS": "30",
     }

@@ -11,7 +11,7 @@ from fleetops_reports.infrastructure.rest_clients.circuit_breaker import Circuit
 from fleetops_reports.infrastructure.rest_clients.field_mapping import get_payload_field
 from fleetops_reports.infrastructure.rest_clients.gateway_http import (
     build_gateway_resource_url,
-    fetch_gateway_list_all_pages,
+    fetch_gateway_list_all_pages_with_fallbacks,
 )
 from fleetops_reports.infrastructure.rest_clients.gateway_token_provider import (
     GatewayBearerTokenProvider,
@@ -29,16 +29,25 @@ class RestVehiclesClient:
         resource_path: str = "/vehiculos/",
     ) -> None:
         self._url = build_gateway_resource_url(gateway_base_url, resource_path)
+        self._list_urls = list(
+            dict.fromkeys(
+                [
+                    self._url,
+                    build_gateway_resource_url(gateway_base_url, "/api/vehicles/"),
+                ]
+            )
+        )
         self._circuit_breaker = circuit_breaker
         self._bearer_token = bearer_token
         self._token_provider = token_provider
 
     async def list_vehicles(self) -> list[Vehicle]:
         async def operation() -> list[Vehicle]:
-            items = await fetch_gateway_list_all_pages(
-                self._url,
+            items = await fetch_gateway_list_all_pages_with_fallbacks(
+                self._list_urls,
                 self._bearer_token,
                 token_provider=self._token_provider,
+                unavailable_log_message="Vehicles upstream route unavailable",
             )
             return [
                 Vehicle(
