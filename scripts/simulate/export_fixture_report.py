@@ -10,7 +10,16 @@ import sys
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-ROOT = Path(os.environ.get("REPORTS_ROOT", Path(__file__).resolve().parents[2]))
+def _resolve_root() -> Path:
+    if os.environ.get("REPORTS_ROOT"):
+        return Path(os.environ["REPORTS_ROOT"])
+    script_path = Path(__file__).resolve()
+    if len(script_path.parents) >= 3:
+        return script_path.parents[2]
+    return script_path.parent
+
+
+ROOT = _resolve_root()
 FIXTURES_DIR = Path(os.environ.get("FIXTURES_DIR", ROOT / "docs" / "simulate" / "fixtures"))
 OUTPUT_DEFAULT = Path(os.environ.get("OUTPUT_DIR", ROOT / "docs" / "reports"))
 
