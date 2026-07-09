@@ -10,6 +10,7 @@ from functools import lru_cache
 
 from fleetops_reports.application.dependencies import (
     configure_download_report_use_case,
+    configure_generate_fixture_report_use_case,
     configure_generate_report_use_case,
     configure_get_report_use_case,
     configure_list_reports_use_case,
@@ -33,6 +34,12 @@ from fleetops_reports.infrastructure.observability.prometheus_adapters import (
 from fleetops_reports.infrastructure.pdf.weasyprint_renderer import WeasyPrintRenderer
 from fleetops_reports.infrastructure.persistence.mongodb.analytics_repository import (
     MongoAnalyticsRepository,
+)
+from fleetops_reports.infrastructure.fixtures.clients import (
+    FixtureAssignmentsClient,
+    FixtureIncidentsClient,
+    FixtureMaintenanceClient,
+    FixtureVehiclesClient,
 )
 from fleetops_reports.infrastructure.rest_clients.assignments_client import (
     RestAssignmentsClient,
@@ -137,6 +144,20 @@ def _build_generate_report_use_case(settings: Settings) -> GenerateReportUseCase
     )
 
 
+def _build_fixture_generate_report_use_case(settings: Settings) -> GenerateReportUseCase:
+    return GenerateReportUseCase(
+        vehicles_client=FixtureVehiclesClient(),
+        assignments_client=FixtureAssignmentsClient(),
+        incidents_client=FixtureIncidentsClient(),
+        maintenance_client=FixtureMaintenanceClient(),
+        availability_service=AvailabilityService(),
+        incident_service=IncidentService(),
+        maintenance_service=MaintenanceService(),
+        report_service=_build_report_service(settings),
+        metrics_recorder=PrometheusReportMetricsRecorder(),
+    )
+
+
 def _build_list_reports_use_case() -> ListReportsUseCase:
     return ListReportsUseCase(_build_repository())
 
@@ -153,6 +174,9 @@ def configure_application() -> None:
     settings = get_settings()
     configure_metrics_exporter(PrometheusMetricsExporter())
     configure_generate_report_use_case(lambda: _build_generate_report_use_case(settings))
+    configure_generate_fixture_report_use_case(
+        lambda: _build_fixture_generate_report_use_case(settings)
+    )
     configure_list_reports_use_case(_build_list_reports_use_case)
     configure_get_report_use_case(_build_get_report_use_case)
     configure_download_report_use_case(lambda: _build_download_report_use_case(settings))

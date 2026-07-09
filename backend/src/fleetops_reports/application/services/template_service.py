@@ -48,8 +48,8 @@ class TemplateService:
             "title": report.title,
             "period": report.period.label(),
             "status": report.status,
-            "sede_operacion": report.sede_operacion or "All sites",
-            "ciudad_operacion": report.ciudad_operacion or "All cities",
+            "sede_operacion_label": report.sede_operacion or "All sites",
+            "ciudad_operacion_label": report.ciudad_operacion or "All cities",
             "created_at": report.created_at.strftime("%Y-%m-%d %H:%M UTC"),
             "graph_urls": graph_urls,
             "vehicles": self._build_vehicle_rows(vehicles or []),
@@ -88,7 +88,8 @@ class TemplateService:
                     vehicle.estado_vehiculo,
                     vehicle.estado_vehiculo.replace("_", " ").title(),
                 ),
-                "sede_operacion": vehicle.sede_operacion or vehicle.ciudad_operacion,
+                "sede_operacion": vehicle.sede_operacion or "—",
+                "ciudad_operacion": vehicle.ciudad_operacion or "—",
             }
             for vehicle in sorted_vehicles
         ]

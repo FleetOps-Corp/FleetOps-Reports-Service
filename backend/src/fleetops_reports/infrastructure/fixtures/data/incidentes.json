@@ -1,0 +1,290 @@
+[
+  {
+    "id": "INC-202605-000-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-001",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-01T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-001-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-002",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-02T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-001-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-002",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-03T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-002-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-003",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-03T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-002-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-003",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-04T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-002-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-003",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-05T10:30:00Z"
+  },
+  {
+    "id": "INC-202605-003-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-004",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-04T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-004-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-005",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-05T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-004-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-005",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-06T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-005-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-006",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-06T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-005-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-006",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-07T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-005-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-006",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-08T10:30:00Z"
+  },
+  {
+    "id": "INC-202605-006-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-007",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-07T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-007-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-008",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-08T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-007-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-008",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-09T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-008-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-009",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-09T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-008-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-009",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-10T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-008-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-009",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-11T10:30:00Z"
+  },
+  {
+    "id": "INC-202605-009-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-010",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-10T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-010-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-011",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-11T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-010-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-011",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-12T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-011-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-012",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-12T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-011-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-012",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-13T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-011-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-012",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-14T10:30:00Z"
+  },
+  {
+    "id": "INC-202605-012-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-013",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-13T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-013-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-014",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-14T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-013-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-014",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-15T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-014-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-015",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-15T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-014-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-015",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-16T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-014-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-015",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-17T10:30:00Z"
+  },
+  {
+    "id": "INC-202605-015-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-016",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-16T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-016-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-017",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "LEVE",
+    "fecha_hora": "2026-05-17T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-016-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-017",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-18T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-017-0",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-018",
+    "tipo_incidente": "OPERATIVO",
+    "gravedad": "MODERADO",
+    "fecha_hora": "2026-05-18T08:30:00Z"
+  },
+  {
+    "id": "INC-202605-017-1",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-018",
+    "tipo_incidente": "MECANICO",
+    "gravedad": "GRAVE",
+    "fecha_hora": "2026-05-19T09:30:00Z"
+  },
+  {
+    "id": "INC-202605-017-2",
+    "id_conductor": "11111111-1111-1111-1111-111111111111",
+    "placa_vehiculo": "FOP-018",
+    "tipo_incidente": "HUMANO",
+    "gravedad": "CRITICO",
+    "fecha_hora": "2026-05-20T10:30:00Z"
+  }
+]

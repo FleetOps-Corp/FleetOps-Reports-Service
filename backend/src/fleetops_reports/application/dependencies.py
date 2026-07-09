@@ -15,6 +15,7 @@ from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 
 _generate_report_use_case_provider: Callable[[], GenerateReportUseCase] | None = None
+_generate_fixture_report_use_case_provider: Callable[[], GenerateReportUseCase] | None = None
 _list_reports_use_case_provider: Callable[[], ListReportsUseCase] | None = None
 _get_report_use_case_provider: Callable[[], GetReportUseCase] | None = None
 _download_report_use_case_provider: Callable[[], DownloadReportUseCase] | None = None
@@ -24,6 +25,13 @@ _metrics_exporter: MetricsExporter | None = None
 def configure_generate_report_use_case(provider: Callable[[], GenerateReportUseCase]) -> None:
     global _generate_report_use_case_provider
     _generate_report_use_case_provider = provider
+
+
+def configure_generate_fixture_report_use_case(
+    provider: Callable[[], GenerateReportUseCase],
+) -> None:
+    global _generate_fixture_report_use_case_provider
+    _generate_fixture_report_use_case_provider = provider
 
 
 def configure_list_reports_use_case(provider: Callable[[], ListReportsUseCase]) -> None:
@@ -56,6 +64,13 @@ def get_generate_report_use_case() -> GenerateReportUseCase:
         )
         raise RuntimeError(msg)
     return _generate_report_use_case_provider()
+
+
+def get_generate_fixture_report_use_case() -> GenerateReportUseCase:
+    if _generate_fixture_report_use_case_provider is None:
+        msg = "Fixture report use case is not configured."
+        raise RuntimeError(msg)
+    return _generate_fixture_report_use_case_provider()
 
 
 def get_list_reports_use_case() -> ListReportsUseCase:
