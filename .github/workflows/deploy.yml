@@ -85,7 +85,9 @@ jobs:
               exit 1
             fi
 
-            docker compose -f docker-compose.prod.yml --env-file .env up -d --build --remove-orphans
+            docker compose -f docker-compose.prod.yml --env-file .env up -d --build --no-deps backend
+            docker compose -f docker-compose.prod.yml --env-file .env up -d gateway minio
+            docker compose -f docker-compose.prod.yml --env-file .env up -d --remove-orphans
             docker compose -f docker-compose.prod.yml --env-file .env ps
 
             GATEWAY_PORT="$(grep -E '^GATEWAY_HTTP_PORT=' .env | cut -d= -f2- | tr -d '\r' || true)"

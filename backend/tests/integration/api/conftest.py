@@ -24,15 +24,15 @@ from fleetops_reports.application.use_cases.generate_report import GenerateRepor
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.config.security import get_security_settings
-from fleetops_reports.presentation.api.middleware import register_auth_middleware
-from fleetops_reports.presentation.dependencies import get_app_settings
 from fleetops_reports.infrastructure.fixtures.clients import (
     FixtureAssignmentsClient,
     FixtureIncidentsClient,
     FixtureMaintenanceClient,
     FixtureVehiclesClient,
 )
+from fleetops_reports.presentation.api.middleware import register_auth_middleware
 from fleetops_reports.presentation.api.routes import reports
+from fleetops_reports.presentation.dependencies import get_app_settings
 from tests.conftest import (
     FakeAssignmentsClient,
     FakeIncidentsClient,

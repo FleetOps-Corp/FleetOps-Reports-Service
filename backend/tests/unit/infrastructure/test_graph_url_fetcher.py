@@ -47,9 +47,11 @@ def test_fetch_graph_url_raises_on_http_error() -> None:
         response=MagicMock(status_code=404),
     )
 
-    with patch(
-        "fleetops_reports.infrastructure.pdf.graph_url_fetcher.httpx.get",
-        return_value=response,
+    with (
+        patch(
+            "fleetops_reports.infrastructure.pdf.graph_url_fetcher.httpx.get",
+            return_value=response,
+        ),
+        pytest.raises(httpx.HTTPStatusError),
     ):
-        with pytest.raises(httpx.HTTPStatusError):
-            fetch_graph_url("https://minio.test/missing.svg")
+        fetch_graph_url("https://minio.test/missing.svg")

@@ -18,10 +18,11 @@ _DEFAULT_TIMEOUT_SECONDS = 30.0
 def _fetch_data_uri(url: str) -> dict[str, Any]:
     header, payload = url.split(",", 1)
     mime_type = header[5:].split(";", 1)[0] or "application/octet-stream"
-    if ";base64" in header:
-        content = base64.b64decode(payload)
-    else:
-        content = unquote_to_bytes(payload)
+    content = (
+        base64.b64decode(payload)
+        if ";base64" in header
+        else unquote_to_bytes(payload)
+    )
     return {
         "string": content,
         "mime_type": mime_type,
@@ -30,7 +31,11 @@ def _fetch_data_uri(url: str) -> dict[str, Any]:
     }
 
 
-def fetch_graph_url(url: str, *, timeout_seconds: float = _DEFAULT_TIMEOUT_SECONDS) -> dict[str, Any]:
+def fetch_graph_url(
+    url: str,
+    *,
+    timeout_seconds: float = _DEFAULT_TIMEOUT_SECONDS,
+) -> dict[str, Any]:
     """Fetch a graph resource URL for WeasyPrint rendering."""
     if url.startswith("data:"):
         return _fetch_data_uri(url)

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from importlib import resources
-from typing import Any
+from typing import Any, cast
 
 from fleetops_reports.application.ports.operational_clients import (
     AssignmentRecord,
@@ -17,7 +17,7 @@ from fleetops_reports.domain.models.vehicle import Vehicle
 
 def _load_json(name: str) -> list[dict[str, Any]]:
     package = resources.files("fleetops_reports.infrastructure.fixtures") / "data"
-    return json.loads((package / name).read_text(encoding="utf-8"))
+    return cast(list[dict[str, Any]], json.loads((package / name).read_text(encoding="utf-8")))
 
 
 def _parse_dt(value: str) -> datetime:

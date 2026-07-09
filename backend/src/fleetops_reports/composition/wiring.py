@@ -27,6 +27,12 @@ from fleetops_reports.application.use_cases.generate_report import GenerateRepor
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.config.settings import Settings
+from fleetops_reports.infrastructure.fixtures.clients import (
+    FixtureAssignmentsClient,
+    FixtureIncidentsClient,
+    FixtureMaintenanceClient,
+    FixtureVehiclesClient,
+)
 from fleetops_reports.infrastructure.observability.prometheus_adapters import (
     PrometheusMetricsExporter,
     PrometheusReportMetricsRecorder,
@@ -34,12 +40,6 @@ from fleetops_reports.infrastructure.observability.prometheus_adapters import (
 from fleetops_reports.infrastructure.pdf.weasyprint_renderer import WeasyPrintRenderer
 from fleetops_reports.infrastructure.persistence.mongodb.analytics_repository import (
     MongoAnalyticsRepository,
-)
-from fleetops_reports.infrastructure.fixtures.clients import (
-    FixtureAssignmentsClient,
-    FixtureIncidentsClient,
-    FixtureMaintenanceClient,
-    FixtureVehiclesClient,
 )
 from fleetops_reports.infrastructure.rest_clients.assignments_client import (
     RestAssignmentsClient,

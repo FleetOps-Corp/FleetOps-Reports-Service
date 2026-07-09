@@ -1,5 +1,7 @@
 """Fixture-backed report generation tests."""
 
+from datetime import date
+
 import pytest
 
 from fleetops_reports.application.services.availability_service import AvailabilityService
@@ -21,7 +23,6 @@ from fleetops_reports.infrastructure.fixtures.clients import (
     FixtureVehiclesClient,
 )
 from fleetops_reports.infrastructure.fixtures.loader import load_fixture_vehicles
-from datetime import date
 
 
 @pytest.fixture
