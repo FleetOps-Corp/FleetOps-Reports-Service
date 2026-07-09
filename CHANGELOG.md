@@ -5,6 +5,11 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.10] - 2026-07-09
+
+### Fixed
+- Restore reliable PDF chart rendering: upload SVG to MinIO and embed charts as data URIs in WeasyPrint (reverts presigned/download path that broke EC2 PDF generation).
+
 ## [2.2.9] - 2026-07-09
 
 ### Fixed

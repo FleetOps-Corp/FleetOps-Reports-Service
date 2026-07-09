@@ -25,8 +25,6 @@ from fleetops_reports.domain.models.vehicle import Vehicle
 
 logger = logging.getLogger(__name__)
 
-PRESIGNED_GRAPH_EXPIRES_SECONDS = 600
-
 
 class PdfRenderer(Protocol):
     async def render(self, template_name: str, context: dict[str, object]) -> bytes:
@@ -86,12 +84,7 @@ class ReportService:
             graph_content = self._build_chart_or_placeholder(chart_key, build_chart)
             object_name = f"{report.report_id}-{chart_key}.svg"
             await self._storage.upload_graph(object_name, graph_content)
-            await self._storage.create_presigned_url(
-                object_name,
-                PRESIGNED_GRAPH_EXPIRES_SECONDS,
-            )
-            stored_graph = await self._storage.download_graph(object_name)
-            graph_urls[chart_key] = svg_to_data_uri(stored_graph)
+            graph_urls[chart_key] = svg_to_data_uri(graph_content)
 
         context = self._template_service.build_context(
             report,
