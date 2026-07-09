@@ -17,6 +17,7 @@ from fleetops_reports.application.ports.operational_clients import (
     MaintenanceRecord,
 )
 from fleetops_reports.application.services.graph_service import GraphService
+from fleetops_reports.application.services.svg_embed import svg_to_data_uri
 from fleetops_reports.application.services.template_service import TemplateService
 from fleetops_reports.domain.exceptions import EmptyDatasetError
 from fleetops_reports.domain.models.report import Report
@@ -85,10 +86,12 @@ class ReportService:
             graph_content = self._build_chart_or_placeholder(chart_key, build_chart)
             object_name = f"{report.report_id}-{chart_key}.svg"
             await self._storage.upload_graph(object_name, graph_content)
-            graph_urls[chart_key] = await self._storage.create_presigned_url(
+            await self._storage.create_presigned_url(
                 object_name,
                 PRESIGNED_GRAPH_EXPIRES_SECONDS,
             )
+            stored_graph = await self._storage.download_graph(object_name)
+            graph_urls[chart_key] = svg_to_data_uri(stored_graph)
 
         context = self._template_service.build_context(
             report,

@@ -56,8 +56,7 @@ async def test_report_service_generates_report(
         "critical-ranking",
     }
     assert all(
-        url.startswith("https://minio.test/") and "expires=600" in url
-        for url in graph_urls.values()
+        url.startswith("data:image/svg+xml;base64,") for url in graph_urls.values()
     )
 
 

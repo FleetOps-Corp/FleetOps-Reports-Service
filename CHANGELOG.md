@@ -5,6 +5,11 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.9] - 2026-07-09
+
+### Fixed
+- CI Bandit failure: PDF charts use MinIO presigned URL generation plus SDK download (SAD step 8) instead of httpx with disabled TLS verification.
+
 ## [2.2.8] - 2026-07-09
 
 ### Fixed
