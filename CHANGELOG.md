@@ -5,6 +5,12 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.3] - 2026-07-09
+
+### Fixed
+- Map operational Security Gateway auth failures to **503** with `OPERATIONAL_GATEWAY_AUTH_FAILED` instead of misleading **422**.
+- Treat empty `OPERATIONAL_GATEWAY_BEARER_TOKEN` as unset so service-account login is attempted.
+
 ## [2.2.2] - 2026-07-08
 
 ### Added

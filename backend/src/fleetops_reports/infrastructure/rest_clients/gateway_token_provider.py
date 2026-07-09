@@ -10,6 +10,8 @@ from typing import Any
 
 import httpx
 
+from fleetops_reports.domain.exceptions import OperationalGatewayAuthError
+
 logger = logging.getLogger(__name__)
 
 _DEFAULT_REFRESH_MARGIN_SECONDS = 300
@@ -34,7 +36,7 @@ class GatewayBearerTokenProvider:
         refresh_margin_seconds: int = _DEFAULT_REFRESH_MARGIN_SECONDS,
     ) -> None:
         self._gateway_base_url = gateway_base_url.rstrip("/")
-        self._static_token = static_token.strip() if static_token else None
+        self._static_token = static_token.strip() if static_token and static_token.strip() else None
         self._service_email = service_email
         self._service_password = service_password
         self._refresh_margin_seconds = refresh_margin_seconds
@@ -70,8 +72,23 @@ class GatewayBearerTokenProvider:
             "password": self._service_password,
         }
         async with httpx.AsyncClient(follow_redirects=True, timeout=15.0) as client:
-            response = await client.post(login_url, json=payload)
-            response.raise_for_status()
+            try:
+                response = await client.post(login_url, json=payload)
+                response.raise_for_status()
+            except httpx.HTTPStatusError as exc:
+                if exc.response.status_code == 401:
+                    raise OperationalGatewayAuthError(
+                        "Service account login to Security Gateway /auth/login was rejected "
+                        f"(email={self._service_email}). Ask Security to run seed_admin.py or "
+                        "set OPERATIONAL_GATEWAY_BEARER_TOKEN with a valid ADMINISTRADOR JWT."
+                    ) from exc
+                raise OperationalGatewayAuthError(
+                    f"Security Gateway /auth/login returned HTTP {exc.response.status_code}."
+                ) from exc
+            except httpx.RequestError as exc:
+                raise OperationalGatewayAuthError(
+                    f"Security Gateway /auth/login is unreachable: {exc}"
+                ) from exc
             body: dict[str, Any] = response.json()
 
         token = str(body.get("access_token") or body.get("token") or "")

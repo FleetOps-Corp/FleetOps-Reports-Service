@@ -23,6 +23,7 @@ from fleetops_reports.application.use_cases.generate_report import GenerateRepor
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.domain.exceptions import DomainError, ReportNotFoundError
+from fleetops_reports.presentation.api.error_mapping import http_status_for_domain_error
 from fleetops_reports.presentation.dependencies import get_report_mapper
 from fleetops_reports.presentation.mappers.report_mapper import ReportMapper
 from fleetops_reports.presentation.schemas.report_schemas import (
@@ -63,7 +64,7 @@ async def generate_report(
         report = await use_case.execute(command)
     except DomainError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=http_status_for_domain_error(exc),
             detail=exc.to_dict() if hasattr(exc, "to_dict") else str(exc),
         ) from exc
     return mapper.report_to_response(report)
