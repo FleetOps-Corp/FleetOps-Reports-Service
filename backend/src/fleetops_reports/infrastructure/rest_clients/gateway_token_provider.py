@@ -10,6 +10,7 @@ from typing import Any
 
 import httpx
 
+from fleetops_reports.application.inbound_token_context import get_inbound_bearer_token
 from fleetops_reports.domain.exceptions import OperationalGatewayAuthError
 
 logger = logging.getLogger(__name__)
@@ -21,6 +22,9 @@ _DEFAULT_REFRESH_MARGIN_SECONDS = 300
 class _CachedToken:
     value: str
     expires_at: float
+
+
+_MIN_STATIC_TOKEN_LENGTH = 20
 
 
 class GatewayBearerTokenProvider:
@@ -36,7 +40,14 @@ class GatewayBearerTokenProvider:
         refresh_margin_seconds: int = _DEFAULT_REFRESH_MARGIN_SECONDS,
     ) -> None:
         self._gateway_base_url = gateway_base_url.rstrip("/")
-        self._static_token = static_token.strip() if static_token and static_token.strip() else None
+        normalized_static = static_token.strip() if static_token and static_token.strip() else None
+        if normalized_static and len(normalized_static) < _MIN_STATIC_TOKEN_LENGTH:
+            logger.warning(
+                "Ignoring short OPERATIONAL_GATEWAY_BEARER_TOKEN placeholder; "
+                "will use inbound JWT or service-account login instead."
+            )
+            normalized_static = None
+        self._static_token = normalized_static
         self._service_email = service_email
         self._service_password = service_password
         self._refresh_margin_seconds = refresh_margin_seconds
@@ -46,6 +57,10 @@ class GatewayBearerTokenProvider:
     async def get_token(self) -> str | None:
         if self._static_token:
             return self._static_token
+
+        inbound_token = get_inbound_bearer_token()
+        if inbound_token:
+            return inbound_token
 
         if not self._service_email or not self._service_password:
             logger.warning(

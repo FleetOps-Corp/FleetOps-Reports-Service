@@ -5,6 +5,31 @@ All notable changes to FleetOps Reports are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.10] - 2026-07-09
+
+### Fixed
+- Restore reliable PDF chart rendering: upload SVG to MinIO and embed charts as data URIs in WeasyPrint (reverts presigned/download path that broke EC2 PDF generation).
+
+## [2.2.9] - 2026-07-09
+
+### Fixed
+- CI Bandit failure: PDF charts use MinIO presigned URL generation plus SDK download (SAD step 8) instead of httpx with disabled TLS verification.
+
+## [2.2.8] - 2026-07-09
+
+### Fixed
+- CI quality gate: Ruff import order, line length, and MyPy cast in fixture loader.
+- Safer EC2 redeploy script (`redeploy_ec2.sh`) rebuilds backend only to avoid instance OOM.
+
+## [2.2.7] - 2026-07-09
+
+### Fixed
+- Restore SAD-compliant PDF chart flow: upload SVG to MinIO, presigned URL in template, WeasyPrint HTTP fetch via custom `url_fetcher`.
+- Add `download_graph` to object storage port for graph retrieval from MinIO.
+
+### Added
+- Grafana Alloy example config and EC2 install script for Grafana Cloud metrics/logs (`observability/alloy.config.alloy.example`, `scripts/deploy/install_grafana_alloy.sh`).
+
 ## [2.2.3] - 2026-07-09
 
 ### Fixed

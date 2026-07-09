@@ -1,0 +1,56 @@
+// Grafana Alloy configuration for FleetOps Reports EC2 host metrics.
+// Copy to /etc/alloy/config.alloy and replace placeholder credentials.
+//
+// Required environment (e.g. /etc/alloy/credentials.env):
+//   GCLOUD_HOSTED_METRICS_URL
+//   GCLOUD_HOSTED_METRICS_ID
+//   GCLOUD_RW_API_KEY
+//   GCLOUD_HOSTED_LOGS_URL      (optional)
+//   GCLOUD_HOSTED_LOGS_ID       (optional)
+//   REPORTS_METRICS_TARGET    (default 127.0.0.1:8081)
+
+prometheus.remote_write "metrics_hosted_prometheus" {
+  endpoint {
+    name = "hosted-prometheus"
+    url  = sys.env("GCLOUD_HOSTED_METRICS_URL")
+
+    basic_auth {
+      username = sys.env("GCLOUD_HOSTED_METRICS_ID")
+      password = sys.env("GCLOUD_RW_API_KEY")
+    }
+  }
+}
+
+prometheus.scrape "fleetops_reports" {
+  targets = [{
+    __address__ = coalesce(sys.env("REPORTS_METRICS_TARGET"), "127.0.0.1:8081"),
+  }]
+  forward_to      = [prometheus.remote_write.metrics_hosted_prometheus.receiver]
+  scrape_interval = "60s"
+  metrics_path    = "/metrics"
+}
+
+loki.write "hosted_logs" {
+  endpoint {
+    url = sys.env("GCLOUD_HOSTED_LOGS_URL")
+
+    basic_auth {
+      username = sys.env("GCLOUD_HOSTED_LOGS_ID")
+      password = sys.env("GCLOUD_RW_API_KEY")
+    }
+  }
+}
+
+local.file_match "reports_logs" {
+  path_targets = [{
+    __path__    = "/var/lib/docker/volumes/*backend_logs*/_data/*.log",
+    job         = "fleetops-reports",
+    service     = "fleetops-reports",
+    environment = "production",
+  }]
+}
+
+loki.source.file "reports_logs" {
+  targets    = local.file_match.reports_logs.targets
+  forward_to = [loki.write.hosted_logs.receiver]
+}

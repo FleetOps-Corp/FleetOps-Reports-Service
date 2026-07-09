@@ -38,7 +38,7 @@ def test_environment(monkeypatch: pytest.MonkeyPatch) -> None:
         "MINIO_REPORTS_BUCKET": "reports",
         "MINIO_GRAPHS_BUCKET": "graphs",
         "OPERATIONAL_GATEWAY_BASE_URL": "https://example.invalid:8080",
-        "OPERATIONAL_GATEWAY_BEARER_TOKEN": "test-gateway-token",
+        "OPERATIONAL_GATEWAY_BEARER_TOKEN": "test-gateway-token-value-12345",
         "CIRCUIT_BREAKER_FAILURE_THRESHOLD": "3",
         "CIRCUIT_BREAKER_RECOVERY_SECONDS": "30",
     }
@@ -201,6 +201,9 @@ class FakeStorage:
 
     async def download_report_pdf(self, object_name: str) -> bytes:
         return await _async_value(self._objects.get(object_name, b"PDF-CONTENT"))
+
+    async def download_graph(self, object_name: str) -> bytes:
+        return await _async_value(self._objects.get(object_name, b"<svg/>"))
 
 
 class FakeRenderer:

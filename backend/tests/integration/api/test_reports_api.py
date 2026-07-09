@@ -2,6 +2,8 @@
 
 import jwt
 
+from fleetops_reports.presentation.dependencies import get_app_settings
+
 
 def _auth_headers(client) -> dict[str, str]:
     token = jwt.encode(
@@ -105,3 +107,47 @@ def test_list_and_download_report_endpoints(api_client) -> None:
     download_response = api_client.get("/reports/rep-download-001/download", headers=headers)
     assert download_response.status_code == 200
     assert download_response.headers["content-type"] == "application/pdf"
+
+
+def test_generate_fixture_report_endpoint_filters_by_city(api_client) -> None:
+    response = api_client.post(
+        "/reports/generate/fixture",
+        headers=_auth_headers(api_client),
+        json={
+            "report_id": "rep-ref-bogota-202605",
+            "title": "FleetOps Executive Report — Fixture Reference (Bogotá)",
+            "start_date": "2026-05-01",
+            "end_date": "2026-05-31",
+            "ciudad_operacion": "Bogotá",
+        },
+    )
+    assert response.status_code == 201
+    body = response.json()
+    assert body["report_id"] == "rep-ref-bogota-202605"
+    assert body["ciudad_operacion"] == "Bogotá"
+    assert body["status"] == "generated"
+    assert len(body["kpis"]) == 6
+
+    download_response = api_client.get(
+        "/reports/rep-ref-bogota-202605/download",
+        headers=_auth_headers(api_client),
+    )
+    assert download_response.status_code == 200
+    assert download_response.headers["content-type"] == "application/pdf"
+
+
+def test_generate_fixture_report_endpoint_disabled_when_flag_off(api_client, monkeypatch) -> None:
+    monkeypatch.setenv("FIXTURE_REPORTS_ENABLED", "false")
+    get_app_settings.cache_clear()
+    response = api_client.post(
+        "/reports/generate/fixture",
+        headers=_auth_headers(api_client),
+        json={
+            "report_id": "rep-fixture-disabled",
+            "title": "Disabled",
+            "start_date": "2026-05-01",
+            "end_date": "2026-05-31",
+        },
+    )
+    assert response.status_code == 404
+    get_app_settings.cache_clear()

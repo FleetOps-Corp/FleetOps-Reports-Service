@@ -23,12 +23,14 @@ class _FakeUseCase:
 @pytest.fixture(autouse=True)
 def reset_dependency_providers() -> Iterator[None]:
     deps._generate_report_use_case_provider = None
+    deps._generate_fixture_report_use_case_provider = None
     deps._list_reports_use_case_provider = None
     deps._get_report_use_case_provider = None
     deps._download_report_use_case_provider = None
     deps._metrics_exporter = None
     yield
     deps._generate_report_use_case_provider = None
+    deps._generate_fixture_report_use_case_provider = None
     deps._list_reports_use_case_provider = None
     deps._get_report_use_case_provider = None
     deps._download_report_use_case_provider = None
@@ -44,6 +46,17 @@ def test_configure_and_get_generate_report_use_case() -> None:
     fake_use_case = _FakeUseCase()
     deps.configure_generate_report_use_case(lambda: fake_use_case)  # type: ignore[arg-type]
     assert deps.get_generate_report_use_case() is fake_use_case
+
+
+def test_get_generate_fixture_report_use_case_requires_configuration() -> None:
+    with pytest.raises(RuntimeError, match="Fixture report use case is not configured"):
+        deps.get_generate_fixture_report_use_case()
+
+
+def test_configure_and_get_generate_fixture_report_use_case() -> None:
+    fake_use_case = _FakeUseCase()
+    deps.configure_generate_fixture_report_use_case(lambda: fake_use_case)  # type: ignore[arg-type]
+    assert deps.get_generate_fixture_report_use_case() is fake_use_case
 
 
 def test_get_list_reports_use_case_requires_configuration() -> None:

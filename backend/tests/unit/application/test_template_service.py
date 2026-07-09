@@ -37,6 +37,8 @@ def test_template_service_builds_context(report_period, sample_vehicles) -> None
     assert context["title"] == "Executive Report"
     assert context["period"] == report_period.label()
     assert context["status"] == "draft"
+    assert context["sede_operacion_label"] == "All sites"
+    assert context["ciudad_operacion_label"] == "All cities"
     assert context["graph_urls"] == graph_urls
     assert len(context["vehicles"]) == len(sample_vehicles)
     assert context["vehicles"][0]["status"] == "DISPONIBLE"

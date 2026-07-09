@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 
 from fleetops_reports.application.dependencies import (
     get_download_report_use_case,
+    get_generate_fixture_report_use_case,
     get_generate_report_use_case,
     get_get_report_use_case,
     get_list_reports_use_case,
@@ -23,8 +24,15 @@ from fleetops_reports.application.use_cases.generate_report import GenerateRepor
 from fleetops_reports.application.use_cases.get_report import GetReportUseCase
 from fleetops_reports.application.use_cases.list_reports import ListReportsUseCase
 from fleetops_reports.config.security import get_security_settings
+from fleetops_reports.infrastructure.fixtures.clients import (
+    FixtureAssignmentsClient,
+    FixtureIncidentsClient,
+    FixtureMaintenanceClient,
+    FixtureVehiclesClient,
+)
 from fleetops_reports.presentation.api.middleware import register_auth_middleware
 from fleetops_reports.presentation.api.routes import reports
+from fleetops_reports.presentation.dependencies import get_app_settings
 from tests.conftest import (
     FakeAssignmentsClient,
     FakeIncidentsClient,
@@ -64,8 +72,10 @@ def api_client(
     private_pem, public_key_path = _generate_test_rsa_keys(tmp_path)
     monkeypatch.setenv("JWT_ALGORITHM", "RS256")
     monkeypatch.setenv("JWT_PUBLIC_KEY_PATH", public_key_path)
+    monkeypatch.setenv("FIXTURE_REPORTS_ENABLED", "true")
     monkeypatch.delenv("JWT_SECRET_KEY", raising=False)
     get_security_settings.cache_clear()
+    get_app_settings.cache_clear()
 
     app = FastAPI()
     register_auth_middleware(app)
@@ -84,6 +94,17 @@ def api_client(
         report_service,
     )
     app.dependency_overrides[get_generate_report_use_case] = lambda: use_case
+    fixture_use_case = GenerateReportUseCase(
+        FixtureVehiclesClient(),
+        FixtureAssignmentsClient(),
+        FixtureIncidentsClient(),
+        FixtureMaintenanceClient(),
+        AvailabilityService(),
+        IncidentService(),
+        MaintenanceService(),
+        report_service,
+    )
+    app.dependency_overrides[get_generate_fixture_report_use_case] = lambda: fixture_use_case
     app.dependency_overrides[get_list_reports_use_case] = lambda: ListReportsUseCase(
         fake_repository
     )

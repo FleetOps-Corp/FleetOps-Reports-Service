@@ -34,6 +34,7 @@ set_or_replace OPERATIONAL_VEHICLES_PATH /vehiculos/
 set_or_replace OPERATIONAL_ASSIGNMENTS_PATH /asignaciones/
 set_or_replace OPERATIONAL_INCIDENTS_PATH /api/incidents/
 set_or_replace OPERATIONAL_MAINTENANCE_PATH /api/v1/mantenimientos/
+set_or_replace FIXTURE_REPORTS_ENABLED true
 
 if [[ -n "${OPERATIONAL_GATEWAY_BEARER_TOKEN:-}" ]]; then
   set_or_replace OPERATIONAL_GATEWAY_BEARER_TOKEN "$OPERATIONAL_GATEWAY_BEARER_TOKEN"

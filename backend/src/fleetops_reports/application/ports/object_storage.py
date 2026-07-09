@@ -22,3 +22,6 @@ class ObjectStorage(Protocol):
     async def download_report_pdf(self, object_name: str) -> bytes:
         """Download a stored PDF report object from MinIO."""
 
+    async def download_graph(self, object_name: str) -> bytes:
+        """Download a stored graph SVG object from MinIO."""
+
