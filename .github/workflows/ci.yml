@@ -90,8 +90,10 @@ jobs:
           path: bandit-report.json
 
       - name: SonarCloud Scan
-        if: github.event_name == 'pull_request'
-        uses: SonarSource/sonarqube-scan-action@v8.2.0
+        if: |
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'develop'))
+        uses: SonarSource/sonarqube-scan-action@713881670b6b3676cda39549040e2d88c70d582e # v8.2.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -100,6 +102,8 @@ jobs:
   build-docker:
     name: Build Docker Images
     needs: quality-gate
+    # TODO-FASE-DOCKER: publish backend and gateway images to GHCR (or another registry)
+    # and switch deploy.yml from on-host `docker compose build` to registry pulls.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -111,19 +115,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Install Trivy
-        uses: aquasecurity/setup-trivy@v0.3.1
+        uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
         with:
           version: v0.72.0
           cache: true
 
       - name: Build Backend Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: ./backend
           push: false
@@ -145,7 +149,7 @@ jobs:
             --exit-code 0
 
       - name: Build Gateway Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: ./gateway
           push: false
@@ -213,7 +217,7 @@ jobs:
       - name: Notify Slack
         if: ${{ vars.SLACK_NOTIFICATIONS_ENABLED == 'true' }}
         continue-on-error: true
-        uses: slackapi/slack-github-action@v2
+        uses: slackapi/slack-github-action@91efab103c0de0a537f72a35f6b8cda0ee76bf0a # v2
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK }}
           webhook-type: incoming-webhook

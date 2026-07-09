@@ -6,7 +6,7 @@ requires = ["setuptools==80.9.0", "wheel==0.45.1"]
 build-backend = "setuptools.build_meta"
 [project]
 name = "fleetops-reports"
-version = "0.1.0"
+version = "2.2.3"
 description = "FleetOps Reports analytical microservice archetype"
 requires-python = "==3.13.*"
 dependencies = [
@@ -22,7 +22,9 @@ dependencies = [
   "prometheus-client==0.22.1",
   "python-json-logger==3.3.0",
   "requests==2.32.4",
-  "PyYAML==6.0.2"
+  "PyYAML==6.0.2",
+  "PyJWT==2.10.1",
+  "cryptography==42.0.8"
 ]
 
 [project.optional-dependencies]
@@ -59,7 +61,7 @@ dev = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-"fleetops_reports.infrastructure.templates" = ["html/*.j2"]
+"fleetops_reports.infrastructure.templates" = ["html/**/*.j2"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -86,6 +88,7 @@ partial_branches = [
 target-version = "py313"
 line-length = 100
 src = ["src", "tests"]
+
 
 [tool.ruff.lint]
 select = [

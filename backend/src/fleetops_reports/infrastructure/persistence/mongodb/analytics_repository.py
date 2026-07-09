@@ -15,6 +15,30 @@ from fleetops_reports.domain.value_objects.report_period import ReportPeriod
 from fleetops_reports.infrastructure.persistence.mongodb.documents import ReportDocument
 
 
+def _document_to_report(document: ReportDocument) -> Report:
+    return Report(
+        report_id=document.report_id,
+        title=document.title,
+        period=ReportPeriod(
+            start_date=date.fromisoformat(document.period["start_date"]),
+            end_date=date.fromisoformat(document.period["end_date"]),
+        ),
+        kpis=[
+            KPI.create_now(
+                name=item["name"],
+                metric=Metric(name=item["metric"], value=item["value"], unit=item["unit"]),
+                source=item["source"],
+            )
+            for item in document.kpis
+        ],
+        status=document.status,
+        document_url=document.document_url,
+        sede_operacion=document.sede_operacion,
+        ciudad_operacion=document.ciudad_operacion,
+        created_at=document.created_at,
+    )
+
+
 class MongoAnalyticsRepository:
     async def save_report(self, report: Report) -> Report:
         document = ReportDocument(
@@ -26,6 +50,8 @@ class MongoAnalyticsRepository:
             },
             status=report.status,
             document_url=report.document_url,
+            sede_operacion=report.sede_operacion,
+            ciudad_operacion=report.ciudad_operacion,
             kpis=[
                 {
                     "name": kpi.name,
@@ -47,23 +73,26 @@ class MongoAnalyticsRepository:
         document = await ReportDocument.find_one(ReportDocument.report_id == report_id)
         if document is None:
             return None
-        return Report(
-            report_id=document.report_id,
-            title=document.title,
-            period=ReportPeriod(
-                start_date=date.fromisoformat(document.period["start_date"]),
-                end_date=date.fromisoformat(document.period["end_date"]),
-            ),
-            kpis=[
-                KPI.create_now(
-                    name=item["name"],
-                    metric=Metric(name=item["metric"], value=item["value"], unit=item["unit"]),
-                    source=item["source"],
-                )
-                for item in document.kpis
-            ],
-            status=document.status,
-            document_url=document.document_url,
-            created_at=document.created_at,
-        )
+        return _document_to_report(document)
 
+    async def list_reports(
+        self,
+        sede_operacion: str | None = None,
+        ciudad_operacion: str | None = None,
+    ) -> list[Report]:
+        documents = await ReportDocument.find_all().sort("-created_at").to_list()
+        if sede_operacion:
+            normalized = sede_operacion.strip().casefold()
+            documents = [
+                document
+                for document in documents
+                if (document.sede_operacion or "").strip().casefold() == normalized
+            ]
+        if ciudad_operacion:
+            normalized = ciudad_operacion.strip().casefold()
+            documents = [
+                document
+                for document in documents
+                if (document.ciudad_operacion or "").strip().casefold() == normalized
+            ]
+        return [_document_to_report(document) for document in documents]

@@ -23,6 +23,13 @@ from fleetops_reports.application.services.availability_service import (
 )
 from fleetops_reports.application.services.incident_service import IncidentService
 from fleetops_reports.application.services.maintenance_service import MaintenanceService
+from fleetops_reports.application.services.operational_filter_service import (
+    filter_incidents_by_period,
+    filter_incidents_for_vehicles,
+    filter_maintenance_by_period,
+    filter_maintenance_for_vehicles,
+    filter_vehicles_for_report,
+)
 from fleetops_reports.application.services.report_service import ReportService
 from fleetops_reports.domain.exceptions import DomainError, ReportGenerationError
 from fleetops_reports.domain.models.report import Report
@@ -34,6 +41,8 @@ class GenerateReportCommand:
     report_id: str
     title: str
     period: ReportPeriod
+    sede_operacion: str | None = None
+    ciudad_operacion: str | None = None
 
 
 class GenerateReportUseCase:
@@ -63,24 +72,56 @@ class GenerateReportUseCase:
         self._metrics_recorder.on_request()
         try:
             with self._metrics_recorder.track_generation():
-                vehicles = await self._vehicles_client.list_vehicles()
+                vehicles = filter_vehicles_for_report(
+                    await self._vehicles_client.list_vehicles(),
+                    sede_operacion=command.sede_operacion,
+                    ciudad_operacion=command.ciudad_operacion,
+                )
                 await self._assignments_client.list_assignments()
-                incidents = await self._incidents_client.list_incidents()
-                maintenance = await self._maintenance_client.list_maintenance()
+                incidents = filter_incidents_by_period(
+                    filter_incidents_for_vehicles(
+                        await self._incidents_client.list_incidents(),
+                        vehicles,
+                    ),
+                    command.period.start_date,
+                    command.period.end_date,
+                )
+                maintenance = filter_maintenance_by_period(
+                    filter_maintenance_for_vehicles(
+                        await self._maintenance_client.list_maintenance(),
+                        vehicles,
+                    ),
+                    command.period.start_date,
+                    command.period.end_date,
+                )
+
                 kpis = [
                     self._availability_service.calculate_global_kpi(vehicles),
                     self._maintenance_service.calculate_mttr_kpi(maintenance),
                     self._incident_service.calculate_critical_vehicle_kpi(
-                        incidents, maintenance, vehicles
+                        incidents,
+                        maintenance,
+                        vehicles,
                     ),
+                    self._incident_service.calculate_high_severity_rate(incidents),
+                    self._incident_service.calculate_human_incident_rate(incidents),
+                    self._incident_service.calculate_recurrent_vehicle_kpi(incidents),
                 ]
+
                 report = Report(
                     report_id=command.report_id,
                     title=command.title,
                     period=command.period,
                     kpis=kpis,
+                    sede_operacion=command.sede_operacion,
+                    ciudad_operacion=command.ciudad_operacion,
                 )
-                return await self._report_service.generate(report)
+                return await self._report_service.generate(
+                    report,
+                    vehicles=vehicles,
+                    incidents=incidents,
+                    maintenance=maintenance,
+                )
         except DomainError:
             raise
         except Exception as exc:

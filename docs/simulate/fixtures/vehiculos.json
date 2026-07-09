@@ -1,0 +1,290 @@
+[
+  {
+    "id_vehiculo": "0e295003-ccc2-489b-b6d9-e23867eb2cf1",
+    "numero_placa": "FOP-001",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "0114e58f-8dfd-4436-abf8-febe3cf35ea6",
+    "numero_placa": "FOP-002",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Volvo",
+    "modelo": "VNL"
+  },
+  {
+    "id_vehiculo": "3a7bb855-41c3-4c18-aa1f-671327c45044",
+    "numero_placa": "FOP-003",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "International",
+    "modelo": "LT"
+  },
+  {
+    "id_vehiculo": "02abe97a-27ac-4984-a4f6-fe99c8b43fd9",
+    "numero_placa": "FOP-004",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
+  },
+  {
+    "id_vehiculo": "93f24135-f7fe-4549-a6dd-43a43b962ca2",
+    "numero_placa": "FOP-005",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "6e74b701-f7a7-454a-84a7-a912346caaf2",
+    "numero_placa": "FOP-006",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "d4b47341-4580-4795-8e4e-36a9af2191c8",
+    "numero_placa": "FOP-007",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Volvo",
+    "modelo": "VNL"
+  },
+  {
+    "id_vehiculo": "85a9cbc1-70d4-43c0-931a-d129ea472e45",
+    "numero_placa": "FOP-008",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "International",
+    "modelo": "LT"
+  },
+  {
+    "id_vehiculo": "32fd7427-fbc5-4fbf-a69a-4fea3b630b2f",
+    "numero_placa": "FOP-009",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
+  },
+  {
+    "id_vehiculo": "43c868ec-b8d0-47c5-871e-1dd8faeefd35",
+    "numero_placa": "FOP-010",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "aa9dac46-ed5a-4566-a995-24d7500cd9f1",
+    "numero_placa": "FOP-011",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "152dff31-ceb1-473f-8d70-0f84167f938b",
+    "numero_placa": "FOP-012",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Volvo",
+    "modelo": "VNL"
+  },
+  {
+    "id_vehiculo": "b16caf7c-75b2-443b-907a-5695955f9ec8",
+    "numero_placa": "FOP-013",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "International",
+    "modelo": "LT"
+  },
+  {
+    "id_vehiculo": "38f5fa2c-c5f9-4b8f-940d-47e2a4fb18a8",
+    "numero_placa": "FOP-014",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
+  },
+  {
+    "id_vehiculo": "c9df5d19-d1cd-4f19-8e8e-33e48afeac2d",
+    "numero_placa": "FOP-015",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "bdd25117-f4ca-458e-a663-b81f901a6c1c",
+    "numero_placa": "FOP-016",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "c0c69f90-8cec-4401-923f-14aa3bc78e95",
+    "numero_placa": "FOP-017",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Volvo",
+    "modelo": "VNL"
+  },
+  {
+    "id_vehiculo": "34496b0e-deef-4a7c-805b-321ca3f29be9",
+    "numero_placa": "FOP-018",
+    "estado_vehiculo": "FUERA_DE_SERVICIO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "International",
+    "modelo": "LT"
+  },
+  {
+    "id_vehiculo": "b8d9576f-96c7-465a-82f5-f5ca55ffe897",
+    "numero_placa": "FOP-019",
+    "estado_vehiculo": "FUERA_DE_SERVICIO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
+  },
+  {
+    "id_vehiculo": "8f3a3e15-95e3-40b1-b89a-9b7d2e0da286",
+    "numero_placa": "FOP-020",
+    "estado_vehiculo": "FUERA_DE_SERVICIO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "5bc22676-112b-401a-ab7b-2214faac8996",
+    "numero_placa": "FOP-021",
+    "estado_vehiculo": "EN_RUTA",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "cf31b64e-5edc-4b33-a327-267830b22aed",
+    "numero_placa": "FOP-022",
+    "estado_vehiculo": "EN_RUTA",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Volvo",
+    "modelo": "VNL"
+  },
+  {
+    "id_vehiculo": "59da212b-af1e-48e4-8aba-44527d266542",
+    "numero_placa": "FOP-023",
+    "estado_vehiculo": "EN_RUTA",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "International",
+    "modelo": "LT"
+  },
+  {
+    "id_vehiculo": "1a51266c-9424-4d77-9bb6-d9a81560fe0a",
+    "numero_placa": "FOP-024",
+    "estado_vehiculo": "EN_RUTA",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T680"
+  },
+  {
+    "id_vehiculo": "440b6f81-c2f3-4713-b369-9fd14aa04a7e",
+    "numero_placa": "FOP-025",
+    "estado_vehiculo": "ASIGNADO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "9655233d-567e-420e-a645-5f3e3c79fccb",
+    "numero_placa": "FOP-026",
+    "estado_vehiculo": "ASIGNADO",
+    "ciudad_operacion": "Bogotá",
+    "sede_operacion": "Patio Norte Bogotá",
+    "marca": "Freightliner",
+    "modelo": "Cascadia"
+  },
+  {
+    "id_vehiculo": "eadd81b9-3483-4974-95c1-f8a310115ddc",
+    "numero_placa": "EXT-101",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Medellín",
+    "sede_operacion": "Patio Medellín",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "4ddc6b75-1fbe-4022-b369-97b8b0951e94",
+    "numero_placa": "EXT-102",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Medellín",
+    "sede_operacion": "Patio Medellín",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "f0355b49-291e-446d-93b8-b651b645e43e",
+    "numero_placa": "EXT-103",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Medellín",
+    "sede_operacion": "Patio Medellín",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "702fa6b9-182f-4ab8-a8ed-02bb5e9b09d8",
+    "numero_placa": "EXT-201",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Cali",
+    "sede_operacion": "Patio Cali",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "12026c0e-4f2e-4400-a690-a62ec215942e",
+    "numero_placa": "EXT-202",
+    "estado_vehiculo": "EN_MANTENIMIENTO",
+    "ciudad_operacion": "Cali",
+    "sede_operacion": "Patio Cali",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  },
+  {
+    "id_vehiculo": "aff34336-d5bf-46a3-987d-f26324db28e1",
+    "numero_placa": "EXT-203",
+    "estado_vehiculo": "DISPONIBLE",
+    "ciudad_operacion": "Cali",
+    "sede_operacion": "Patio Cali",
+    "marca": "Kenworth",
+    "modelo": "T800"
+  }
+]

@@ -14,7 +14,17 @@ backend/coverage.xml
 backend/coverage-relative.xml
 backend/coverage-test.xml
 bandit-report.json
+certs/*
+!certs/README.md
+*.pem
+*.crt
+*.~/AppData/
+_avast_/
+docs/token/
 
+# Local-only bootstrap scripts with real credentials (use *.example.ps1 templates from repo)
+scripts/simulate/bootstrap_security_reports_user.ps1
+scripts/simulate/*-local.ps1
 *.xml
 backend/.coverage.*
 backend/coverage/

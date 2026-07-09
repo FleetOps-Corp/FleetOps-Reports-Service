@@ -19,3 +19,6 @@ class ObjectStorage(Protocol):
     async def create_presigned_url(self, object_name: str, expires_seconds: int) -> str:
         """Create a temporary signed URL for WeasyPrint-safe graph access."""
 
+    async def download_report_pdf(self, object_name: str) -> bytes:
+        """Download a stored PDF report object from MinIO."""
+

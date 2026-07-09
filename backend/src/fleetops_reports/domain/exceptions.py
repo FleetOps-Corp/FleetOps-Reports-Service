@@ -68,6 +68,17 @@ class ReportGenerationError(DomainError):
         )
 
 
+class ReportNotFoundError(DomainError):
+    """Raised when a requested report does not exist or has no stored artifact."""
+
+    def __init__(self, report_id: str) -> None:
+        super().__init__(
+            message=f"Report '{report_id}' was not found",
+            code="REPORT_NOT_FOUND",
+            details={"report_id": report_id},
+        )
+
+
 class InvalidReportPeriodError(DomainError):
     """Raised when a reporting period is chronologically invalid."""
 
@@ -87,5 +98,19 @@ class EmptyDatasetError(DomainError):
             message=f"Dataset '{dataset_name}' cannot be empty for this calculation",
             code="EMPTY_DATASET",
             details={"dataset_name": dataset_name},
+        )
+
+
+class OperationalGatewayAuthError(DomainError):
+    """Raised when Reports cannot authenticate outbound calls to Security Gateway."""
+
+    def __init__(self, reason: str) -> None:
+        super().__init__(
+            message=(
+                "Reports cannot authenticate with the operational Security Gateway. "
+                f"{reason}"
+            ),
+            code="OPERATIONAL_GATEWAY_AUTH_FAILED",
+            details={"reason": reason},
         )
 

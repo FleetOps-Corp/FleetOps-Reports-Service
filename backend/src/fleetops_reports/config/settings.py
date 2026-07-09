@@ -6,15 +6,31 @@ externalized through environment variables per prompt hard constraints.
 
 from __future__ import annotations
 
-from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
+from pydantic import Field
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+    )
+
+
+class SecuritySettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).resolve().parents[4] / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    jwt_public_key_path: str | None = Field(default=None, alias="JWT_PUBLIC_KEY_PATH")
+    jwt_secret_key: str | None = Field(default=None, alias="JWT_SECRET_KEY")
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=Path(__file__).resolve().parents[4] / ".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
     )
-
     app_name: str = "FleetOps Reports"
     app_environment: str = Field(alias="APP_ENVIRONMENT")
     log_level: str = Field(alias="LOG_LEVEL")
@@ -31,6 +47,31 @@ class Settings(BaseSettings):
     minio_graphs_bucket: str = Field(alias="MINIO_GRAPHS_BUCKET")
 
     operational_gateway_base_url: str = Field(alias="OPERATIONAL_GATEWAY_BASE_URL")
+    operational_gateway_bearer_token: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_BEARER_TOKEN"
+    )
+    operational_gateway_service_email: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_SERVICE_EMAIL"
+    )
+    operational_gateway_service_password: str | None = Field(
+        default=None, alias="OPERATIONAL_GATEWAY_SERVICE_PASSWORD"
+    )
+    operational_vehicles_path: str = Field(
+        default="/vehiculos/",
+        alias="OPERATIONAL_VEHICLES_PATH",
+    )
+    operational_assignments_path: str = Field(
+        default="/asignaciones/",
+        alias="OPERATIONAL_ASSIGNMENTS_PATH",
+    )
+    operational_incidents_path: str = Field(
+        default="/api/incidents/",
+        alias="OPERATIONAL_INCIDENTS_PATH",
+    )
+    operational_maintenance_path: str = Field(
+        default="/api/v1/mantenimientos/",
+        alias="OPERATIONAL_MAINTENANCE_PATH",
+    )
 
     circuit_breaker_failure_threshold: int = Field(
         alias="CIRCUIT_BREAKER_FAILURE_THRESHOLD"
@@ -40,3 +81,7 @@ class Settings(BaseSettings):
     )
 
     templates_dir: str | None = Field(default=None, alias="TEMPLATES_DIR")
+
+    jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
+    jwt_public_key_path: str | None = Field(default=None, alias="JWT_PUBLIC_KEY_PATH")
+    jwt_secret_key: str | None = Field(default=None, alias="JWT_SECRET_KEY")
