@@ -59,14 +59,22 @@ async def generate_report(
     use_case: Annotated[GenerateReportUseCase, Depends(get_generate_report_use_case)],
     mapper: Annotated[ReportMapper, Depends(get_report_mapper)],
 ) -> GenerateReportResponse:
+
+    # 1. Transformamos la petición HTTP entrante a un comando de la capa de aplicación
     command = mapper.request_to_command(request)
+
     try:
+        # 2. Ejecución asíncrona del caso de uso cruzando los 4 microservices bajo ADR-005
         report = await use_case.execute(command)
+
     except DomainError as exc:
+        # 3. Captura limpia de errores de lógica de negocio o fallos concurrentes controlados
         raise HTTPException(
             status_code=http_status_for_domain_error(exc),
             detail=exc.to_dict() if hasattr(exc, "to_dict") else str(exc),
         ) from exc
+
+    # 4. Mapeo de la entidad de dominio de salida al formato JSON de Pydantic
     return mapper.report_to_response(report)
 
 

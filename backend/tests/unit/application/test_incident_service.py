@@ -10,6 +10,7 @@ import pytest
 
 from fleetops_reports.application.ports.operational_clients import IncidentRecord
 from fleetops_reports.application.services.incident_service import IncidentService
+from fleetops_reports.domain.models.vehicle import Vehicle
 
 # ------------------------------------------------------------------ #
 # KPI 1 — Critical Vehicles                                          #
